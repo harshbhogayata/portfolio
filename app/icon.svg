@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <rect width="32" height="32" fill="#e85d04"/>
+  <text
+    x="16"
+    y="17"
+    dominant-baseline="middle"
+    text-anchor="middle"
+    fill="white"
+    font-family="ui-monospace, monospace"
+    font-weight="700"
+    font-size="13"
+    letter-spacing="0.5"
+  >HB</text>
+</svg>
