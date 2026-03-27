@@ -8,10 +8,24 @@ export const meta = {
   email: "work.harsh.bhogayata@gmail.com",
   github: "https://github.com/harshbhogayata",
   linkedin: "https://linkedin.com/in/harshbhogayata",
+  medium: "https://medium.com/@harshmbhogayata",
+  researchgate: "https://www.researchgate.net/profile/Harsh-Bhogayata",
   role: "Software Engineer",
 };
 
 export const changelog = [
+  {
+    version: "v2.3.1",
+    date: "Jan 2026 – Present",
+    title: "First Production Deployment",
+    breaking: false,
+    changes: [
+      "Joined Brainybeam Infotech Pvt Ltd — Python Django Intern",
+      "Engineering production RESTful APIs with Python and Django",
+      "Optimizing database queries and data models for real applications",
+      "Patch: shipped PQC research paper + 4-part technical writing series",
+    ],
+  },
   {
     version: "v2.0.0",
     label: "BREAKING CHANGE",
@@ -85,6 +99,16 @@ export const features = [
     repo: "https://github.com/harshbhogayata/vadodara-Flood-Archive-Relief",
   },
   {
+    version: "v2.1.1",
+    status: "stable",
+    title: "The Quantum Disruption — Research Paper",
+    description:
+      "Survey on Post-Quantum Cryptography. Covers 'Harvest Now, Decrypt Later' threats, NIST standardization of CRYSTALS-Kyber/Dilithium, and the migration challenges for legacy systems. Published on ResearchGate.",
+    deps: ["post-quantum cryptography", "nist", "crystals-kyber", "dilithium", "cryptography"],
+    link: "https://www.researchgate.net/publication/400146061_The_Quantum_Disruption_A_Chronicle_of_the_Global_Transition_to_a_New_Cryptographic_Era",
+    repo: null,
+  },
+  {
     version: "v2.1.0",
     status: "stable",
     title: "Kalakari Store",
@@ -147,4 +171,35 @@ export const knownIssues = [
   { fixed: false, text: "Tendency to over-engineer v1 of anything" },
   { fixed: true,  text: "Imposter syndrome — resolved in v1.2.0" },
   { fixed: true,  text: "Shipping without security review — fixed in v2.0.0" },
+];
+
+export const writing = [
+  {
+    title: "Beyond Defense: The Geopolitics and Future of Quantum Security",
+    excerpt: "How the race for quantum safety will reshape privacy, sovereignty, and the internet itself.",
+    date: "Jan 2026",
+    tags: ["cybersecurity", "infosec", "future"],
+    link: "https://medium.com/@harshmbhogayata/beyond-defense-the-geopolitics-and-future-of-quantum-security-52833d5d297e",
+  },
+  {
+    title: "The Great Migration: How to Move the World to Quantum Safety",
+    excerpt: "We have the new algorithms. Now comes the hard part: replacing the engine of the digital economy while it's still running.",
+    date: "Jan 2026",
+    tags: ["infosec", "leadership", "cryptography"],
+    link: "https://medium.com/@harshmbhogayata/the-great-migration-how-to-move-the-world-to-quantum-safety-4f9375b7510f",
+  },
+  {
+    title: "The Architects of Trust: Meet the Algorithms Replacing RSA",
+    excerpt: "Inside the global 'crypto-bake-off' that decided the future of internet security.",
+    date: "Jan 2026",
+    tags: ["post-quantum-cryptography", "nist", "cybersecurity"],
+    link: "https://medium.com/@harshmbhogayata/the-architects-of-trust-meet-the-algorithms-replacing-rsa-2a76075d6059",
+  },
+  {
+    title: "The Quantum Threat isn't Future Science Fiction — It's Happening Right Now",
+    excerpt: "Why 'Harvest Now, Decrypt Later' means your data is already at risk, even without a quantum computer.",
+    date: "Jan 2026",
+    tags: ["quantum-computing", "cybersecurity", "data-privacy"],
+    link: "https://medium.com/@harshmbhogayata/the-quantum-threat-isnt-future-science-fiction-it-s-happening-right-now-eb9cdd48df0f",
+  },
 ];

@@ -3,6 +3,7 @@ import Hero from "@/components/Hero";
 import Latest from "@/components/Latest";
 import Changelog from "@/components/Changelog";
 import Features from "@/components/Features";
+import Writing from "@/components/Writing";
 import Dependencies from "@/components/Dependencies";
 import KnownIssues from "@/components/KnownIssues";
 import Installation from "@/components/Installation";
@@ -15,6 +16,7 @@ export default function Home() {
       <Latest />
       <Changelog />
       <Features />
+      <Writing />
       <Dependencies />
       <KnownIssues />
       <Installation />

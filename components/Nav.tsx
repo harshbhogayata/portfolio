@@ -7,6 +7,7 @@ const links = [
   { label: "latest",     href: "#latest" },
   { label: "changelog",  href: "#changelog" },
   { label: "features",   href: "#features" },
+  { label: "writing",    href: "#writing" },
   { label: "deps",       href: "#deps" },
   { label: "install",    href: "#install" },
 ];

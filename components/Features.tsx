@@ -92,14 +92,16 @@ export default function Features() {
                         live <ArrowUpRight size={11} />
                       </a>
                     )}
-                    <a
-                      href={project.repo}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-1 font-mono text-[11px] text-muted hover:text-ink hover:underline underline-offset-2 transition-colors whitespace-nowrap"
-                    >
-                      repo <ArrowUpRight size={11} />
-                    </a>
+                    {project.repo && (
+                      <a
+                        href={project.repo}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-1 font-mono text-[11px] text-muted hover:text-ink hover:underline underline-offset-2 transition-colors whitespace-nowrap"
+                      >
+                        repo <ArrowUpRight size={11} />
+                      </a>
+                    )}
                   </div>
 
                 </div>
