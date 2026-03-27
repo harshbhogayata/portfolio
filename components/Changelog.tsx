@@ -70,9 +70,9 @@ export default function Changelog() {
                     >
                       {entry.version}
                     </span>
-                    {entry.breaking && (
+                    {entry.breaking && entry.label && (
                       <span className="font-mono text-[10px] text-accent font-medium tracking-wide uppercase">
-                        BREAKING CHANGE
+                        {entry.label}
                       </span>
                     )}
                     <span className="font-mono text-[11px] text-muted">{entry.date}</span>

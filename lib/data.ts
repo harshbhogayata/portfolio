@@ -16,14 +16,15 @@ export const meta = {
 export const changelog = [
   {
     version: "v2.3.1",
+    label: "CURRENT",
     date: "Jan 2026 – Present",
     title: "First Production Deployment",
-    breaking: false,
+    breaking: true,
     changes: [
       "Joined Brainybeam Infotech Pvt Ltd — Python Django Intern",
       "Engineering production RESTful APIs with Python and Django",
       "Optimizing database queries and data models for real applications",
-      "Patch: shipped PQC research paper + 4-part technical writing series",
+      "Shipped PQC research paper + 4-part technical writing series on Medium",
     ],
   },
   {
@@ -31,7 +32,7 @@ export const changelog = [
     label: "BREAKING CHANGE",
     date: "2024",
     title: "Full-Stack Transition",
-    breaking: true,
+    breaking: false,
     changes: [
       "Enrolled in MCA — Parul University (Software Dev & App Security)",
       "Added: React, Node.js, Express, TypeScript, Django, Docker",
@@ -79,13 +80,23 @@ export const features = [
     repo: "https://github.com/harshbhogayata/TO",
   },
   {
+    version: "v2.3.1",
+    status: "stable",
+    title: "The Quantum Disruption — Research Paper",
+    description:
+      "Published survey on Post-Quantum Cryptography. Covers 'Harvest Now, Decrypt Later' threats, NIST standardization of CRYSTALS-Kyber/Dilithium, and migration challenges for legacy systems.",
+    deps: ["post-quantum cryptography", "nist", "crystals-kyber", "dilithium", "cryptography"],
+    link: "https://www.researchgate.net/publication/400146061_The_Quantum_Disruption_A_Chronicle_of_the_Global_Transition_to_a_New_Cryptographic_Era",
+    repo: null,
+  },
+  {
     version: "v2.3.0",
     status: "stable",
     title: "TalentOrbit",
     description:
       "Job marketplace for seekers, companies, and admins. Application tracking, subscription tiers, Razorpay payments, rate-limited auth, email verification. Deployed on Render.",
     deps: ["python", "django 6", "razorpay", "postgresql", "docker"],
-    link: null,
+    link: "https://talentorbit-web.onrender.com",
     repo: "https://github.com/harshbhogayata/TalentOrbit",
   },
   {
@@ -97,16 +108,6 @@ export const features = [
     deps: ["leaflet.js", "capacitor", "pwa", "openstreetmap", "vanilla js"],
     link: "https://vadodara-flood-archive-relief.vercel.app",
     repo: "https://github.com/harshbhogayata/vadodara-Flood-Archive-Relief",
-  },
-  {
-    version: "v2.1.1",
-    status: "stable",
-    title: "The Quantum Disruption — Research Paper",
-    description:
-      "Survey on Post-Quantum Cryptography. Covers 'Harvest Now, Decrypt Later' threats, NIST standardization of CRYSTALS-Kyber/Dilithium, and the migration challenges for legacy systems. Published on ResearchGate.",
-    deps: ["post-quantum cryptography", "nist", "crystals-kyber", "dilithium", "cryptography"],
-    link: "https://www.researchgate.net/publication/400146061_The_Quantum_Disruption_A_Chronicle_of_the_Global_Transition_to_a_New_Cryptographic_Era",
-    repo: null,
   },
   {
     version: "v2.1.0",
