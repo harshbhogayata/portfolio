@@ -27,6 +27,22 @@ export const metadata: Metadata = {
   title: "Harsh Bhogayata · v2.3.1",
   description:
     "Software engineer. Security-aware, full-stack, ships with intent. Based in Vadodara, India.",
+  metadataBase: new URL("https://harshbhogayata.vercel.app"),
+  openGraph: {
+    title: "Harsh Bhogayata · v2.3.1",
+    description:
+      "Software engineer. Security-aware, full-stack, ships with intent. Based in Vadodara, India.",
+    url: "https://harshbhogayata.vercel.app",
+    siteName: "Harsh Bhogayata",
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Harsh Bhogayata · v2.3.1",
+    description:
+      "Software engineer. Security-aware, full-stack, ships with intent. Based in Vadodara, India.",
+  },
 };
 
 export default function RootLayout({
