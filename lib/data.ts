@@ -80,16 +80,6 @@ export const features = [
     repo: "https://github.com/harshbhogayata/TO",
   },
   {
-    version: "v2.3.1",
-    status: "stable",
-    title: "The Quantum Disruption — Research Paper",
-    description:
-      "Published survey on Post-Quantum Cryptography. Covers 'Harvest Now, Decrypt Later' threats, NIST standardization of CRYSTALS-Kyber/Dilithium, and migration challenges for legacy systems.",
-    deps: ["post-quantum cryptography", "nist", "crystals-kyber", "dilithium", "cryptography"],
-    link: "https://www.researchgate.net/publication/400146061_The_Quantum_Disruption_A_Chronicle_of_the_Global_Transition_to_a_New_Cryptographic_Era",
-    repo: null,
-  },
-  {
     version: "v2.3.0",
     status: "stable",
     title: "TalentOrbit",
@@ -167,12 +157,20 @@ export const dependencies = {
 // ★ production-ready  ◐ actively growing  ○ familiar
 
 export const knownIssues = [
-  { fixed: false, text: "Database optimization at scale — limited prod exposure (patching, ETA Q3 2026)" },
-  { fixed: false, text: "System design for distributed systems — reading architecture docs, building toward it" },
-  { fixed: false, text: "Tendency to over-engineer v1 of anything" },
-  { fixed: true,  text: "Imposter syndrome — resolved in v1.2.0" },
-  { fixed: true,  text: "Shipping without security review — fixed in v2.0.0" },
+  { fixed: false, text: "Production database tuning at scale — internship is the active patch" },
+  { fixed: false, text: "Distributed systems depth — running: DDIA + side projects, not blocked" },
+  { fixed: false, text: "Over-engineering v1 — recurring, managed, ships anyway" },
+  { fixed: true,  text: "Imposter syndrome — patched in v1.2.0, stable" },
+  { fixed: true,  text: "Shipping without security review — hotfix in v2.0.0, never reverted" },
 ];
+
+export const paper = {
+  title: "The Quantum Disruption: A Chronicle of the Global Transition to a New Cryptographic Era",
+  excerpt: "A published survey on Post-Quantum Cryptography — analyzing 'Harvest Now, Decrypt Later' threats, NIST standardization of CRYSTALS-Kyber/Dilithium, and migration challenges for legacy systems.",
+  date: "2025",
+  tags: ["post-quantum cryptography", "nist", "crystals-kyber", "dilithium"],
+  link: "https://www.researchgate.net/publication/400146061_The_Quantum_Disruption_A_Chronicle_of_the_Global_Transition_to_a_New_Cryptographic_Era",
+};
 
 export const writing = [
   {

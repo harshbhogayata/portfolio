@@ -6,7 +6,7 @@ import { features } from "@/lib/data";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-const featured = [features[0], features[1]]; // TO (wip) + Research Paper
+const featured = [features[0], features[2]]; // TO (wip) + Flood Archive
 
 export default function Latest() {
   return (
