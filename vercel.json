@@ -1,5 +1,12 @@
 {
   "framework": null,
   "buildCommand": null,
-  "installCommand": null
+  "installCommand": null,
+  "redirects": [
+    {
+      "source": "/stories.html",
+      "destination": "/portfolio-site.html",
+      "permanent": true
+    }
+  ]
 }

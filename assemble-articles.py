@@ -1,7 +1,7 @@
 """Build the case-study pages in work/ from articles/<slug>.html.
 
 Each article shares the site's header, menu, footer and styles (assemble-site.py runs this after the main pages).
-In the prose, {A} is the path back to the site root and @@FLOOD_RECORD@@ is the record from the stories page.
+In the prose, {A} is the path back to the site root.
 """
 import html
 import re
@@ -92,11 +92,6 @@ def tool(name, file, prefix):
     return f'<li><img src="{prefix}assets/stack-logos/{file}.svg" alt="{name}" title="{name}" decoding="async"></li>'
 
 
-def flood_record():
-    record = re.search(r'<div class="flood-instrument">.*?\n    </div>\n', read(root / "site-stories.html"), re.S).group(0)
-    return re.sub(r'\s*<figure class="flood-map">.*?</figure>', "", record, flags=re.S)
-
-
 def stations(prose):
     """Number every section heading so it can hang off the wire, and size each release rule to its stops."""
     count = iter(range(1, 100))
@@ -108,7 +103,7 @@ def article(i, p):
     prefix = "../"
     nxt = PROJECTS[(i + 1) % len(PROJECTS)]
     prev = PROJECTS[i - 1]
-    prose = read(root / "articles" / f"{p['slug']}.html").replace("{A}", prefix).replace("@@FLOOD_RECORD@@", flood_record())
+    prose = read(root / "articles" / f"{p['slug']}.html").replace("{A}", prefix)
     words = len(re.sub(r"<[^>]+>", " ", prose).split())
     prose = stations(prose)
     toc = "".join(f'<li><a href="#s{n}"><i aria-hidden="true"></i><b>{int(n):02d}</b>{title}</a></li>' for n, title in re.findall(r'<h2 id="s(\d+)" data-n="\d+">(.*?)</h2>', prose))

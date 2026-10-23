@@ -2312,8 +2312,7 @@ html.main-site::-webkit-scrollbar{display:none}
           <a id="flood-source" href="https://timesofindia.indiatimes.com/city/vadodara/rising-vishwamitri-puts-barodians-on-edge-again/articleshow/123751219.cms" target="_blank" rel="noopener noreferrer">Read the linked report <span aria-hidden="true">↗</span></a>
         </div>
       </div>
-    </div>
-<figcaption><b>Fig. 02</b>The record for three of the archive’s places. Pick one; the link goes to the reporting behind it.</figcaption></figure>
+    </div><figcaption><b>Fig. 02</b>The record for three of the archive’s places. Pick one; the link goes to the reporting behind it.</figcaption></figure>
 
       <h2 id="s2" data-n="02">Evidence, not a warning</h2>
       <p>People wanted more than history, so a simulator grew out of the archive. You set the level of the Ajwa reservoir, a day’s rainfall and whether the Dhadhar river is backing up, and the map shades each place by what those conditions have meant there before.</p>
@@ -2555,10 +2554,10 @@ html.main-site::-webkit-scrollbar{display:none}
   if (stack && stackTools.length && stackRoute) {
     const PROJECTS = {
       curator: ['Curator', 'work/curator.html'],
-      kalakari: ['Kalakari', 'stories.html#kalakari-story'],
+      kalakari: ['Kalakari'],
       flood: ['Flood Archive', 'work/flood.html'],
-      scaledown: ['ScaleDown', 'stories.html#scaledown-story'],
-      morrow: ['Morrow'],
+      scaledown: ['ScaleDown'],
+      morrow: ['Morrow', 'work/morrow.html'],
       eventsorted: ['EventSorted'],
       ida: ['IDA GCC Desk'],
       tally: ['Tally connector']
@@ -2728,7 +2727,7 @@ html.main-site::-webkit-scrollbar{display:none}
       label: 'PROGRAMME', chips: ['Computer applications', 'Software systems'], stats: [['Length', '2 years'], ['Shipped during it', '3 projects']], href: '#work', link: NEXT },
     { text: '_By _October _2025, I was shipping *Kalakari, a marketplace for artisans.', when: 'October 2025', fact: 'study',
       label: 'SHIPPED WITH', tools: [tool('React', 'react'), tool('TypeScript', 'typescript'), tool('Tailwind CSS', 'tailwindcss'), tool('Node.js', 'nodedotjs'), tool('MongoDB', 'mongodb'), tool('Vercel', 'vercel')],
-      stats: [['Commits', '14'], ['Status', 'Live']], href: 'stories.html#kalakari-story', link: 'The Kalakari story' },
+      stats: [['Commits', '14'], ['Status', 'Live']], href: 'https://www.kalakari-shop.tech/', link: 'Visit Kalakari' },
     { text: '_In _January _2026, I was shipping *Flood *Archive, a map that works offline.', when: 'January 2026', fact: 'study',
       label: 'SHIPPED WITH', tools: [tool('Capacitor', 'capacitor'), tool('Android', 'android'), tool('Vercel', 'vercel')],
       stats: [['Commits', '55'], ['Works', 'Offline']], href: 'work/flood.html', link: 'The Flood Archive story' },
@@ -2751,7 +2750,7 @@ html.main-site::-webkit-scrollbar{display:none}
     const stats = data.stats.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join('');
     proof.innerHTML = `<p class="xs-proof-label" style="--n:0">${data.label}</p><ul class="xs-proof-kit" style="--n:1">${kit}</ul>`
       + `<dl class="xs-proof-stats" style="--n:2">${stats}</dl>`
-      + (data.href ? `<a class="xs-proof-link" style="--n:3" href="${data.href.startsWith('#') ? '' : storyBase}${data.href}">${data.link} <b aria-hidden="true">↗</b></a>` : '');
+      + (data.href ? `<a class="xs-proof-link" style="--n:3" href="${/^(#|https?:)/.test(data.href) ? '' : storyBase}${data.href}">${data.link} <b aria-hidden="true">↗</b></a>` : '');
   }
 
   const words = (text) => text.split(' ').map((raw) => ({

@@ -6,7 +6,24 @@
       <aside class="art-note"><b>Risk shading</b>Red: above waist deep.<br>Yellow: waterlogging.<br>Green: no recorded trouble.</aside>
       <p>The first version was deliberately not a prediction. It was a map with a history attached to every point. Pick a place and the years line up side by side: waist deep in 2019, the first floor in 2024, cut off in September 2025. Each entry links to the news report or bulletin it came from, because a claim about someone’s street should be checkable.</p>
       <p>Places are shaded by that history. Red means the water has come above waist height, yellow means waterlogging, and green means no recorded trouble. The shading is a summary of the past, and the interface never dresses it up as anything more.</p>
-      <figure class="art-fig art-fig--wide">@@FLOOD_RECORD@@<figcaption><b>Fig. 02</b>The record for three of the archive’s places. Pick one; the link goes to the reporting behind it.</figcaption></figure>
+      <figure class="art-fig art-fig--wide"><div class="flood-instrument">
+      <div class="flood-ledger">
+        <div class="flood-places" role="group" aria-label="Explore recorded flood history by place">
+          <button type="button" data-place="vadsar" aria-pressed="true">Vadsar <span>Casa Residency</span></button>
+          <button type="button" data-place="sayajigunj" aria-pressed="false">Sayajigunj <span>Parshuram Bhatta</span></button>
+          <button type="button" data-place="harni" aria-pressed="false">Harni <span>Motnath Mahadev</span></button>
+        </div>
+        <div class="flood-record" aria-live="polite">
+          <h3 id="flood-place-name">Casa Residency, Vadsar</h3>
+          <div class="flood-years">
+            <div><span>2019</span><strong data-flood-year="2019">Waist deep</strong></div>
+            <div><span>2024</span><strong data-flood-year="2024">First floor (12 ft)</strong></div>
+            <div><span>2025</span><strong data-flood-year="2025">Marooned in September</strong></div>
+          </div>
+          <a id="flood-source" href="https://timesofindia.indiatimes.com/city/vadodara/rising-vishwamitri-puts-barodians-on-edge-again/articleshow/123751219.cms" target="_blank" rel="noopener noreferrer">Read the linked report <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </div><figcaption><b>Fig. 02</b>The record for three of the archive’s places. Pick one; the link goes to the reporting behind it.</figcaption></figure>
 
       <h2>Evidence, not a warning</h2>
       <p>People wanted more than history, so a simulator grew out of the archive. You set the level of the Ajwa reservoir, a day’s rainfall and whether the Dhadhar river is backing up, and the map shades each place by what those conditions have meant there before.</p>

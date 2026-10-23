@@ -37,18 +37,13 @@ def build_page(title, description, content_fragment):
     "Harsh Bhogayata’s portfolio evolution: three versions, and the work behind them.",
     "site-writing.html",
 ), encoding="utf-8")
-(root / "stories.html").write_text(build_page(
-    "Project Stories — Harsh Bhogayata",
-    "Projects in context, with research and writing by Harsh Bhogayata.",
-    "site-stories.html",
-), encoding="utf-8")
 
 # Remove the obsolete standalone footer preview if it has survived locally.
 old_preview = root / "footer.html"
 if old_preview.exists():
     old_preview.unlink()
 
-print("Built portfolio-site.html and stories.html from the shared site sources.")
+print("Built portfolio-site.html from the shared site sources.")
 
 # The case studies in work/ share the same shell; their builder lives beside this file.
 import runpy
