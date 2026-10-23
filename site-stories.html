@@ -1,0 +1,164 @@
+<main class="writing-stories stories-page" id="writing" aria-label="Project stories, research and articles">
+  <section class="stories-intro" id="story-index" aria-labelledby="stories-title">
+    <div class="stories-intro-title"><h1 id="stories-title">The work,<br>in its full context.</h1></div>
+    <div class="stories-intro-copy">
+      <p>Products shaped by real constraints, questions that took longer than a launch, and the decisions that changed what each project became.</p>
+      <nav aria-label="On this page"><a href="#project-stories">Project stories <span>04</span></a><a href="#research-paper">Research papers <span>02</span></a><a href="#articles">Articles <span>04</span></a></nav>
+      <a class="stories-home-link" href="portfolio-site.html#portfolio">Back to the portfolio evolution <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+  <div id="project-stories" class="stories-project-anchor" aria-hidden="true"></div>
+  <section class="story-scale" id="scaledown-story" aria-labelledby="scale-title">
+    <div class="scale-opening">
+      <h2 id="scale-title">ScaleDown</h2>
+      <p>I saw potential in ScaleDown’s website, redesigned it to show HASTE in action, and sent the concept to the team.</p>
+    </div>
+    <div class="scale-comparison" aria-label="Comparison of ScaleDown's published site and redesign preview">
+      <section class="scale-published" aria-labelledby="scale-published-title">
+        <div class="scale-source">
+          <h2 id="scale-published-title">The published site</h2>
+          <a href="https://scaledown.ai/" target="_blank" rel="noopener noreferrer">scaledown.ai <span aria-hidden="true">↗</span></a>
+        </div>
+        <p class="scale-metric-label">Cost per million tokens</p>
+        <p class="scale-price"><strong>$0.05</strong><span>ScaleDown</span></p>
+        <div class="scale-prices" aria-label="Published comparison prices per million tokens">
+          <div><span>GPT-5.4 nano</span><strong>$1.45</strong><i style="--price:24.2%"></i></div>
+          <div><span>Gemini 3.1 Flash Lite</span><strong>$1.75</strong><i style="--price:29.2%"></i></div>
+          <div><span>Claude Haiku 4.5</span><strong>$6.00</strong><i style="--price:100%"></i></div>
+        </div>
+      </section>
+      <section class="scale-preview" aria-labelledby="scale-preview-title">
+        <div class="scale-source">
+          <h2 id="scale-preview-title">The redesign preview</h2>
+          <a href="https://scaledown-mocha.vercel.app/" target="_blank" rel="noopener noreferrer">scaledown-mocha.vercel.app <span aria-hidden="true">↗</span></a>
+        </div>
+        <p class="scale-metric-label">HASTE compression</p>
+        <div class="scale-pipeline" aria-label="10,000 raw tokens become 3,000 compressed tokens">
+          <div><strong>10,000</strong><span>raw tokens</span></div>
+          <span class="scale-pipeline-line" aria-hidden="true"><i></i></span>
+          <div><strong>3,000</strong><span>compressed tokens</span></div>
+        </div>
+        <div class="scale-gain"><strong>−70%</strong><span>tokens to carry forward</span><strong>20k <small>tok/s</small></strong></div>
+      </section>
+    </div>
+    <div class="scale-end">
+      <p>Add text. Compress it. See what remains.</p>
+      <a href="https://scaledown-mocha.vercel.app/" target="_blank" rel="noopener noreferrer">Open the redesign <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+
+  <section class="story-flood" id="flood-story" aria-labelledby="flood-title">
+    <div class="flood-opening">
+      <h2 id="flood-title">Flood Archive</h2>
+      <p>It began with a question people were asking during the monsoon: “Is my area safe?” The first useful answer was a record of what had actually happened there.</p>
+    </div>
+    <div class="flood-instrument">
+      <figure class="flood-map">
+        <img src="assets/flood-live-social-preview.webp" alt="Flood Archive’s live Vadodara risk map with the Vishwamitri river, location markers, risk levels, and simulator controls" loading="lazy" width="1919" height="945">
+      </figure>
+      <div class="flood-ledger">
+        <div class="flood-places" role="group" aria-label="Explore recorded flood history by place">
+          <button type="button" data-place="vadsar" aria-pressed="true">Vadsar <span>Casa Residency</span></button>
+          <button type="button" data-place="sayajigunj" aria-pressed="false">Sayajigunj <span>Parshuram Bhatta</span></button>
+          <button type="button" data-place="harni" aria-pressed="false">Harni <span>Motnath Mahadev</span></button>
+        </div>
+        <div class="flood-record" aria-live="polite">
+          <h3 id="flood-place-name">Casa Residency, Vadsar</h3>
+          <div class="flood-years">
+            <div><span>2019</span><strong data-flood-year="2019">Waist deep</strong></div>
+            <div><span>2024</span><strong data-flood-year="2024">First floor (12 ft)</strong></div>
+            <div><span>2025</span><strong data-flood-year="2025">Marooned in September</strong></div>
+          </div>
+          <a id="flood-source" href="https://timesofindia.indiatimes.com/city/vadodara/rising-vishwamitri-puts-barodians-on-edge-again/articleshow/123751219.cms" target="_blank" rel="noopener noreferrer">Read the linked report <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+    </div>
+    <div class="flood-end">
+      <p>Fifty locations, records from 2019–2025, and a map that makes that history local. The simulator grew from the archive, but historical evidence is not an official warning or a verified forecast.</p>
+      <a href="https://vadodara-flood-archive-relief.vercel.app" target="_blank" rel="noopener noreferrer">Explore Flood Archive <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+
+  <section class="story-kalakari" id="kalakari-story" aria-labelledby="kalakari-title">
+    <div class="kalakari-stage" data-side="buyer">
+      <h2 id="kalakari-title">Kalakari</h2>
+      <figure class="kalakari-image">
+        <img data-image="buyer" src="assets/kalakari.webp" alt="A handcrafted blue and white patterned bowl from Kalakari" width="900" height="900">
+        <img data-image="maker" src="assets/kalakari-live-maker.webp" alt="A Kalakari artisan carving an ornate wooden chair in his workshop" width="1024" height="1024" hidden>
+      </figure>
+      <div class="kalakari-voices" aria-live="polite">
+        <div class="kalakari-voice" data-view="buyer">
+          <h3>An object should lead back to a person.</h3>
+          <p>Discovery is only the beginning. The product page has to make room for the artisan’s profile, place, and craft.</p>
+        </div>
+        <div class="kalakari-voice" data-view="maker" hidden>
+          <h3>A marketplace must work for its makers.</h3>
+          <p>Listing the work, managing stock, and handling orders matter as much as presenting a beautiful object to a buyer.</p>
+        </div>
+      </div>
+    </div>
+    <div class="kalakari-switch">
+      <div role="group" aria-label="See both sides of Kalakari">
+        <button type="button" data-side="buyer" aria-pressed="true">For the person finding it</button>
+        <button type="button" data-side="maker" aria-pressed="false">For the person making it</button>
+      </div>
+      <a href="https://www.kalakari-shop.tech/" target="_blank" rel="noopener noreferrer">Visit Kalakari <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+
+  <section class="story-curator" id="curator-story" aria-labelledby="curator-title">
+    <div class="curator-opening">
+      <h2 id="curator-title">Curator</h2>
+      <p>Reading is the visible part. Source context and the work before publication make that reading worth returning to.</p>
+    </div>
+    <div class="curator-surface" data-mode="reading">
+      <div class="curator-reading" data-curator-view="reading">
+        <div class="curator-reading-rule"><span>Briefs</span><span>Stories</span><span>Saved reading</span></div>
+        <p>The source should stay attached to the story.</p>
+        <div class="curator-reading-bottom">A calmer way to follow the news is being built toward launch, with daily briefs, source context, and a library of stories to return to.</div>
+      </div>
+      <div class="curator-trace" data-curator-view="trace" hidden>
+        <p>Follow the work backward from a published brief.</p>
+        <ol>
+          <li><strong>Publish</strong><span>The reader gets a brief with its context still visible.</span></li>
+          <li><strong>Review</strong><span>Editorial judgment decides what is ready and what needs more work.</span></li>
+          <li><strong>Group</strong><span>Related reporting is brought together before it is summarized.</span></li>
+          <li><strong>Ingest</strong><span>The process begins with source material, not an invented headline.</span></li>
+        </ol>
+      </div>
+    </div>
+    <div class="curator-switch">
+      <div role="group" aria-label="Explore Curator's two sides">
+        <button type="button" data-mode="reading" aria-pressed="true">The reading surface</button>
+        <button type="button" data-mode="trace" aria-pressed="false">Trace it back</button>
+      </div>
+      <a href="https://thecuratorgroup.org/" target="_blank" rel="noopener noreferrer">Explore Curator <span aria-hidden="true">↗</span></a>
+    </div>
+  </section>
+  <section class="story-reading" id="research-paper" aria-labelledby="research-title">
+    <div class="reading-heading"><h2 id="research-title">Research</h2><p>Two papers shared on ResearchGate, on the human and technical sides of security in transition.</p></div>
+    <a class="paper-row" href="https://www.researchgate.net/publication/414009969_Human-Centered_Cyber_Hygiene_Against_AI-Enabled_Phishing_A_Narrative_Review_and_Layered_Defense_Framework" target="_blank" rel="noopener noreferrer">
+      <span class="paper-source">ResearchGate <span>2026</span></span>
+      <strong>Human-Centered Cyber Hygiene Against AI-Enabled Phishing: A Narrative Review and Layered Defense Framework</strong>
+      <span class="paper-summary">A narrative review of AI-enabled phishing and a layered defense framework centered on people, interfaces, authentication, and recovery.</span>
+      <span class="paper-arrow" aria-hidden="true">↗</span>
+    </a>
+    <a class="paper-row" href="https://www.researchgate.net/publication/400146061_The_Quantum_Disruption_A_Chronicle_of_the_Global_Transition_to_a_New_Cryptographic_Era" target="_blank" rel="noopener noreferrer">
+      <span class="paper-source">ResearchGate <span>2025</span></span>
+      <strong>The Quantum Disruption: A Chronicle of the Global Transition to a New Cryptographic Era</strong>
+      <span class="paper-summary">A look at the shift toward post-quantum cryptography and the work required to move from today’s public-key systems.</span>
+      <span class="paper-arrow" aria-hidden="true">↗</span>
+    </a>
+  </section>
+
+  <section class="story-reading story-articles" id="articles" aria-labelledby="articles-title">
+    <div class="reading-heading"><h2 id="articles-title">Articles</h2><p>Writing on the security transition now underway: its algorithms, its infrastructure, and the people who have to make the change.</p></div>
+    <div class="article-list">
+      <a href="https://medium.com/@harshmbhogayata/beyond-defense-the-geopolitics-and-future-of-quantum-security-52833d5d297e" target="_blank" rel="noopener noreferrer"><span>01 <i>Security & geopolitics</i></span><strong>Beyond Defense: The Geopolitics and Future of Quantum Security</strong><b aria-hidden="true">↗</b></a>
+      <a href="https://medium.com/@harshmbhogayata/the-great-migration-how-to-move-the-world-to-quantum-safety-4f9375b7510f" target="_blank" rel="noopener noreferrer"><span>02 <i>Migration</i></span><strong>The Great Migration: How to Move the World to Quantum Safety</strong><b aria-hidden="true">↗</b></a>
+      <a href="https://medium.com/@harshmbhogayata/the-architects-of-trust-meet-the-algorithms-replacing-rsa-2a76075d6059" target="_blank" rel="noopener noreferrer"><span>03 <i>Algorithms</i></span><strong>The Architects of Trust: Meet the Algorithms Replacing RSA</strong><b aria-hidden="true">↗</b></a>
+      <a href="https://medium.com/@harshmbhogayata/the-quantum-threat-isnt-future-science-fiction-it-s-happening-right-now-eb9cdd48df0f" target="_blank" rel="noopener noreferrer"><span>04 <i>Quantum computing</i></span><strong>The Quantum Threat Isn’t Future Science Fiction — It’s Happening Right Now</strong><b aria-hidden="true">↗</b></a>
+    </div>
+    <a class="all-articles-link" href="https://medium.com/@harshmbhogayata" target="_blank" rel="noopener noreferrer">All writing on Medium <span aria-hidden="true">↗</span></a>
+  </section>
+</main>

@@ -1,0 +1,247 @@
+
+/* Concept: work as articles. Each project reads as a route: a framed opening on the site's hairline grid, then
+   one wire that runs the length of the story. Sections hang off it as stations, it fills as you read, the margin
+   carries the evidence (commits, numbers), and at the end it turns its corner into the next project. The card
+   on the home page grows into the opening figure (cross-document view transition). */
+@view-transition{navigation:auto}
+::view-transition-group(*){animation-duration:.52s;animation-timing-function:cubic-bezier(.16,1,.3,1)}
+::view-transition-old(root),::view-transition-new(root){animation-duration:.3s}
+
+.art{--ink:#16181d;--body:#2f3542;--muted:#6a7487;--line:#cfd6e1;--soft:#e1e6ee;--blue:#1746f5;--wire:#5f76ff;--lime:#b7e900;--gutter:var(--home-space,clamp(48px,5.3vw,69px));--side:clamp(220px,20vw,290px);--gap:clamp(36px,3.6vw,56px);--prose:820px;--rail:clamp(34px,3vw,44px);width:100%;border-top:1px solid #bfc7d3;background:#f7f8fa;color:var(--ink)}
+.art [hidden]{display:none!important}
+.mono{font-family:ui-monospace,Consolas,monospace}
+
+/* Opening: title cell and figure cell, then a strip of facts in the stack section's column rhythm. */
+.art-crumb{display:flex;align-items:center;gap:12px;margin:0;color:#7a86a0;font:500 11px/1.2 ui-monospace,Consolas,monospace;letter-spacing:.06em;text-transform:uppercase}
+.art-crumb i{width:28px;height:1px;background:#8d99ae}
+.art-crumb a{color:#586783!important;text-decoration:none}
+.art-crumb a:hover{color:var(--blue)!important}
+.art-title h1 span{color:var(--blue)}
+.art-standfirst{max-width:520px;margin:clamp(16px,1.8vw,24px) 0 0;color:#3d4452;font-size:clamp(16px,1.4vw,21px);line-height:1.42;letter-spacing:-.02em}
+.art-figure img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.art-figure figcaption b{color:var(--ink);font-weight:500}
+.art-figure--flood{background:#17252b}
+.art-figure--flood img{object-position:64% 44%}
+.art-figure--curator{background:#f6f3ec}
+.art-figure--curator img{object-position:0 0}
+.art-figure--kalakari{background:#efe9df}
+.art-figure--kalakari img{object-position:50% 62%}
+.art-figure--scaledown{background:#f2f7fc}
+.art-figure--scaledown img{object-position:0 0}
+
+.art-spec{display:grid;grid-template-columns:repeat(4,minmax(0,1fr)) minmax(0,2.1fr) auto;margin:0;border-bottom:1px solid var(--line);background:#fbfcfe}
+.art-spec>div{min-width:0;padding:15px 20px 16px;border-left:1px solid var(--soft)}
+.art-spec>div:first-child{padding-left:var(--gutter);border-left:0}
+.art-spec dt{color:#7a86a0;font:500 9px/1.2 ui-monospace,Consolas,monospace;letter-spacing:.07em;text-transform:uppercase}
+.art-spec dd{margin:7px 0 0;color:#2b313c;font-size:13.5px;line-height:1.3}
+.art-spec ul{display:flex;gap:14px;margin:6px 0 0;padding:0;list-style:none}
+.art-spec li img{display:block;width:19px;height:19px}
+.art-spec li.text{color:#3f4757;font-size:12.5px;line-height:19px}
+.art-spec .art-go{display:flex;align-items:center;padding-right:var(--gutter)}
+.art-spec .art-go a{display:flex;align-items:center;gap:10px;padding-bottom:3px;border-bottom:1px solid #77839a;color:var(--ink)!important;font-size:14px;white-space:nowrap;text-decoration:none}
+.art-spec .art-go b{color:var(--blue);font-weight:400;transition:transform .2s ease}
+.art-spec .art-go a:hover b{transform:translate(3px,-3px)}
+
+/* The route: margin | prose | notes. The wire sits just left of the prose. */
+/* The route starts on the title's left edge: wire and section numbers in the rail, then prose, then notes. */
+.art-route{position:relative;display:grid;grid-template-columns:minmax(0,var(--prose)) var(--side);justify-content:start;column-gap:var(--gap);padding:clamp(48px,5.2vw,80px) var(--gutter) 0 calc(var(--gutter) + var(--rail))}
+.art-prose{position:relative;grid-column:1;min-width:0}
+.art-wire{position:absolute;top:6px;bottom:0;left:calc(-1 * var(--rail));width:1.4px;background:var(--line)}
+.art-wire>b{position:absolute;top:0;left:0;width:100%;height:var(--fill,0px);background:var(--wire)}
+.art-wire>i{position:absolute;top:var(--fill,0px);left:50%;width:11px;height:11px;margin:-5.5px 0 0 -5.5px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 3px #f7f8fa,0 0 0 4.3px var(--wire);opacity:var(--head,0);transition:opacity .3s ease}
+
+.art-prose>p,.art-prose>ul,.art-prose>ol{margin:0 0 1.1em;color:var(--body);font-size:clamp(16.5px,1.28vw,19px);line-height:1.7;letter-spacing:-.011em}
+.art-prose>p.art-lede{color:var(--ink);font-size:clamp(20px,1.62vw,24px);line-height:1.5;letter-spacing:-.022em}
+.art-prose>p strong,.art-prose li strong{color:var(--ink);font-weight:600}
+.art-prose p a{color:var(--blue)!important;text-decoration:underline;text-decoration-thickness:1px;text-underline-offset:3px}
+.art-prose>ul,.art-prose>ol{padding-left:1.15em}
+.art-prose li{margin-bottom:.5em;padding-left:.25em}
+.art-prose li::marker{color:var(--wire);font:500 .8em ui-monospace,Consolas,monospace}
+.art-prose>h3{margin:34px 0 10px;font-size:clamp(18px,1.45vw,21px);font-weight:620;letter-spacing:-.025em}
+
+/* Stations: each section heading hangs off a node on the wire, with its number out in the margin. */
+.art-prose>h2{position:relative;margin:clamp(64px,6.4vw,96px) 0 20px;font-size:clamp(28px,2.5vw,38px);font-weight:650;letter-spacing:-.048em;line-height:1.04}
+.art-prose>h2::before{position:absolute;top:calc(.42em - 1px);right:calc(100% + var(--rail) + 12px);padding-right:22px;background:linear-gradient(#a9b4c6,#a9b4c6) right center/14px 1px no-repeat;color:#7a86a0;font:500 11px/12px ui-monospace,Consolas,monospace;letter-spacing:.06em;content:attr(data-n);transition:color .3s ease}
+.art-prose>h2::after{position:absolute;top:calc(.42em + 1px);left:calc(-1 * var(--rail) - 4.3px);width:10px;height:10px;border-radius:50%;background:#f7f8fa;box-shadow:inset 0 0 0 1.4px #a9b4c6;content:"";transition:background .3s ease,box-shadow .3s ease}
+.art-prose>h2.is-past::after{background:var(--wire);box-shadow:inset 0 0 0 1.4px var(--wire)}
+.art-prose>h2.is-past::before{color:var(--ink)}
+
+/* Margin notes: evidence beside the sentence it supports. */
+.art-note{float:right;clear:right;width:var(--side);margin:4px calc(-1 * (var(--side) + var(--gap))) 18px 0;padding-top:10px;border-top:1px solid var(--ink);color:#4f5a6e;font-size:13px;line-height:1.5}
+.art-note b{display:block;margin-bottom:6px;color:var(--ink);font:500 10px/1.3 ui-monospace,Consolas,monospace;letter-spacing:.05em;text-transform:uppercase}
+.art-note q{color:var(--ink);font:500 12px/1.5 ui-monospace,Consolas,monospace;quotes:"“" "”"}
+.art-note strong{display:block;color:var(--ink);font-size:30px;font-weight:640;letter-spacing:-.05em;line-height:1}
+
+.art-pull{position:relative;margin:clamp(40px,4.4vw,60px) 0;color:var(--ink);font-size:clamp(26px,2.5vw,36px);font-weight:620;letter-spacing:-.048em;line-height:1.12}
+.art-pull::before{position:absolute;top:.45em;left:calc(-1 * var(--rail) - 7px);width:14px;height:14px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 3px #f7f8fa;content:""}
+
+/* Figures step out to the notes column; captions read like drawing labels. */
+.art-fig{clear:both;margin:clamp(32px,3.6vw,52px) 0}
+.art-fig--wide{margin-right:calc(-1 * (var(--side) + var(--gap)))}
+.art-fig img,.art-fig video{display:block;width:100%;height:auto;background:#e6ecfa}
+.art-fig figcaption{display:flex;gap:14px;margin-top:12px;padding-top:10px;border-top:1px solid var(--soft);color:#6a7487;font:500 10.5px/1.5 ui-monospace,Consolas,monospace;letter-spacing:.04em;text-transform:uppercase}
+.art-fig figcaption b{flex:none;color:var(--wire);font-weight:500}
+.art-fig--dark img{background:#17252b}
+.art-phones{display:grid;grid-template-columns:repeat(var(--n,3),minmax(0,1fr));gap:clamp(14px,2vw,26px);align-items:start;padding:clamp(24px,3vw,40px) clamp(20px,3.4vw,52px);background:#e9eef8}
+.art-phones img{border-radius:clamp(16px,2vw,26px);box-shadow:0 0 0 1px rgba(23,25,31,.08),0 18px 40px -24px rgba(23,40,90,.35)}
+.art-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(12px,1.6vw,20px)}
+
+.art-facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:32px 0;border-top:1px solid var(--ink);border-bottom:1px solid var(--line)}
+.art-facts div{padding:16px 16px 18px 0}
+.art-facts div+div{padding-left:18px;border-left:1px solid var(--soft)}
+.art-facts strong{display:block;font-size:clamp(28px,2.6vw,40px);font-weight:640;letter-spacing:-.055em;line-height:1}
+.art-facts span{display:block;margin-top:8px;color:var(--muted);font-size:13px;line-height:1.35}
+
+/* Release history: the experience rule, laid across the wide column. */
+.art-prose>ul.art-timeline{position:relative;display:grid;grid-template-columns:repeat(var(--n,6),minmax(0,1fr));gap:16px;clear:both;margin:40px calc(-1 * (var(--side) + var(--gap))) 44px 0;padding:0;list-style:none}
+.art-timeline::before{position:absolute;top:4px;left:0;right:0;height:1.4px;background:linear-gradient(90deg,var(--wire),var(--wire) 86%,#aebcf6);content:""}
+.art-timeline li{position:relative;min-width:0;padding-top:24px}
+.art-timeline li::before{position:absolute;top:0;left:0;width:9px;height:9px;border-radius:50%;background:#f7f8fa;box-shadow:inset 0 0 0 1.4px var(--wire);content:""}
+.art-timeline li:last-child::before{background:var(--lime);box-shadow:0 0 0 3px #f7f8fa,0 0 0 4.3px var(--wire)}
+.art-timeline time{display:block;color:#586783;font:500 10px/1.2 ui-monospace,Consolas,monospace;letter-spacing:.05em}
+.art-timeline strong{display:block;margin-top:9px;font-size:14.5px;font-weight:600;letter-spacing:-.02em}
+.art-timeline span{display:block;margin-top:5px;color:var(--muted);font-size:13px;line-height:1.4}
+
+.art-fig .flood-instrument{color:#f4f7f8}
+.art-fig .flood-places button{min-width:0;min-height:72px;white-space:normal;overflow-wrap:anywhere}
+.art-fig .flood-ledger,.art-fig .flood-record{min-width:0}
+
+/* The end of the route: the wire turns its corner into the next project. */
+.art-end{position:relative;grid-column:1/3;min-width:0;padding:clamp(56px,6vw,88px) 0 clamp(56px,6vw,96px)}
+.art-turn{position:absolute;top:0;left:calc(-1 * var(--rail));width:calc(var(--rail) - 10px);height:calc(clamp(56px,6vw,88px) + 10px);border-bottom:1.4px solid var(--line);border-left:1.4px solid var(--line);border-bottom-left-radius:10px;transition:border-color .4s ease}
+.art.is-done .art-turn{border-color:var(--wire)}
+.art.is-done .art-next-label{color:var(--wire)}
+.art-next{display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,40%);gap:clamp(24px,3.4vw,52px);align-items:start;color:inherit!important;text-decoration:none}
+.art-next-label{display:block;height:20px;transition:color .4s ease;color:#7a86a0;font:500 11px/20px ui-monospace,Consolas,monospace;letter-spacing:.07em;text-transform:uppercase}
+.art-next strong{display:block;margin-top:24px;font-size:clamp(44px,4.6vw,72px);font-weight:680;letter-spacing:-.064em;line-height:.9;transition:color .25s ease}
+.art-next-dek{display:block;max-width:420px;margin-top:16px;color:var(--muted);font-size:16px;line-height:1.5}
+.art-next-go{display:inline-flex;gap:8px;margin-top:22px;padding-bottom:3px;border-bottom:1px solid #77839a;color:var(--ink);font-size:14.5px}
+.art-next-go b{color:var(--blue);font-weight:400;transition:transform .2s ease}
+.art-next-figure{display:block;aspect-ratio:1.5;overflow:hidden;background:#e6ecfa}
+.art-next-figure img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.16,1,.3,1)}
+.art-next--flood .art-next-figure{background:#17252b}
+.art-next--kalakari .art-next-figure{background:#efe9df}
+.art-next--scaledown .art-next-figure{background:#f2f7fc}
+.art-next--scaledown .art-next-figure img{object-position:0 0}
+.art-next--curator .art-next-figure img{object-position:0 0}
+.art-next:hover strong{color:var(--blue)}
+.art-next:hover .art-next-go b{transform:translate(3px,-3px)}
+.art-next:hover .art-next-figure img{transform:scale(1.03)}
+
+@media(max-width:1000px){
+  .art{--gutter:22px;--gap:28px;--rail:20px}
+  .art-spec{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .art-spec>div{padding:13px 16px;border-top:1px solid var(--soft)}
+  .art-spec>div:nth-child(odd){padding-left:22px;border-left:0}
+  .art-spec>div:nth-child(-n+2){border-top:0}
+  .art-spec .art-stack-cell{grid-column:1/-1;padding-left:22px;border-left:0}
+  .art-spec .art-go{grid-column:1/-1;padding:14px 22px;border-left:0}
+  .art-route{grid-template-columns:minmax(0,1fr);padding:40px 22px 0 42px}
+  .art-prose>h2::before{position:static;display:block;width:max-content;margin-bottom:14px;padding:0 22px 0 0}
+  .art-note{float:none;width:auto;margin:0 0 20px;padding:12px 0 0}
+  .art-fig--wide{margin-right:0}
+  .art-fig--wide{margin-left:-18px}
+  .art-phones{padding:18px 12px;gap:10px}
+  .art-pair{grid-template-columns:minmax(0,1fr)}
+  .art-prose>ul.art-timeline{grid-template-columns:minmax(0,1fr);gap:0;margin-right:0;padding-left:22px}
+  .art-timeline::before{top:6px;bottom:6px;left:4px;right:auto;width:1.4px;height:auto;background:var(--wire)}
+  .art-timeline li{padding:0 0 18px}
+  .art-timeline li::before{top:2px;left:-22px}
+  .art-timeline strong{margin-top:5px}
+  .art-end{grid-column:1}
+  .art-next{grid-template-columns:minmax(0,1fr)}
+  .art-facts div{padding-right:8px}
+  .art-facts div+div{padding-left:12px}
+}
+
+/* Fact strip: more than one link stacks; a private project says so instead. */
+.art-spec .art-go{flex-direction:column;justify-content:center;align-items:flex-start;gap:9px}
+.art-spec .art-go>span{color:#7a86a0;font:500 11px/1.3 ui-monospace,Consolas,monospace;letter-spacing:.05em;text-transform:uppercase}
+.art-figure--morrow,.art-next--morrow .art-next-figure{background:#0b0d12}
+.art-figure--bokuka,.art-next--bokuka .art-next-figure{background:#efe6d6}
+.art-figure--evolution,.art-next--evolution .art-next-figure{background:#e9eef8}
+
+/* Home: four case studies in a row, with the portfolio's own story underneath. */
+@media(min-width:1001px){.selected-projects--four{grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(18px,2vw,32px)}}
+.selected-projects--four .selected-preview{padding:0}
+.selected-projects--four .selected-preview img{width:100%;height:100%;object-fit:cover}
+.selected-projects--four .selected-curator .selected-preview img{object-position:0 0}
+.selected-projects--four .selected-flood .selected-preview img{object-fit:contain}
+.selected-morrow .selected-preview{background:#0b0d12}
+.selected-bokuka .selected-preview{background:#efe6d6}
+.selected-projects--four .selected-preview img,.selected-projects--four .selected-project:hover .selected-preview img{height:100%;max-width:none;border:0;box-shadow:none;transform:none}
+
+/* Curator's cover is a composed shot of the phone app on its own paper colour. */
+.art-figure--curator{background:#ece6da}
+.art-next--curator .art-next-figure{background:#ece6da}
+.art-next--curator .art-next-figure img{object-position:50% 40%}
+.selected-projects--four .selected-curator .selected-preview{background:#ece6da}
+.selected-projects--four .selected-curator .selected-preview img{object-position:50% 38%}
+
+/* A recording you can hear: one big play button, then a bar with the wire as its progress line. */
+.art-player-stage{position:relative;overflow:hidden;background:#efe6d6;cursor:pointer}
+.art-player-stage video{display:block;width:100%;height:auto}
+.art-player-big{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;width:100%;border:0;background:linear-gradient(rgba(22,24,29,0),rgba(22,24,29,.18));color:#fff;font:500 11px/1.2 ui-monospace,Consolas,monospace;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;transition:opacity .35s ease}
+.art-player-big i{display:grid;place-items:center;width:78px;height:78px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 6px rgba(247,248,250,.5);transition:transform .25s cubic-bezier(.16,1,.3,1)}
+.art-player-big i::before{width:0;height:0;margin-left:5px;border-top:13px solid transparent;border-bottom:13px solid transparent;border-left:21px solid var(--lime);content:""}
+.art-player-big span{padding:6px 10px;background:rgba(22,24,29,.72)}
+.art-player-big:hover i{transform:scale(1.06)}
+.art-player.is-started .art-player-big{opacity:0;pointer-events:none}
+.art-player-bar{display:grid;grid-template-columns:34px minmax(0,1fr) auto;align-items:center;gap:16px;padding:12px 0 2px}
+.art-player-toggle{display:grid;place-items:center;width:34px;height:34px;padding:0;border:1px solid var(--ink);border-radius:50%;background:transparent;cursor:pointer}
+.art-player-toggle i{width:0;height:0;margin-left:3px;border-top:6px solid transparent;border-bottom:6px solid transparent;border-left:10px solid var(--ink)}
+.art-player.is-playing .art-player-toggle i{width:10px;height:12px;margin:0;border:0;border-right:3px solid var(--ink);border-left:3px solid var(--ink)}
+.art-player-track{position:relative;height:1.4px;background:var(--line);cursor:pointer}
+.art-player-track::before{position:absolute;inset:-10px 0;content:""}
+.art-player-track b{position:absolute;top:0;bottom:0;left:0;width:calc(var(--played,0) * 100%);background:var(--wire)}
+.art-player-track b::after{position:absolute;top:50%;right:-5.5px;width:11px;height:11px;margin-top:-5.5px;border-radius:50%;background:var(--lime);box-shadow:0 0 0 2.5px #f7f8fa,0 0 0 3.8px var(--wire);content:""}
+.art-player-time{color:#586783;font:500 11px/1 ui-monospace,Consolas,monospace;letter-spacing:.04em}
+.art-phones{grid-template-columns:repeat(var(--n,3),minmax(0,300px));justify-content:center}
+
+/* Opening: the cover is shown whole, at its own shape, a little right of centre; the title is a small paper tab in
+   the lower-left corner. A short script places the picture so the tab never covers any of it (see articles.js). */
+.art-open{position:relative;height:min(calc(100svh - var(--masthead-height,88px) - 78px),860px);min-height:460px;border-bottom:1px solid var(--line);--r:18px}
+.art-figure{position:absolute;top:var(--fy,22px);left:var(--fx,32%);width:var(--fw,auto);height:var(--fh,calc(100% - 44px));aspect-ratio:var(--ar,1.6);margin:0;overflow:hidden}
+.art-figure img{display:block;width:100%;height:100%;object-fit:contain}
+.art-title{position:absolute;bottom:0;left:0;z-index:2;padding:clamp(14px,1.4vw,20px) clamp(24px,2.4vw,36px) clamp(16px,1.6vw,24px) var(--gutter);border-top:1px solid var(--line);border-right:1px solid var(--line);border-top-right-radius:var(--r);background:#f7f8fa}
+.art-crumb{display:flex;align-items:center;gap:12px;margin:0 0 10px;color:#7a86a0;font:500 11px/1.2 ui-monospace,Consolas,monospace;letter-spacing:.06em;text-transform:uppercase;white-space:nowrap}
+.art-crumb i{width:24px;height:1px;background:#8d99ae}
+.art-crumb a{color:#586783!important;text-decoration:none}
+.art-crumb a:hover{color:var(--blue)!important}
+.art-crumb .art-step{display:inline-grid;place-items:center;width:22px;height:22px;margin-left:2px;border:1px solid var(--line);border-radius:50%;font-size:12px;line-height:1}
+.art-crumb .art-step:hover{border-color:var(--blue)}
+.art-title h1{margin:0;font-size:clamp(40px,4vw,64px);font-weight:680;letter-spacing:-.064em;line-height:.9;white-space:nowrap}
+.art-points,.art-fig-note,.art-standfirst,.art-short{display:none}
+
+/* The five points open the article instead, as a short numbered list above the first paragraph. */
+.art-short{margin:0 0 clamp(36px,4vw,52px);padding:0;list-style:none;border-top:1px solid var(--ink)}
+.art-short li{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;padding:11px 0;border-bottom:1px solid #e1e6ee;color:#2f3542;font-size:clamp(15px,1.15vw,17px);line-height:1.4;letter-spacing:-.012em}
+.art-short li span{padding-top:3px;color:var(--wire);font:500 11px/1.3 ui-monospace,Consolas,monospace;letter-spacing:.05em}
+
+@media(max-width:1000px){
+  .art-open{display:flex;flex-direction:column;height:auto;min-height:0;--r:16px}
+  .art-figure{position:relative;inset:auto;width:100%;height:auto;margin:0}
+  .art-title{position:relative;align-self:flex-start;max-width:calc(100% - 26px);margin-top:-1px;padding:16px 20px 18px 22px}
+  .art-title h1{font-size:clamp(38px,11vw,58px);white-space:normal}
+}
+
+.art-next-figure img,.selected-projects--four .selected-preview img{object-fit:contain!important;object-position:50% 50%!important}
+
+/* Contents: one vertical line down the paper beside the picture, from the top to the title tab, with the article's
+   sections spread evenly along it. Pressing a title scrolls to that section. The script gives it the space. */
+.art-toc{position:absolute;top:var(--ct,26px);left:var(--gutter);z-index:1;width:var(--cw,280px);height:var(--chh,auto);display:var(--cd,block)}
+.art-toc ol{position:relative;display:flex;flex-direction:column;justify-content:space-between;height:100%;margin:0;padding:0;list-style:none}
+.art-toc ol::before{position:absolute;top:calc(var(--node) / 2);bottom:calc(var(--node) / 2);left:calc(var(--node) / 2 - .65px);width:1.3px;background:var(--line);content:""}
+.art-toc{--node:13px}
+.art-toc a{position:relative;display:grid;grid-template-columns:var(--node) 26px minmax(0,1fr);align-items:center;column-gap:14px;padding:2px 0;color:#3d4452!important;font-size:clamp(15px,1.3vw,19px);font-weight:520;line-height:1.2;letter-spacing:-.022em;text-decoration:none;transition:color .2s ease}
+.art-toc a b{color:#8d99ae;font:500 10.5px/1 ui-monospace,Consolas,monospace;letter-spacing:.05em;transition:color .2s ease}
+.art-toc a i{position:relative;width:var(--node);height:var(--node);border-radius:50%;background:#f7f8fa;box-shadow:inset 0 0 0 1.5px var(--wire);transition:background .2s ease,box-shadow .2s ease}
+.art-toc a:hover,.art-toc a:focus-visible{color:var(--blue)!important}
+.art-toc a:hover b,.art-toc a:focus-visible b{color:var(--wire)}
+.art-toc a:hover i,.art-toc a:focus-visible i{background:var(--lime);box-shadow:0 0 0 3px #f7f8fa,0 0 0 4.4px var(--wire)}
+@media(max-width:1000px){.art-toc{position:static;order:3;width:auto;height:auto;margin:20px 22px 22px;display:block}.art-toc ol{gap:12px}}
+
+/* The travelling dot on the contents line: it runs top to bottom until a section is chosen, then rests on it. */
+.art-toc-dot{position:absolute;top:0;left:0;z-index:2;width:var(--node);height:var(--node);border-radius:50%;background:var(--lime);box-shadow:0 0 0 3px #f7f8fa,0 0 0 4.4px var(--wire);pointer-events:none;will-change:transform}
+.art-toc li.is-here a{color:var(--ink)!important}
+.art-toc li.is-here a b{color:var(--wire)}

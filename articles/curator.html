@@ -1,0 +1,53 @@
+      <p class="art-lede">Most news apps compete for your attention. Curator started from the opposite brief: read less, understand more, and always be able to see where a sentence came from.</p>
+      <aside class="art-note"><b>Repository</b><strong>114</strong>commits since 23 April 2026, from one author.</aside>
+      <p>It is a news app for iPhone, Android and the web, and the system behind it that reads the news before you do. I have built all of it on my own since April 2026: the product, the interface, the apps, the API and the pipeline that writes the stories. The project’s own README puts the goal in one line, and it has not changed since the first commit: turn “many trusted source signals into calm, source-backed articles, daily briefs” and “a premium reading experience with minimal visual noise.”</p>
+
+      <h2>A calmer front page</h2>
+      <p>Curator has four doors, and only four. <strong>Brief</strong> is the morning edition: a short set of stories chosen for the day, also read aloud as an audio brief. <strong>Explore</strong> is the same reporting organised by topic. <strong>Search</strong> does what it says. <strong>Saved</strong> is a library: stories you kept, collections you made, your history and how much you have read.</p>
+      <p>There is no infinite feed, no trending rail and no count of unread items. When the brief is done, it says so. That restraint is the product; everything else exists to make the stories inside it trustworthy.</p>
+      <figure class="art-fig art-fig--wide"><div class="art-phones" style="--n:2"><img src="{A}assets/work/curator-app-article-reading.webp" alt="Reading a Curator article on a phone, with the narration player above the text" loading="lazy"><img src="{A}assets/work/curator-app-search-results.webp" alt="Curator search results on a phone" loading="lazy"></div><figcaption><b>Fig. 02</b>Reading with narration above the text, and search.</figcaption></figure>
+
+      <h2>The source stays attached</h2>
+      <aside class="art-note"><b>Pipeline config</b><q>PIPELINE_MIN_CLUSTER_SOURCES = 3</q><br>And at most two items per outlet reach the model.</aside>
+      <p>A Curator article is never one outlet’s story reposted. It is written from a cluster of reports about the same event, from at least three different outlets, and it says who reported what as it goes: “according to Reuters”, not a vague “reports say”. Under every article the sources sit as links you can open, and a <strong>Report an issue</strong> button sits beside them.</p>
+      <p>The rule is written into the roadmap in five words, and the rest of the system is built to keep it.</p>
+      <blockquote class="art-pull">Multi-outlet synthesis in Curator’s voice. Never verbatim RSS.</blockquote>
+      <p>The writing model is held to the same standard. Its instructions ask for neutral language, inline attribution, no clickbait and no facts that are not in the reporting it was given. It returns structured data, not free text: a title, a short excerpt, a 600 to 1,100 word body, a category, topics and a description of the picture it needs.</p>
+
+      <h2>Following the work backward</h2>
+      <p>What a reader sees is the last step of five. Every hour a scheduled job walks the rest of the line.</p>
+      <ol>
+        <li><strong>Ingest.</strong> Stories arrive from RSS feeds and news APIs. Every source carries a licence status (licensed, RSS-permitted, needs review or blocked) and the pipeline only reads what it is allowed to.</li>
+        <li><strong>Group.</strong> Reports about the same event are clustered by how much their headlines overlap. A cluster needs at least three distinct outlets before it can become a story, and no outlet may contribute more than two items, so one loud publisher cannot set the tone.</li>
+        <li><strong>Draft.</strong> The cluster is handed to a language model with the rules above, and the result is stored as a draft, not published.</li>
+        <li><strong>Review.</strong> Drafts wait in an editorial queue as draft, in review, approved, published or rejected. A person decides what goes out.</li>
+        <li><strong>Publish.</strong> An approved story gets a cover image, found and scored from open photo libraries, a narrated audio version, links to related stories and, if it is important enough, a push notification.</li>
+      </ol>
+      <figure class="art-fig art-fig--wide"><video poster="{A}assets/work/curator-brief-to-reader.poster.webp" autoplay muted loop playsinline preload="none"><source src="{A}assets/work/curator-brief-to-reader.webm" type="video/webm"><source src="{A}assets/work/curator-brief-to-reader.mp4" type="video/mp4"></video><figcaption><b>Fig. 03</b>On the web: from the morning brief into the reader.</figcaption></figure>
+
+      <h2>Listening as well as reading</h2>
+      <aside class="art-note"><b>Daily brief</b><strong>900–1,400</strong>words of script written to be heard, not read.</aside>
+      <p>Some mornings are for listening. A second writing step turns the day’s brief into a 900 to 1,400 word script meant to be heard rather than read, and a voice model narrates it. The audio is stored once and streamed to everyone. Individual articles can be narrated too, and on the web the paragraph being read is highlighted as it goes, so you can drop your eyes back in at any point.</p>
+      <figure class="art-fig"><video poster="{A}assets/work/curator-follow-along.poster.webp" autoplay muted loop playsinline preload="none"><source src="{A}assets/work/curator-follow-along.webm" type="video/webm"><source src="{A}assets/work/curator-follow-along.mp4" type="video/mp4"></video><figcaption><b>Fig. 04</b>Follow along: the paragraph being narrated lights up.</figcaption></figure>
+
+      <h2>Built to feel instant</h2>
+      <p>The plan behind the apps opens with a single sentence: “a mobile-first long-form news app where every interaction feels instant, survives flaky networks.” A few principles carry that. Saving, following and reading progress update on screen immediately and sync behind you. Stories you have opened stay readable offline. Every write can be safely repeated, so a dropped connection never saves something twice. The server, not the device, decides what a subscription unlocks, and no personal data goes into logs.</p>
+      <p>The web is designed as “the app at 200%”. Below 1,024 pixels it is the app, screen for screen. Above that it widens into a reader with room for the brief, the library and the story side by side, without inventing a second product.</p>
+      <p>Underneath: a React Native app built with Expo, a React Router web app rendered on the server, and a Django API on Postgres with Redis. Subscriptions run through the app stores, with a regional payment provider on the web.</p>
+
+      <h2>Trade-offs along the way</h2>
+      <aside class="art-note"><b>Commits · 24 Jun 2026</b><q>Raise multi-source bar to 5</q><br><br>then <q>lower min outlets to 3 so drafts can generate</q></aside>
+      <p>Not every decision held. In June I raised the bar for a story from three outlets to five, to make sure only well-covered events got through. The pipeline stalled: in a quiet news hour, almost nothing cleared five, and the drafts stopped coming. It went back to three, with the per-outlet cap doing the work of keeping clusters balanced.</p>
+      <aside class="art-note"><b>Schedule</b><q>5 * * * *</q><br>The whole line runs at five past every hour.</aside>
+      <p>Hosting shaped the architecture as much as taste did. The plan I could afford had no room for an always-on worker queue, so the pipeline runs as an hourly scheduled job instead. The self-hosted voice model ran out of memory on a one-gigabyte server, so narration moved to a hosted voice for now. Dead images are checked again before they are replaced, after two failed checks rather than one, because news photo links go down and come back more often than you would expect.</p>
+
+      <h2>What’s next</h2>
+      <p>In October I wrote an honest audit of the pipeline, and it is the to-do list before launch. Grouping by headline overlap is crude: it has no sense of meaning and no time window. Outlets are counted per feed rather than per publisher, which flatters the “three sources” rule. And there is not yet a check that every sentence in a draft is supported by one of its sources. Fixing those, finishing app-store billing and completing a rights review of every source come first. The launch page is already up at thecuratorgroup.org.</p>
+      <ul class="art-timeline">
+        <li><time>23 APR 2026</time><div><strong>First commit</strong><span>Phone app, web app and API in one repository.</span></div></li>
+        <li><time>16 JUN</time><div><strong>Narration and billing</strong><span>Audio on cloud storage, payments, end-to-end tests on device.</span></div></li>
+        <li><time>24 JUN</time><div><strong>The pipeline at scale</strong><span>Regional feeds, five news providers, the daily audio brief.</span></div></li>
+        <li><time>5 JUL</time><div><strong>Subscriptions</strong><span>App-store billing and regional pricing.</span></div></li>
+        <li><time>7–9 JUL</time><div><strong>Curator Teams</strong><span>A separate product: morning briefs for investment teams.</span></div></li>
+        <li><time>13 OCT</time><div><strong>The web reader, rebuilt</strong><span>A full-page reader, save from anywhere, onboarding.</span></div></li>
+      </ul>

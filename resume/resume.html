@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Harsh Bhogayata — Resume</title>
+<!-- FONT -->
+<style>
+  /* One A4 page in the portfolio's language: Geist, cobalt accent, mono section labels with a rule running out.
+     Text stays real, selectable text so applicant tracking systems can read it. */
+  @page { size: A4; margin: 0; }
+  :root { --ink: #16181d; --body: #2f3542; --muted: #626c7e; --line: #cfd6e1; --blue: #1746f5; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: #fff; }
+  body { width: 210mm; padding: 10mm 14mm 7mm; color: var(--body); font: 400 8.6pt/1.32 Geist, Arial, sans-serif; letter-spacing: -.005em; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  a { color: inherit; text-decoration: none; }
+  header { display: grid; grid-template-columns: 1fr auto; align-items: end; gap: 8mm; padding-bottom: 3mm; border-bottom: 1.2pt solid var(--ink); }
+  h1 { margin: 0; color: var(--ink); font-size: 23pt; white-space: nowrap; font-weight: 680; letter-spacing: -.05em; line-height: .95; }
+  h1::after { display: inline-block; width: .17em; height: .17em; margin-left: .06em; background: var(--blue); content: ""; }
+  .role { margin: 1.6mm 0 0; color: var(--muted); font-size: 10.5pt; letter-spacing: -.015em; }
+  .contact { margin: 0; text-align: right; color: var(--body); font-size: 7.6pt; line-height: 1.6; white-space: nowrap; }
+  .contact a { color: var(--ink); }
+  .contact b { color: var(--blue); font-weight: 500; }
+  section { margin-top: 3.1mm; }
+  h2 { display: flex; align-items: center; gap: 3mm; margin: 0 0 1.6mm; color: var(--blue); font: 500 7.6pt/1 ui-monospace, Consolas, monospace; letter-spacing: .09em; text-transform: uppercase; }
+  h2::after { flex: 1; height: .6pt; background: var(--line); content: ""; }
+  p { margin: 0; }
+  .summary { color: var(--ink); font-size: 9.2pt; line-height: 1.38; }
+  .skills { display: grid; grid-template-columns: 24mm 1fr; gap: 1mm 3mm; margin: 0; }
+  .skills dt { color: var(--ink); font-weight: 600; }
+  .skills dd { margin: 0; }
+  .entry + .entry { margin-top: 2.3mm; }
+  .head { display: grid; grid-template-columns: 1fr auto; gap: 4mm; align-items: baseline; }
+  .head strong { color: var(--ink); font-size: 9.8pt; font-weight: 640; letter-spacing: -.015em; }
+  .head .meta { color: var(--muted); }
+  .head .when { color: var(--muted); font: 500 7.8pt/1 ui-monospace, Consolas, monospace; letter-spacing: .02em; white-space: nowrap; }
+  .stack { margin-top: .6mm; color: var(--muted); font-size: 8.3pt; }
+  .stack a { color: var(--blue); }
+  ul { margin: 1mm 0 0; padding: 0; list-style: none; }
+  li { position: relative; padding-left: 3.6mm; }
+  li + li { margin-top: .5mm; }
+  li::before { position: absolute; top: .62em; left: 0; width: 1.8mm; height: .7pt; background: var(--blue); content: ""; }
+  li strong { color: var(--ink); font-weight: 600; }
+  li a, .pub a { color: var(--blue); }
+  .pub li { font-size: 8.1pt; line-height: 1.33; }
+  .pub em { font-style: italic; }
+</style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Harsh Bhogayata</h1>
+      <p class="role">Software Engineer</p>
+    </div>
+    <p class="contact">
+      <a href="mailto:work.harsh.bhogayata@gmail.com">work.harsh.bhogayata@gmail.com</a> <b>|</b> +91 93134 39465 <b>|</b> Vadodara, India<br>
+      <a href="https://linkedin.com/in/harshbhogayata">linkedin.com/in/harshbhogayata</a> <b>|</b> <a href="https://github.com/harshbhogayata">github.com/harshbhogayata</a> <b>|</b> <a href="https://harshbhogayata.vercel.app">harshbhogayata.vercel.app</a>
+    </p>
+  </header>
+
+  <section>
+    <h2>Summary</h2>
+    <p class="summary">Software Engineer building full-stack products across web, mobile, TV and backend. Built Morrow, a streaming platform for Apple TV and web, and Curator, a Django and React Native news product with a live B2B app. Now shipping at Quantaura Design Tech.</p>
+  </section>
+
+  <section>
+    <h2>Skills</h2>
+    <dl class="skills">
+      <dt>Languages</dt><dd>TypeScript, JavaScript, Python, Go, Swift, SQL</dd>
+      <dt>Frameworks</dt><dd>React, Next.js, React Native (Expo), Node.js, Hono, Django, Django REST Framework, Frappe/ERPNext, SwiftUI (tvOS), PyTorch</dd>
+      <dt>Infra &amp; tools</dt><dd>AWS, Cloudflare Workers, Docker, Kubernetes, PostgreSQL, Redis, Celery, GitHub Actions, Railway, Vercel, Linux, Git</dd>
+      <dt>Practices</dt><dd>REST and GraphQL API design, system design, automated testing (Vitest, Playwright, pytest), CI/CD</dd>
+    </dl>
+  </section>
+
+  <section>
+    <h2>Experience</h2>
+    <div class="entry">
+      <div class="head"><span><strong>Quantaura Design Tech</strong> <span class="meta">— Full Stack Developer · Vadodara, India</span></span><span class="when">Jul 2026 – Present</span></div>
+      <ul>
+        <li>Built <strong>IDA GCC Desk</strong> for <a href="https://idagcc.com">IDA GCC</a>, a UAE immersive-tech company: a Frappe app of 46 custom DocTypes on ERPNext and HRMS for pursuits, delivery, equipment, procurement and VAT invoicing, deployed to the client's VPS with a one-click Windows installer.</li>
+        <li>Built <strong>EventSorted</strong>, a multi-tenant event and rental inventory product on React, TypeScript and a Hono API over Cloudflare Workers, D1 and R2: reservations, dispatch, partial returns, barcode scanning, CSV/XLSX import and dispatch PDFs; live for the first client with 211 passing tests.</li>
+        <li>Wrote a Go agent for two-way TallyPrime accounting sync and benchmarked the platform at 10,000 items and 100,000 stock-movement lines.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Projects</h2>
+    <div class="entry">
+      <div class="head"><span><strong>Morrow</strong> <span class="meta">— Multi-source streaming platform for Apple TV, smart TVs and web</span></span></div>
+      <p class="stack">TypeScript, React, Vite, Shaka Player, Swift/tvOS, Node.js, Vercel · <a href="https://github.com/harshbhogayata/morrow">github.com/harshbhogayata/morrow</a></p>
+      <ul>
+        <li>Designed a two-stage source resolver that gates streams on device decoders, DRM and region, then ranks verified entitlements over unverified claims, so the player never advertises 4K it cannot deliver.</li>
+        <li>Maps availability across Indian OTT providers and aggregator bundles, hands playback to the native app where entitled, and streams a home Jellyfin library otherwise, with per-title source switching.</li>
+        <li>Built the Shaka Player playback stack with on-demand trailers, generated captions and resume state; one codebase runs on tvOS, VIDAA TVs and the browser, with 30 Vitest and Playwright suites.</li>
+      </ul>
+    </div>
+    <div class="entry">
+      <div class="head"><span><strong>Curator</strong> <span class="meta">— Source-backed news product: Django API, web app, Expo mobile app and a live B2B briefs app</span></span></div>
+      <p class="stack">Django, DRF, PostgreSQL, Redis, Celery, React Native (Expo), React Router, Railway · <a href="https://teams.thecuratorgroup.org">teams.thecuratorgroup.org</a></p>
+      <ul>
+        <li>Built the editorial pipeline: 83 RSS and news-API sources ingested, clustered, rewritten by an LLM, image-scored and routed through admin review to publish, audio and push.</li>
+        <li>Shipped a 131-endpoint REST API for Firebase auth, saves, collections, reading stats, billing and push, consumed by web and mobile through typed services.</li>
+        <li>Launched Curator Teams, an isolated B2B workspace that synthesizes morning briefs for funds, with Slack and email delivery, Google OAuth and Stripe billing.</li>
+      </ul>
+    </div>
+    <div class="entry">
+      <div class="head"><span><strong>Other work</strong></span></div>
+      <ul>
+        <li><strong>Flood Archive</strong> — MCA major project, graded 9/10. Flood-risk map of Vadodara, 2019–2025: 50+ zones scored from satellite data, news and municipal bulletins, a dam-level risk simulator and an offline relief mode with shelters and SOS feed; Android app via Capacitor · <a href="https://github.com/harshbhogayata/vadodara-Flood-Archive-Relief">github.com/harshbhogayata/vadodara-Flood-Archive-Relief</a></li>
+        <li><strong>Parameter Golf</strong> — OpenAI's 16 MB, 10-minute LM challenge: 16 experiment branches in PyTorch adding document-aware sliding-window evaluation, multi-hash bigram embeddings and a sweepable int5/int6 export path</li>
+      </ul>
+    </div>
+  </section>
+
+  <section>
+    <h2>Education</h2>
+    <div class="head"><span><strong>Parul University</strong> <span class="meta">— Master of Computer Applications · CGPA 8.28/10</span></span><span class="when">Jul 2024 – Jul 2026</span></div>
+  </section>
+
+  <section class="pub">
+    <h2>Publications</h2>
+    <ul>
+      <li>Gopal, N. R., Kumar, M., Bhalkar, R. D., <strong>Bhogayata, H.</strong>, Kumari, D., Abdulla, F. (2026). From Data to Mind: A Critical Evaluation of AGI and Machine Consciousness. <em>International Journal of Artificial Intelligence and Machine Learning</em>, 6(12s), 1141–1147. <a href="https://doi.org/10.51483/IJAIML.6.12s.2026.1141-1147">doi.org/10.51483/IJAIML.6.12s.2026.1141-1147</a></li>
+      <li><strong>Bhogayata, H.</strong> (2026). Human-Centered Cyber Hygiene Against AI-Enabled Phishing: A Narrative Review and Layered Defense Framework. Preprint, ResearchGate. <a href="https://www.researchgate.net/publication/414009969_Human-Centered_Cyber_Hygiene_Against_AI-Enabled_Phishing_A_Narrative_Review_and_Layered_Defense_Framework">View</a></li>
+      <li><strong>Bhogayata, H.</strong> (2026). The Quantum Disruption: A Chronicle of the Global Transition to a New Cryptographic Era. Preprint, ResearchGate. <a href="https://www.researchgate.net/publication/400146061_The_Quantum_Disruption_A_Chronicle_of_the_Global_Transition_to_a_New_Cryptographic_Era">View</a></li>
+    </ul>
+  </section>
+</body>
+</html>
