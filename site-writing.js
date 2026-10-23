@@ -189,10 +189,10 @@
   if (stack && stackTools.length && stackRoute) {
     const PROJECTS = {
       curator: ['Curator', 'work/curator.html'],
-      kalakari: ['Kalakari'],
-      flood: ['Flood Archive', 'work/flood.html'],
-      scaledown: ['ScaleDown'],
       morrow: ['Morrow', 'work/morrow.html'],
+      bokuka: ['Bokuka', 'work/bokuka.html'],
+      flood: ['Flood Archive', 'work/flood.html'],
+      evolution: ['Portfolio Evolution', 'work/evolution.html'],
       eventsorted: ['EventSorted'],
       ida: ['IDA GCC Desk'],
       tally: ['Tally connector']
