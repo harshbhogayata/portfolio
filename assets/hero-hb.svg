@@ -1,0 +1,58 @@
+<svg class="engineer-art-svg" viewBox="0 0 771 648" role="img" aria-labelledby="engineer-art-title" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+<title id="engineer-art-title">An architectural HB system of blue planes, with design, build, and ship nodes</title>
+<defs>
+ <linearGradient id="hero-pale-plane" x1="0" y1="0" x2=".94" y2=".48"><stop stop-color="#eaf0ff"/><stop offset=".55" stop-color="#a8bef7"/><stop offset="1" stop-color="#1746f5" stop-opacity=".58"/></linearGradient>
+ <linearGradient id="hero-mid-plane" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#1746f5"/><stop offset=".55" stop-color="#1746f5"/><stop offset="1" stop-color="#1746f5" stop-opacity=".12"/></linearGradient>
+ <linearGradient id="hero-deep-plane" x1="0" y1="0" x2=".82" y2=".7"><stop stop-color="#1746f5"/><stop offset=".7" stop-color="#1746f5"/><stop offset="1" stop-color="#4f72ed" stop-opacity=".3"/></linearGradient>
+ <linearGradient id="hero-b-plane" x1=".1" y1="0" x2=".85" y2=".85"><stop stop-color="#1746f5"/><stop offset=".52" stop-color="#1746f5"/><stop offset="1" stop-color="#8298e9" stop-opacity=".62"/></linearGradient>
+ <linearGradient id="hero-fade-plane" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#1746f5"/><stop offset=".63" stop-color="#1746f5" stop-opacity=".9"/><stop offset="1" stop-color="#1746f5" stop-opacity=".07"/></linearGradient>
+</defs>
+<g id="hero-guides" fill="none" stroke="#8298e7" stroke-width=".8" stroke-opacity=".34" aria-hidden="true">
+ <path class="guide-line" pathLength="1" d="M0 410 502 11 705 147"/>
+ <path class="guide-line" pathLength="1" d="M0 299 703 642"/>
+ <path class="guide-line" pathLength="1" d="m18 642 687-411M65 648l640-370M0 535l625-423"/>
+ <path class="guide-line" pathLength="1" d="M114 58v511M248 0v638M365 61v576M599 0v607M200 236v326"/>
+ <path class="guide-line guide-dash" pathLength="1" d="M247 34C153 82 159 203 237 244"/>
+ <path class="guide-line guide-dash" pathLength="1" d="M419 33 478 67 666 178 688 286"/>
+ <path class="guide-line guide-dash" pathLength="1" d="M41 393C24 310 64 244 130 208M41 393C44 449 74 475 114 500L248 520 419 640 598 452"/>
+ <path class="guide-line guide-dash" pathLength="1" d="M526 138C571 128 612 147 625 182 640 223 614 264 580 278"/>
+ <path id="hero-orbit" d="M42 371C24 269 130 153 257 113 379 75 540 92 637 187 711 260 694 403 644 482 579 584 421 584 291 556 168 529 59 466 42 371Z" stroke="#1746f5" stroke-width="1.2" stroke-opacity=".8" stroke-dasharray="3 7"/>
+</g>
+<g id="hero-planes" aria-hidden="true">
+ <g id="hero-h-stems">
+  <path id="hero-h-left" d="m152 162 47 27v263l-47-27Z" fill="url(#hero-fade-plane)"/>
+  <path id="hero-h-back" d="m247 33 62 36v451l-62-35Z" fill="url(#hero-pale-plane)"/>
+  <path id="hero-h-center" d="m247 164 62-35v391l-62-35Z" fill="url(#hero-mid-plane)"/>
+  <path id="hero-h-face" d="m309 69 56 32v379l-56-32Z" fill="url(#hero-deep-plane)"/>
+  <path id="hero-h-right" d="m365 151 54 31v344l-54-31Z" fill="url(#hero-fade-plane)"/>
+ </g>
+ <g id="hero-h-crossbar">
+  <path d="m152 263 47 27 48-28 172 99v52l-172-99-48 28-47-27Z" fill="url(#hero-deep-plane)"/>
+  <path d="m199 290 48-28 62 36-48 29Z" fill="#1746f5" fill-opacity=".9"/>
+  <path d="m309 298 56-32 54 31v52l-54-31-56 32Z" fill="url(#hero-pale-plane)" fill-opacity=".82"/>
+ </g>
+ <g id="hero-b-planes">
+  <path id="hero-b-upper" d="m443 47 75 43c48 27 77 71 81 122 3 38-13 67-42 82-27 14-51-1-81-18l-33-19Z" fill="url(#hero-b-plane)"/>
+  <path id="hero-b-lower" d="m443 231 82 47c49 28 74 64 73 111-1 46-21 80-57 98-30 15-55-1-85-18l-13-8Z" fill="url(#hero-b-plane)"/>
+  <path id="hero-b-spine" d="m443 47 33 19v465l-33-19Z" fill="url(#hero-mid-plane)"/>
+  <path d="m443 226 34 20 121 70c-1 12-4 22-9 32l-112-65-34-20Z" fill="#f7f8fa"/>
+ </g>
+ <path id="hero-accent" d="m405 231 38 21v105l-38-22Z" fill="#d7ff30"/>
+ <g id="hero-nodes" fill="#1746f5">
+  <circle cx="248" cy="33" r="5.5"/><circle cx="114" cy="336" r="4.5"/><circle cx="248" cy="520" r="4.5"/><circle id="hero-orbit-node" cx="688" cy="286" r="4.5"/><circle cx="643" cy="481" r="4.5"/>
+  <circle class="hero-lime-node" cx="598" cy="249" r="5.5" fill="#d7ff30"/><circle class="hero-lime-node" cx="598" cy="452" r="5.5" fill="#d7ff30"/>
+ </g>
+ <path d="M148 158 200 187M242 30v489M361 145v353M439 45v487" fill="none" stroke="#a5baff" stroke-width="1" stroke-opacity=".65"/>
+</g>
+<g id="hero-guides-overlay" fill="none" stroke="#8ca2e8" stroke-width=".7" stroke-opacity=".48" aria-hidden="true">
+ <path class="guide-line" pathLength="1" d="M0 410 502 11M0 298 703 642M18 642 705 236M18 536 621 112"/>
+ <path class="guide-line" pathLength="1" d="M248 0v638M365 61v576M599 0v607"/>
+</g>
+<g id="hero-labels" fill="#64718d" font-family="ui-monospace,Consolas,monospace" font-size="8.5" letter-spacing=".15" aria-hidden="true">
+ <text x="132" y="85">01</text><text x="132" y="100">Design</text><path d="M132 112h16" stroke="#aab4c8" stroke-width=".9"/>
+ <text x="631" y="211">02</text><text x="631" y="226">Build</text><path d="M631 238h16" stroke="#aab4c8" stroke-width=".9"/>
+ <text x="638" y="410">03</text><text x="638" y="425">Ship</text><path d="M638 437h16" stroke="#aab4c8" stroke-width=".9"/>
+ <text x="660" y="76">20.6136° N</text><text x="660" y="90">77.209° E</text><path d="M660 105h15" stroke="#aab4c8" stroke-width=".9"/>
+ <text x="660" y="373">Web /</text><text x="660" y="387">Mobile /</text><text x="660" y="401">Systems /</text><text x="660" y="415">Products</text><path d="M660 430h15" stroke="#aab4c8" stroke-width=".9"/>
+</g>
+</svg>

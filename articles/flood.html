@@ -1,0 +1,39 @@
+      <p class="art-lede">Every monsoon the same message goes round the family groups and the building chats: is my area safe? No app can honestly promise that. What one can do is show what actually happened, street by street and year by year, and let people judge for themselves.</p>
+      <p>Flood Archive is that record. It maps more than fifty places along the Vishwamitri river with what the water did there in recent seasons, how deep it came and the report each fact came from. It started as a question in January 2026 and has been live, and maintained, ever since.</p>
+      <div class="art-facts"><div><strong>50+</strong><span>places mapped along the river</span></div><div><strong>2019–25</strong><span>flood seasons on record</span></div><div><strong>2</strong><span>languages: English and Gujarati</span></div></div>
+
+      <h2>A record, not a forecast</h2>
+      <aside class="art-note"><b>Risk shading</b>Red: above waist deep.<br>Yellow: waterlogging.<br>Green: no recorded trouble.</aside>
+      <p>The first version was deliberately not a prediction. It was a map with a history attached to every point. Pick a place and the years line up side by side: waist deep in 2019, the first floor in 2024, cut off in September 2025. Each entry links to the news report or bulletin it came from, because a claim about someone’s street should be checkable.</p>
+      <p>Places are shaded by that history. Red means the water has come above waist height, yellow means waterlogging, and green means no recorded trouble. The shading is a summary of the past, and the interface never dresses it up as anything more.</p>
+      <figure class="art-fig art-fig--wide">@@FLOOD_RECORD@@<figcaption><b>Fig. 02</b>The record for three of the archive’s places. Pick one; the link goes to the reporting behind it.</figcaption></figure>
+
+      <h2>Evidence, not a warning</h2>
+      <p>People wanted more than history, so a simulator grew out of the archive. You set the level of the Ajwa reservoir, a day’s rainfall and whether the Dhadhar river is backing up, and the map shades each place by what those conditions have meant there before.</p>
+      <aside class="art-note"><b>From the README</b>Not affiliated with the city corporation, the state government or any disaster authority.</aside>
+      <p>It is the most useful part of the app and the easiest to misread, so it is labelled for what it is everywhere it appears: historical evidence, not an official warning and not a verified forecast. The project is not affiliated with the city or any disaster authority, and it says so. If water is rising, the advice is to call the official responders first.</p>
+      <blockquote class="art-pull">History is evidence, not a forecast.</blockquote>
+
+      <h2>Built for a weak signal</h2>
+      <aside class="art-note"><b>Commit · 15 Jan 2026</b><q>Add Live Community Reporting Layer + Service Worker PWA</q></aside>
+      <p>Floods take the network down with them, so the archive had to keep working without one. A service worker stores the map and the record on the first visit, and the critical data stays usable on a patchy connection. Three days after the first version, the same code shipped as an Android app through Capacitor, for people who would rather install something than keep a bookmark.</p>
+      <aside class="art-note"><b>Commit · 16 Jan 2026</b><q>feat: converted to mobile app, fixed UI, and added Capacitor support</q></aside>
+      <p>The stack is intentionally small: plain HTML, CSS and JavaScript, Leaflet for the map, static data for the archive and a published spreadsheet feed for anything live. There is no server of its own to keep running, which matters most in the one week a year when everything else is failing. It does not track anyone, and the whole interface is available in Gujarati as well as English.</p>
+
+      <h2>When the water is rising</h2>
+      <p>The archive has a second mode for the days that matter. Switch it on and it becomes a relief board, called SewaSetu: verified shelters such as schools and safe houses, community reports of what residents are seeing, and a live feed of needs, from food to rescue to medicine.</p>
+      <p>Those three sources do not carry the same weight, and mixing them carelessly would undo the trust the archive is built on. Community reports are collected through a simple form and reviewed, but they are still marked as unverified and may be late or incomplete. The archive’s evidence and a neighbour’s report can appear on the same map; they are never presented as the same thing.</p>
+      <figure class="art-fig art-fig--wide art-fig--dark"><img src="{A}assets/flood.webp" alt="The Flood Archive map with the simulator panel open: Ajwa dam level, rainfall and Dhadhar river controls" loading="lazy"><figcaption><b>Fig. 03</b>The simulator beside the map: dam level, a day’s rainfall and the Dhadhar river.</figcaption></figure>
+
+      <h2>After release</h2>
+      <aside class="art-note"><b>Commit · 17 Oct 2026</b><q>Use keyed CARTO basemap; keyless tiles are now watermarked</q></aside>
+      <p>Most of the work happened in the weeks after the first version went out, in response to how people actually used it. It is still maintained: the most recent change, in October, replaced the free map tiles after they started carrying a watermark.</p>
+      <ul class="art-timeline">
+        <li><time>13 JAN 2026</time><div><strong>First version</strong><span>The map, the record, and a sheet on phones that you can drag out of the way.</span></div></li>
+        <li><time>15 JAN</time><div><strong>Works offline</strong><span>Service worker caching and the community reporting layer.</span></div></li>
+        <li><time>16 JAN</time><div><strong>Mobile app</strong><span>The same code, wrapped with Capacitor.</span></div></li>
+        <li><time>25 JAN</time><div><strong>Android release</strong><span>An installable app, renamed and polished for release.</span></div></li>
+        <li><time>8 MAR</time><div><strong>Hardened feeds</strong><span>Live data sources made resilient when one of them fails.</span></div></li>
+        <li><time>17 OCT</time><div><strong>New basemap</strong><span>Keyed map tiles after the free ones were watermarked.</span></div></li>
+      </ul>
+      <p>The archive is open to corrections. If someone has verified photos or records for a place, they can add them, and accuracy is the only rule for what gets in.</p>

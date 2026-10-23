@@ -1,0 +1,46 @@
+      <p class="art-lede">Bokuka, 墨花, means ink flower. It is a painting that never finishes: ink washes, blossoms and gold leaf laid down stroke by stroke in the browser, with a soundtrack that shifts with the scene.</p>
+      <p>Its own title calls it a living ambient sumi-e installation. Leave it open and it keeps composing. Drag across it and you paint stems that bloom into petals. Type a place, a cosmic city, a temple in snow, a lighthouse at dusk, and it paints that instead. I built it over a few days at the end of August 2026, as an experiment in how far a single web page can go as an instrument.</p>
+      <figure class="art-fig art-fig--wide"><video poster="{A}assets/work/bokuka-brush-stroke-test.poster.webp" autoplay muted loop playsinline preload="none"><source src="{A}assets/work/bokuka-brush-stroke-test.webm" type="video/webm"><source src="{A}assets/work/bokuka-brush-stroke-test.mp4" type="video/mp4"></video><figcaption><b>Fig. 02</b>Strokes laid down one at a time, then left to bleed.</figcaption></figure>
+
+      <h2>Painting with arithmetic</h2>
+      <aside class="art-note"><b>deformPolygon()</b>Depth 2. Gaussian offsets that shrink to 0.55× at each level.</aside>
+      <p>A watercolour wash is not a shape; it is many faint shapes on top of each other. Bokuka follows the method the generative artist Tyler Hobbs described for exactly this. Start with a sixteen-sided polygon. Push the midpoint of every edge out by a random, normally distributed amount, and repeat, so the outline frays the way pigment does at the edge of wet paper. Then stack about forty-four of those, each between 1.4 and 2.9 per cent opaque. The eye reads the result as one soft, uneven bloom of colour.</p>
+      <p>The paper underneath is painted too, with fourteen hundred faint fibres scattered by a noise field. Blossoms are five curved petals and nine gold stamens. Five moods set the palette and the paper: spring sakura, autumn vermilion, midnight indigo, gold leaf and Kyoto rain.</p>
+      <figure class="art-fig art-fig--wide"><div class="art-pair"><img src="{A}assets/work/bokuka-mood-sakura-spring.webp" alt="Bokuka in the spring sakura mood" loading="lazy"><img src="{A}assets/work/bokuka-mood-midnight-indigo.webp" alt="Bokuka in the midnight indigo mood" loading="lazy"><img src="{A}assets/work/bokuka-mood-autumn-vermilion.webp" alt="Bokuka in the autumn vermilion mood" loading="lazy"><img src="{A}assets/work/bokuka-mood-gold-24k.webp" alt="Bokuka in the gold leaf mood" loading="lazy"></div><figcaption><b>Fig. 03</b>Four of the five moods: sakura, indigo, vermilion and gold.</figcaption></figure>
+
+      <h2>Ask it for a place</h2>
+      <p>A prompt console turns the piece into a collaborator. What you type goes to a language model, which answers not with an image but with a plan: three possible directions, each with a title, a mood, a palette, a paper colour, how much gold to use, and a scene. The scene is a small structured description: the sky, any moons or suns, the terrain, three to five structures, water, particles in the air, and which voice the music should use.</p>
+      <p>The structures come from a fixed vocabulary that Bokuka knows how to paint: pagodas, torii gates, lighthouses, gothic spires, a Ferris wheel, an airship, a celestial dragon. The model chooses and arranges; the brushwork stays local, in the same procedural painters as everything else.</p>
+      <blockquote class="art-pull">The model writes the plan. The brush stays local.</blockquote>
+      <aside class="art-note"><b>Fallback</b>Without a key, prompts are routed by keyword into nine archetypes: space, city, ocean, temple, dragon, snow, mountain, botanical, or space and city together.</aside>
+      <p>That split is what keeps it reliable. If no model is available, or there is no network at all, prompts are matched by keyword to one of nine archetypes and painted from curated scenes. The piece never stops because a service did.</p>
+
+      <h2>A score that follows the scene</h2>
+      <p>The music is synthesised live with the Web Audio API, not played from a file. Oscillators run through a low-pass filter and two resonant peaks, at 320 and 840 hertz, that give it the warmth of a wooden soundboard, then into a short echo. A step sequencer plays it, at a pace that never drops below 320 milliseconds a note or rises above 1.1 seconds.</p>
+      <figure class="art-fig art-fig--wide art-player">
+        <div class="art-player-stage">
+          <video playsinline preload="metadata" poster="{A}assets/work/bokuka-hero-music.poster.webp"><source src="{A}assets/work/bokuka-hero-music-web.webm" type="video/webm"><source src="{A}assets/work/bokuka-hero-music-web.mp4" type="video/mp4"></video>
+          <button type="button" class="art-player-big" aria-label="Play the recording with sound"><i aria-hidden="true"></i><span>Play with sound</span></button>
+        </div>
+        <div class="art-player-bar">
+          <button type="button" class="art-player-toggle" aria-label="Play"><i aria-hidden="true"></i></button>
+          <span class="art-player-track" aria-hidden="true"><b></b></span>
+          <time class="art-player-time">0:00 / 0:25</time>
+        </div>
+        <figcaption><b>Fig. 04</b>Listen: 25 seconds of the piece composing itself, recorded straight from the browser, sound and all.</figcaption>
+      </figure>
+      <p>There are eight voices, from chamber strings and a bamboo flute to an ocean swell, a singing bowl and a cyber arpeggio, and each scene picks its own. Moving the pointer up and down the painting opens and closes the filter between 1.4 and 4 kilohertz, so you can brighten or soften the sound by moving through the picture.</p>
+
+      <h2>One file, no framework</h2>
+      <p>The whole installation is a single HTML file of about eleven thousand lines, with no framework and no build step. The small server behind the prompt console uses only Node’s own modules, with rate limits, a cap on concurrent requests and a circuit breaker so a failing model is skipped rather than retried forever. An optional local image model can add a soft base layer under the ink, but the piece never depends on it.</p>
+
+      <h2>Where it went next</h2>
+      <aside class="art-note"><b>studio-physics.js</b>A grid of 3-pixel cells. Water, moving pigment, settled pigment, absorbency and fibre direction in each.</aside>
+      <p>The polygon washes look like watercolour; they do not behave like it. So the next version, a drawing studio called The Paper Remembers, simulates the paper. The sheet is a grid of tiny cells, each holding water, pigment still moving, pigment already settled, how much the paper can absorb and which way its fibres run. Ink spreads along the fibres, dries where it settles, and the work is limited to the area that changed, so it stays fast. Finished sheets export at 3840 by 2560.</p>
+      <p>The studio is still in progress and has not been published. Bokuka itself runs locally, with its source on GitHub.</p>
+      <ul class="art-timeline">
+        <li><time>25 AUG 2026</time><div><strong>First commit</strong><span>The ink field and the first moods.</span></div></li>
+        <li><time>26 AUG</time><div><strong>The design studio</strong><span>Bokuka named, the state of the piece written down.</span></div></li>
+        <li><time>26 AUG</time><div><strong>Ask for a place</strong><span>The scene vocabulary and the live curator.</span></div></li>
+        <li><time>30 AUG</time><div><strong>The Paper Remembers</strong><span>A simulated washi studio, in progress.</span></div></li>
+      </ul>

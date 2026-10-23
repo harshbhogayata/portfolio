@@ -1,0 +1,42 @@
+      <p class="art-lede">Morrow is for one family’s evenings. Its whole promise fits on a line in the original spec: press Play, and the product handles the complexity.</p>
+      <aside class="art-note"><b>Repository</b><strong>151</strong>commits since 29 September 2026, across five working branches.</aside>
+      <p>It is a film and series app that runs in a browser and on the living-room television, in English, Hindi and Gujarati. Behind one Play button it finds every copy of a title the family has, at home or in the cloud, and quietly plays the best one. I have been building it since the end of September, and testing it where it will be used: on the television in one living room.</p>
+
+      <h2>Apple TV is the floor</h2>
+      <aside class="art-note"><b>TVOS_BASELINE_SPEC.md</b><strong>738</strong>records about Apple’s own app, 483 of them checked against the real thing.</aside>
+      <p>Before designing anything, I documented Apple’s own TV app in detail: how its rows scroll, where focus lands, how long each movement takes, what happens when you press Back. The result is a 2,300-line specification and a separate log of every place Morrow deliberately does something different. The spec’s rule is short. Apple’s app is “the floor. Morrow then improves on it.”</p>
+      <p>A quality bar of thirteen tests sits beside it. One clear focus at a time. Calm motion. Honest: no invented availability, no made-up badges, and anything that is only a sample says so. Aware that a family shares the screen. Each feature is held to all thirteen before it counts as done.</p>
+      <figure class="art-fig art-fig--wide"><video poster="{A}assets/work/morrow-home-feature-rotation.poster.webp" autoplay muted loop playsinline preload="none"><source src="{A}assets/work/morrow-home-feature-rotation.webm" type="video/webm"><source src="{A}assets/work/morrow-home-feature-rotation.mp4" type="video/mp4"></video><figcaption><b>Fig. 02</b>Home: the feature rotates every five seconds, and the artwork brings all the colour.</figcaption></figure>
+
+      <h2>Quiet cinema</h2>
+      <p>The design direction has a name, Quiet Cinema, and one job: make the main action obvious, keep you oriented, and disappear while you watch. The interface itself stays neutral; the posters and stills supply every colour on screen. Navigation is a single centred pill, Search, Home, Discover and Library, with a round profile button in the corner that opens profiles and settings.</p>
+      <p>Choosing a title opens it almost to the edges of the screen, the way Apple TV does, with episodes, cast, trailers and a plain line about where it can be watched. Up to five profiles keep each person’s history separate, and any of them can be locked with a code.</p>
+      <figure class="art-fig art-fig--wide"><div class="art-pair"><img src="{A}assets/work/morrow-title-detail.webp" alt="A Morrow title page with episodes, cast and where to watch" loading="lazy"><img src="{A}assets/work/morrow-search.webp" alt="Morrow search with the on-screen keyboard and a Browse row" loading="lazy"></div><figcaption><b>Fig. 03</b>A title, opened. Search, built for a remote.</figcaption></figure>
+
+      <h2>Built for a remote</h2>
+      <p>A television has no mouse and no touch, only four arrows and a button. Morrow has its own focus engine: press an arrow and it chooses the nearest element in that direction by geometry, not by the order things appear in the code. Every page remembers where your focus and scroll were, so Back returns you to exactly the poster you left.</p>
+      <p>Search gets the same care. The on-screen keyboard has a glass lens that glides from key to key, a Browse row sits under the field before you type, and recent searches are one press away.</p>
+
+      <h2>One Play button, many copies</h2>
+      <aside class="art-note"><b>rank.ts</b>Gates first, then ordered keys. The comment notes it replaced “the old backend’s additive points.”</aside>
+      <p>The hard part of Morrow is invisible. A title’s identity comes from a film database. Its copies come from wherever the family keeps them: the media server at home, cloud folders, and cloud copies they have added. Morrow has to choose one, instantly, every time.</p>
+      <p>It does that in two passes. First, gates throw out anything that cannot play. Then the remaining copies are ordered by a strict list of keys: the right language, the plain theatrical cut, no conversion needed, home before cloud, then picture, then sound. The earlier version added up points instead, which meant a sharper picture could outvote the wrong language. With ordered keys, it never can.</p>
+      <blockquote class="art-pull">A better picture should never outvote the right language.</blockquote>
+      <p>The chosen copy is matched to what the device can actually decode, played directly, repackaged or converted as needed, and handed to the player. If it fails, Morrow falls through to the next copy and records why: offline, missing, unplayable or forbidden. In playback, intros and recaps can be skipped, the next episode is waiting at the end, audio and captions are a menu away, and when a film has no captions at all, they are generated on the machine.</p>
+
+      <h2>Glass on a television</h2>
+      <p>Morrow’s controls are made of liquid glass, rebuilt on the graphics card so the light bends through it the way it does on Apple’s devices. The first rule was strict: one path, no fallback. Then I measured it on the actual television in the living room. The glass itself held sixty frames a second, but the transitions around it dropped to between two and twelve.</p>
+      <div class="art-facts"><div><strong>866 → 432</strong><span>ms of main-thread work to open a title</span></div><div><strong>3,679 → 88</strong><span>forced layouts on one transition</span></div><div><strong>6 → 0</strong><span>glass texture uploads while nothing moves</span></div></div>
+      <p>An overnight pass on motion halved the work of opening a title and removed almost every forced layout. It still was not enough on that hardware, so the rule changed. Glass can now be switched off for a frosted material, and televisions start with glass off and reduced motion on. A rule is only as good as the device it runs on.</p>
+      <p>Older TV browsers needed their own fixes too: no top-level await, a server that accepts requests missing a modern security header, and a page that reloads itself if a redeploy leaves it asking for code that no longer exists.</p>
+
+      <h2>What’s next</h2>
+      <p>The open list is concrete. Measure sixty frames a second on the streaming stick, not just on the laptop. Wrap the app for the TV stick properly, and build the phone remote that is still on paper. Add Gujarati captions. And settle the licensing of artwork before any of it is shown publicly.</p>
+      <ul class="art-timeline">
+        <li><time>29 SEP 2026</time><div><strong>First commit</strong><span>A playback backend, 44 commits in four days.</span></div></li>
+        <li><time>2 OCT</time><div><strong>Focus engine</strong><span>Deterministic navigation for a remote.</span></div></li>
+        <li><time>17 OCT</time><div><strong>The new app</strong><span>Rebuilt from the Apple TV spec, deployed.</span></div></li>
+        <li><time>18 OCT</time><div><strong>Glass and titles</strong><span>GPU glass, the expanded title, a TV test rig.</span></div></li>
+        <li><time>19 OCT</time><div><strong>Watching</strong><span>Skip intro, every season, captions and audio.</span></div></li>
+        <li><time>20 OCT</time><div><strong>At home</strong><span>The family library, sources, glass off on TVs.</span></div></li>
+      </ul>
