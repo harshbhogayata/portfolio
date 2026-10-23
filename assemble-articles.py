@@ -19,10 +19,24 @@ def read(path):
     return Path(path).read_text(encoding="utf-8")
 
 
-def page(title, content, prefix, home):
+SITE = "https://harshbhogayata.vercel.app"
+
+
+def share_tags(title, description, path, image, kind="website"):
+    """Description, canonical address and the tags link previews read (LinkedIn, WhatsApp, X, Slack)."""
+    esc = lambda text: text.replace("&", "&amp;").replace('"', "&quot;")
+    t, d, url, img = esc(title), esc(description), f"{SITE}/{path}", f"{SITE}/assets/share/{image}.jpg"
+    return (f'<meta name="description" content="{d}"><link rel="canonical" href="{url}">'
+            f'<meta property="og:type" content="{kind}"><meta property="og:site_name" content="Harsh Bhogayata">'
+            f'<meta property="og:title" content="{t}"><meta property="og:description" content="{d}"><meta property="og:url" content="{url}">'
+            f'<meta property="og:image" content="{img}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">'
+            f'<meta property="og:image:alt" content="{t}"><meta name="twitter:card" content="summary_large_image">')
+
+
+def page(title, content, prefix, home, meta=""):
     out = (
         '<!doctype html>\n<html lang="en" class="main-site"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">'
-        '<meta name="theme-color" content="#f7f8fa"><link rel="icon" type="image/svg+xml" href="assets/hb-favicon.svg">'
+        '<meta name="theme-color" content="#f7f8fa">' + meta + '<link rel="icon" type="image/svg+xml" href="assets/hb-favicon.svg">'
         f"<title>{title}</title><style>" + read(root / "portfolio-font.css") + base + read(root / "site-main.css") + page_shell
         + read(root / "site-writing.css") + read(root / "site-articles.css") + "</style></head><body id=\"top\">"
         + read(root / "site-main-header.html") + read(root / "site-menu.html") + content + read(root / "site-main.html")
@@ -146,7 +160,8 @@ def article(i, p):
   </article>
 </main>
 """
-    (root / "work" / f"{p['slug']}.html").write_text(page(f"{p['name']} — Harsh Bhogayata", content, prefix, "../portfolio-site.html"), encoding="utf-8")
+    (root / "work" / f"{p['slug']}.html").write_text(page(f"{p['name']} — Harsh Bhogayata", content, prefix, "../portfolio-site.html",
+             share_tags(f"{p['name']} — Harsh Bhogayata", p["standfirst"], f"work/{p['slug']}.html", p["slug"], "article")), encoding="utf-8")
     print(f"Built work/{p['slug']}.html ({words} words)")
 
 
