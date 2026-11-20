@@ -1,10 +1,9 @@
 # Harsh Bhogayata
 
-> Software Development Engineer in India. He builds full-stack products across web, mobile, TV and backend, from the first interaction to the systems behind it. Full Stack Developer at Quantaura Design Tech since July 2026; founder of The Curator Group. This site holds case studies of his work, his résumé and his writing.
+> Software Development Engineer in India. He builds full-stack products across web, mobile, TV and backend, from the first interaction to the systems behind it. Full Stack Developer at Quantaura Design Tech since July 2026; founder of The Curator Group. This site holds case studies of his work and his writing.
 
 ## About
 - [Portfolio home](https://harshbhogayata.vercel.app/portfolio-site.html): who he is, tech stack, experience and selected work.
-- [Résumé (PDF)](https://harshbhogayata.vercel.app/resume/Harsh-Bhogayata-Resume.pdf): experience, projects, skills, education and publications.
 - Current role: Full Stack Developer, Quantaura Design Tech (July 2026 to present). Built IDA GCC Desk, a Frappe/ERPNext app of 46 custom DocTypes for a UAE immersive-tech company, and EventSorted, a multi-tenant event and rental inventory product on React, TypeScript and a Hono API over Cloudflare Workers, D1 and R2, live with 211 passing tests; wrote a Go agent for two-way TallyPrime accounting sync.
 - Education: Master of Computer Applications, Parul University (2024 to 2026), CGPA 8.28/10.
 - Stack: TypeScript, React, Next.js, Python, Django, Node.js, Hono, Go, Frappe, React Native (Expo), SwiftUI, Capacitor, PostgreSQL, Redis, Celery, Docker, Cloudflare, Vercel, GitHub Actions.
