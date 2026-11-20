@@ -1,0 +1,29 @@
+# Harsh Bhogayata
+
+> Software Development Engineer in India. He builds full-stack products across web, mobile, TV and backend, from the first interaction to the systems behind it. Full Stack Developer at Quantaura Design Tech since July 2026; founder of The Curator Group. This site holds case studies of his work, his résumé and his writing.
+
+## About
+- [Portfolio home](https://harshbhogayata.vercel.app/portfolio-site.html): who he is, tech stack, experience and selected work.
+- [Résumé (PDF)](https://harshbhogayata.vercel.app/resume/Harsh-Bhogayata-Resume.pdf): experience, projects, skills, education and publications.
+- Current role: Full Stack Developer, Quantaura Design Tech (July 2026 to present). Built IDA GCC Desk, a Frappe/ERPNext app of 46 custom DocTypes for a UAE immersive-tech company, and EventSorted, a multi-tenant event and rental inventory product on React, TypeScript and a Hono API over Cloudflare Workers, D1 and R2, live with 211 passing tests; wrote a Go agent for two-way TallyPrime accounting sync.
+- Education: Master of Computer Applications, Parul University (2024 to 2026), CGPA 8.28/10.
+- Stack: TypeScript, React, Next.js, Python, Django, Node.js, Hono, Go, Frappe, React Native (Expo), SwiftUI, Capacitor, PostgreSQL, Redis, Celery, Docker, Cloudflare, Vercel, GitHub Actions.
+
+## Selected work
+- [Curator](https://harshbhogayata.vercel.app/work/curator.html): a news app that turns many reports of the same story into one calm, sourced article, and never lets the sources fall away. Django API, web app, Expo mobile app and Curator Teams, a B2B workspace that writes morning briefs. Preparing for launch. Product site: [thecuratorgroup.org](https://thecuratorgroup.org); company: [about.thecuratorgroup.org](https://about.thecuratorgroup.org).
+- [Morrow](https://harshbhogayata.vercel.app/work/morrow.html): a film and series app for Apple TV, smart TVs and the web, with every copy at home and in the cloud behind one Play button. A source resolver checks device decoders, DRM and region before it offers a stream. In development.
+- [Bokuka (墨花)](https://harshbhogayata.vercel.app/work/bokuka.html): a living ink painting generated in the browser, with washes, blossoms, gold leaf and a score that shifts with the scene. Experiment.
+- [Flood Archive](https://harshbhogayata.vercel.app/work/flood.html): an offline-first, place-based record of a city's flood history (2019 to 2025), with a dam-level risk simulator and a relief mode that works without a signal. MCA major project, graded 9/10. Live: [vadodara-flood-archive-relief.vercel.app](https://vadodara-flood-archive-relief.vercel.app).
+- [Portfolio Evolution](https://harshbhogayata.vercel.app/work/evolution.html): three portfolios in a year, and what each said about how he wanted to be understood.
+
+## Writing and research
+- [Medium](https://medium.com/@harshmbhogayata): a four-part series on post-quantum cryptography (January 2026).
+- [ResearchGate](https://www.researchgate.net/profile/Harsh-Bhogayata): one journal article (From Data to Mind: A Critical Evaluation of AGI and Machine Consciousness, IJAIML 2026) and two sole-author preprints, on AI-enabled phishing defence and the transition to post-quantum cryptography.
+
+## Contact
+- Email: work.harsh.bhogayata@gmail.com
+- [GitHub](https://github.com/harshbhogayata)
+- [LinkedIn](https://www.linkedin.com/in/harshbhogayata)
+
+## Optional
+- [Earlier portfolio (GitHub Pages)](https://harshbhogayata.github.io/)
