@@ -5,7 +5,7 @@ const path = require('path');
 const { chromium } = require(path.join(__dirname, '../tools/capture/node_modules/playwright-core'));
 
 (async () => {
-  const font = fs.readFileSync(path.join(__dirname, '../portfolio-font.css'), 'utf8');
+  const font = fs.readFileSync(path.join(__dirname, 'resume-font.css'), 'utf8');
   const html = fs.readFileSync(path.join(__dirname, 'resume.html'), 'utf8').replace('<!-- FONT -->', `<style>${font}</style>`);
   const browser = await chromium.launch({ executablePath: path.join(process.env.LOCALAPPDATA, 'ms-playwright/chromium-1228/chrome-win64/chrome.exe') });
   const page = await browser.newPage();

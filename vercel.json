@@ -1,23 +1,32 @@
 {
   "framework": null,
-  "buildCommand": null,
-  "installCommand": null,
+  "installCommand": "",
+  "buildCommand": "node build.mjs",
+  "outputDirectory": "dist",
+  "cleanUrls": true,
+  "trailingSlash": false,
   "redirects": [
-    {
-      "source": "/stories.html",
-      "destination": "/portfolio-site.html",
-      "permanent": true
-    }
+    { "source": "/portfolio-site", "destination": "/", "permanent": true },
+    { "source": "/portfolio-site.html", "destination": "/", "permanent": true },
+    { "source": "/stories.html", "destination": "/", "permanent": true },
+    { "source": "/assets/Harsh-Resume.pdf", "destination": "/resume/Harsh-Bhogayata-Resume.pdf", "permanent": true }
   ],
   "headers": [
     {
       "source": "/resume/(.*)",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "noindex, nofollow, noarchive"
-        }
-      ]
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" }]
+    },
+    {
+      "source": "/demo/(.*)",
+      "headers": [{ "key": "X-Robots-Tag", "value": "noindex" }]
+    },
+    {
+      "source": "/assets/fonts/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=31536000, immutable" }]
+    },
+    {
+      "source": "/assets/(work|chips|share)/(.*)",
+      "headers": [{ "key": "Cache-Control", "value": "public, max-age=604800, stale-while-revalidate=2592000" }]
     }
   ]
 }

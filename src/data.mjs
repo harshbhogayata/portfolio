@@ -1,0 +1,281 @@
+// Everything the pages say. Facts come from the repositories, the résumé and the case studies; nothing here is estimated.
+
+export const site = {
+  url: 'https://harshbhogayata.vercel.app',
+  name: 'Harsh Bhogayata',
+  role: 'Software engineer',
+  place: 'Vadodara, India',
+  email: 'work.harsh.bhogayata@gmail.com',
+  resume: '/resume/Harsh-Bhogayata-Resume.pdf',
+  description: 'Harsh Bhogayata is a software engineer in Vadodara, India, building full-stack products for web, mobile and TV. Case studies of Curator, Morrow, Bokuka and Flood Archive, each with its core rule running live.',
+  links: [
+    { label: 'GitHub', handle: 'harshbhogayata', url: 'https://github.com/harshbhogayata' },
+    { label: 'LinkedIn', handle: 'in/harshbhogayata', url: 'https://www.linkedin.com/in/harshbhogayata' },
+    { label: 'Medium', handle: '@harshmbhogayata', url: 'https://medium.com/@harshmbhogayata' },
+    { label: 'ResearchGate', handle: 'Harsh-Bhogayata', url: 'https://www.researchgate.net/profile/Harsh-Bhogayata' },
+  ],
+};
+
+export const projects = [
+  {
+    slug: 'curator',
+    name: 'Curator',
+    type: 'News app',
+    timeline: 'Apr 2026 — now',
+    year: '2026',
+    status: 'Preparing for launch',
+    tone: 'launch',
+    count: ['Commits', '114'],
+    dek: 'A news app that keeps every source attached to the story.',
+    standfirst: 'A news app that turns many reports of the same story into one calm, sourced article, and never lets the sources fall away.',
+    role: 'Solo: product, interface, apps, API and the pipeline that writes the stories',
+    facts: [['131', 'REST endpoints'], ['83', 'RSS and news-API sources'], ['3', 'outlets before a story exists']],
+    stack: ['React Native', 'Expo', 'React Router', 'Django', 'PostgreSQL', 'Redis', 'Celery', 'Docker'],
+    links: [['thecuratorgroup.org', 'https://thecuratorgroup.org/'], ['Curator Teams', 'https://teams.thecuratorgroup.org']],
+    cover: { src: '/assets/work/curator-phones.webp', alt: 'Curator on a phone: the brief, an article with its sources, and Explore' },
+    caption: 'The phone app: the brief, and an article with its sources under the headline.',
+    theme: 'light',
+    palette: { bg: '#ebe4d6', ink: '#1b1915', soft: '#5f584b', line: 'rgb(27 25 21 / .16)', panel: '#f5f0e6', accent: '#a4551f' },
+    stage: [
+      { label: 'Phone', kind: 'img', src: '/assets/work/curator-phones.webp', alt: 'Three Curator screens on phones: the morning brief, an article and Explore', fit: 'cover' },
+      { label: 'Web reader', kind: 'video', base: '/assets/work/curator-brief-to-reader', alt: 'Curator on the web: opening a story from the morning brief' },
+      { label: 'Follow along', kind: 'video', base: '/assets/work/curator-follow-along', alt: 'Curator narrating an article, with the paragraph being read highlighted' },
+    ],
+    demo: { label: 'Use the live app', src: '/demo/curator/index.html' },
+    rule: {
+      mini: 'curator',
+      title: 'Three outlets, or it is not a story.',
+      body: 'A Curator article is written from a cluster of reports about one event. A cluster needs at least three distinct outlets before it can become a story, and no outlet may contribute more than two items, so one loud publisher cannot set the tone. In June I raised the bar to five. Try that on a quiet hour.',
+      source: ['Pipeline config', 'PIPELINE_MIN_CLUSTER_SOURCES = 3'],
+    },
+  },
+  {
+    slug: 'morrow',
+    name: 'Morrow',
+    type: 'Film and series app',
+    timeline: 'Sep 2026 — now',
+    year: '2026',
+    status: 'In development',
+    tone: 'building',
+    count: ['Commits', '151'],
+    dek: 'Apple TV’s calm on an ordinary television, with one Play button for every copy.',
+    standfirst: 'A film and series app for one family’s evenings: Apple TV’s calm on an ordinary television, with every copy at home and in the cloud behind one Play button.',
+    role: 'Solo: design, focus engine, playback stack and the source resolver',
+    facts: [['3', 'targets from one codebase: tvOS, VIDAA TVs, the browser'], ['30', 'Vitest and Playwright suites'], ['2,300', 'lines of Apple TV spec, written first']],
+    stack: ['TypeScript', 'React', 'Vite', 'Shaka Player', 'SwiftUI', 'Node.js', 'Vercel'],
+    links: [],
+    cover: { src: '/assets/work/morrow-home.webp', alt: 'Morrow’s home screen: a featured film with the navigation pill above it' },
+    caption: 'Home: the artwork brings the colour, the interface stays out of the way.',
+    theme: 'dark',
+    palette: { bg: '#090b13', ink: '#f1f2f6', soft: '#a2a7ba', line: 'rgb(241 242 246 / .16)', panel: '#12151f', accent: '#aab4ff' },
+    stage: [
+      { label: 'Home', kind: 'video', base: '/assets/work/morrow-home-feature-rotation', alt: 'Morrow’s home screen: the featured title rotating every five seconds' },
+      { label: 'A title', kind: 'img', src: '/assets/work/morrow-title-detail.webp', alt: 'A Morrow title page with episodes, cast and where to watch', fit: 'cover' },
+      { label: 'Search', kind: 'img', src: '/assets/work/morrow-search.webp', alt: 'Morrow search with the on-screen keyboard and a Browse row', fit: 'cover' },
+    ],
+    rule: {
+      mini: 'morrow',
+      title: 'A better picture should never outvote the right language.',
+      body: 'Behind one Play button, Morrow finds every copy of a title the family has and picks one. Gates first throw out anything that cannot play. What is left is ordered by a strict list of keys: the right language, the plain theatrical cut, no conversion needed, home before cloud, then picture, then sound. The earlier version added up points instead. Switch it on and watch what wins.',
+      source: ['rank.ts', 'Gates first, then ordered keys.'],
+    },
+  },
+  {
+    slug: 'bokuka',
+    name: 'Bokuka',
+    kanji: '墨花',
+    type: 'Generative installation',
+    timeline: 'Aug 2026',
+    year: '2026',
+    status: 'Experiment',
+    tone: 'experiment',
+    count: ['Commits', '4'],
+    dek: 'Ink, blossoms and live music, generated in the browser as you watch.',
+    standfirst: 'A living ink painting: washes, blossoms and gold leaf laid down stroke by stroke in the browser, with a score that shifts with the scene.',
+    role: 'Solo: the painters, the scene vocabulary, the synthesiser and the prompt server',
+    facts: [['1', 'HTML file, about eleven thousand lines'], ['0', 'frameworks, and no build step'], ['8', 'voices, synthesised live with Web Audio']],
+    stack: ['JavaScript', 'Canvas', 'Web Audio', 'Node.js'],
+    links: [['Source on GitHub', 'https://github.com/harshbhogayata/Gokuka']],
+    cover: { src: '/assets/work/bokuka-home-1920x1200.webp', alt: 'Bokuka: ink blossoms and gold leaf on washi paper' },
+    caption: '墨花, ink flower: a painting that keeps composing itself.',
+    theme: 'light',
+    palette: { bg: '#f0e7d8', ink: '#1e1a16', soft: '#675d50', line: 'rgb(30 26 22 / .16)', panel: '#f8f2e7', accent: '#c2412f' },
+    stage: [
+      { label: 'Brushwork', kind: 'video', base: '/assets/work/bokuka-brush-stroke-test', alt: 'Bokuka laying down strokes one at a time, then leaving them to bleed' },
+      { label: 'Sakura', kind: 'img', src: '/assets/work/bokuka-mood-sakura-spring.webp', alt: 'Bokuka in the spring sakura mood', fit: 'cover' },
+      { label: 'Indigo', kind: 'img', src: '/assets/work/bokuka-mood-midnight-indigo.webp', alt: 'Bokuka in the midnight indigo mood', fit: 'cover' },
+      { label: 'Gold', kind: 'img', src: '/assets/work/bokuka-mood-gold-24k.webp', alt: 'Bokuka in the gold leaf mood', fit: 'cover' },
+    ],
+    rule: {
+      mini: 'bokuka',
+      title: 'A wash is not a shape. It is many faint shapes on top of each other.',
+      body: 'Start with a sixteen-sided polygon. Push the midpoint of every edge out by a random, normally distributed amount, and repeat, so the outline frays the way pigment does on wet paper. Then stack about forty-four of those, each between 1.4 and 2.9 per cent opaque. This is that painter, running. Click the paper, or drag a stem across it.',
+      source: ['deformPolygon()', 'Depth 2. Gaussian offsets that shrink to 0.55× at each level.'],
+    },
+  },
+  {
+    slug: 'flood',
+    name: 'Flood Archive',
+    type: 'Offline-first map',
+    timeline: 'Jan 2026 — now',
+    year: '2026',
+    status: 'Live',
+    tone: 'live',
+    count: ['Commits', '55'],
+    dek: 'A place-based record of a city’s flood history that works without a signal.',
+    standfirst: 'Every monsoon people ask whether their area is safe. No app can promise that. This one shows what actually happened, place by place.',
+    role: 'Solo: research, the archive, the simulator, the relief mode and the Android app',
+    facts: [['50+', 'places mapped along the Vishwamitri'], ['2019–25', 'flood seasons on record'], ['9/10', 'as an MCA major project']],
+    stack: ['JavaScript', 'Leaflet', 'Service worker', 'Capacitor', 'Android', 'Vercel'],
+    links: [['Open the archive', 'https://vadodara-flood-archive-relief.vercel.app'], ['Source on GitHub', 'https://github.com/harshbhogayata/vadodara-Flood-Archive-Relief']],
+    cover: { src: '/assets/work/flood-map.webp', alt: 'Flood Archive’s map with locations along the Vishwamitri river, risk levels and the simulator' },
+    caption: 'The live archive: fifty-plus places along the Vishwamitri, shaded by what has happened there.',
+    theme: 'dark',
+    palette: { bg: '#0c1519', ink: '#e9f0f1', soft: '#93a7ad', line: 'rgb(233 240 241 / .16)', panel: '#132026', accent: '#5fd0e0' },
+    stage: [
+      { label: 'The archive', kind: 'img', src: '/assets/work/flood-map.webp', alt: 'The Flood Archive map: places along the Vishwamitri shaded by their flood history', fit: 'cover' },
+      { label: 'Simulator', kind: 'img', src: '/assets/work/flood-simulator.webp', alt: 'The simulator panel: Ajwa dam level, a day’s rainfall and the Dhadhar river', fit: 'cover' },
+    ],
+    rule: {
+      mini: 'flood',
+      title: 'History is evidence, not a forecast.',
+      body: 'Pick a place and the years line up side by side. Every entry links to the news report or bulletin it came from, because a claim about someone’s street should be checkable. These are three of the archive’s places, with the records it holds for them.',
+      source: ['From the README', 'Not affiliated with the city corporation, the state government or any disaster authority.'],
+    },
+  },
+  {
+    slug: 'evolution',
+    name: 'Portfolio Evolution',
+    type: 'Essay',
+    timeline: 'Nov 2025 — now',
+    year: '2025–26',
+    status: 'Version four, live',
+    tone: 'live',
+    count: ['Versions', '4'],
+    dek: 'Four portfolios, and what each one said about how I wanted to be understood.',
+    standfirst: 'Three portfolios in a year, a fourth soon after, and what each one said about how I wanted to be understood.',
+    role: '',
+    facts: [],
+    stack: ['HTML', 'CSS', 'JavaScript', 'Node.js', 'Vercel'],
+    links: [['Version one', 'https://harshbhogayata.github.io/']],
+    cover: { src: '/assets/work/portfolio-evolution.webp', alt: 'The first three versions of the portfolio, side by side' },
+    caption: 'The terminal, the changelog and the lines: versions one to three.',
+    theme: 'light',
+    palette: { bg: '#e6eaf2', ink: '#14161c', soft: '#565c6b', line: 'rgb(20 22 28 / .16)', panel: '#f1f3f8', accent: '#2f4fd8' },
+    essay: true,
+  },
+];
+
+export const flood = {
+  years: ['2019', '2024', '2025'],
+  places: [
+    { id: 'vadsar', area: 'Vadsar', name: 'Casa Residency', records: ['Waist deep', 'First floor (12 ft)', 'Marooned in September'], source: 'https://timesofindia.indiatimes.com/city/vadodara/rising-vishwamitri-puts-barodians-on-edge-again/articleshow/123751219.cms', outlet: 'The Times of India' },
+    { id: 'sayajigunj', area: 'Sayajigunj', name: 'Parshuram Bhatta', records: ['Submerged', 'Submerged', 'Alert level'], source: 'https://deshgujarat.com/2025/09/06/live-vishwamitri-river-and-ajwa-sarovar-water-levels-update-via-vmc/', outlet: 'DeshGujarat' },
+    { id: 'harni', area: 'Harni', name: 'Motnath Mahadev', records: ['Knee deep', 'Chest deep', 'Waterlogged'], source: 'https://deshgujarat.com/2025/09/06/live-vishwamitri-river-and-ajwa-sarovar-water-levels-update-via-vmc/', outlet: 'DeshGujarat' },
+  ],
+};
+
+export const experience = [
+  {
+    when: 'Jul 2026 — now',
+    title: 'Full Stack Developer',
+    org: 'Quantaura Design Tech',
+    where: 'Vadodara, India',
+    shipped: [
+      { figure: '46', unit: 'custom DocTypes', name: 'IDA GCC Desk', text: 'A Frappe app on ERPNext and HRMS for IDA GCC, a UAE immersive-tech company: pursuits, delivery, equipment, procurement and VAT invoicing. Deployed to the client’s VPS with a one-click Windows installer.' },
+      { figure: '211', unit: 'passing tests', name: 'EventSorted', text: 'A multi-tenant event and rental inventory product on React, TypeScript and a Hono API over Cloudflare Workers, D1 and R2: reservations, dispatch, partial returns, barcode scanning, CSV and XLSX import, dispatch PDFs. Live for the first client.' },
+      { figure: '100k', unit: 'stock-movement lines', name: 'Tally connector', text: 'A Go agent for two-way TallyPrime accounting sync, with the platform benchmarked at 10,000 items and 100,000 stock-movement lines.' },
+    ],
+  },
+  {
+    when: 'Apr 2026 — now',
+    title: 'Founder',
+    org: 'The Curator Group',
+    where: 'Independent',
+    text: 'Curator, a source-backed news app for iPhone, Android and the web, and Curator Teams, a separate B2B workspace that writes morning briefs for investment teams, with Slack and email delivery.',
+    links: [['thecuratorgroup.org', 'https://thecuratorgroup.org/'], ['about.thecuratorgroup.org', 'https://about.thecuratorgroup.org']],
+  },
+  {
+    when: 'Jul 2024 — Jul 2026',
+    title: 'Master of Computer Applications',
+    org: 'Parul University',
+    where: 'Vadodara, India',
+    text: 'CGPA 8.28 out of 10. The major project was Flood Archive, graded 9 out of 10.',
+  },
+];
+
+// A dated log of what went out, newest first. Slugs link to the case study.
+export const log = [
+  { date: '2026-09', text: 'First commit to Morrow', slug: 'morrow' },
+  { date: '2026-08', text: 'Bokuka, built in a few days', slug: 'bokuka' },
+  { date: '2026-07', text: 'Joined Quantaura Design Tech; finished the MCA' },
+  { date: '2026-07', text: 'Curator Teams, morning briefs for investment teams', url: 'https://teams.thecuratorgroup.org' },
+  { date: '2026-04', text: 'First commit to Curator', slug: 'curator' },
+  { date: '2026-01', text: 'Flood Archive goes live, then ships for Android', slug: 'flood' },
+  { date: '2025-10', text: 'Kalakari, a marketplace for artisans', url: 'https://www.kalakari-shop.tech/' },
+  { date: '2024-07', text: 'Started the MCA at Parul University' },
+];
+
+// Where each tool shipped. A tool with no project beside it would not be on this list.
+export const stackProjects = [
+  { id: 'curator', name: 'Curator', slug: 'curator' },
+  { id: 'morrow', name: 'Morrow', slug: 'morrow' },
+  { id: 'bokuka', name: 'Bokuka', slug: 'bokuka' },
+  { id: 'flood', name: 'Flood Archive', slug: 'flood' },
+  { id: 'eventsorted', name: 'EventSorted' },
+  { id: 'ida', name: 'IDA GCC Desk' },
+  { id: 'tally', name: 'Tally connector' },
+];
+
+export const stack = [
+  { group: 'Frontend', tools: [
+    ['TypeScript', ['curator', 'morrow', 'eventsorted']],
+    ['React', ['curator', 'morrow', 'eventsorted']],
+    ['React Router', ['curator', 'morrow']],
+    ['Vite', ['curator', 'morrow']],
+    ['Tailwind CSS', ['curator']],
+    ['Canvas and Web Audio', ['bokuka']],
+    ['Leaflet', ['flood']],
+  ] },
+  { group: 'Backend', tools: [
+    ['Python', ['curator']],
+    ['Django', ['curator']],
+    ['Node.js', ['morrow', 'bokuka']],
+    ['Hono', ['eventsorted']],
+    ['Go', ['tally']],
+    ['Frappe', ['ida']],
+  ] },
+  { group: 'Mobile and TV', tools: [
+    ['React Native', ['curator']],
+    ['Expo', ['curator']],
+    ['SwiftUI', ['morrow']],
+    ['Capacitor', ['flood']],
+  ] },
+  { group: 'Data', tools: [
+    ['PostgreSQL', ['curator']],
+    ['Redis', ['curator']],
+    ['Celery', ['curator']],
+    ['Firebase', ['curator']],
+  ] },
+  { group: 'Ship', tools: [
+    ['Docker', ['curator']],
+    ['GitHub Actions', ['curator']],
+    ['Cloudflare', ['eventsorted']],
+    ['Vercel', ['morrow', 'flood']],
+  ] },
+];
+
+// Smaller pieces that do not have a case study of their own.
+export const more = [
+  { name: 'Curator Teams', kind: 'B2B product', text: 'An isolated workspace that synthesises morning briefs for funds, with Slack and email delivery, Google sign-in and Stripe billing.', url: 'https://teams.thecuratorgroup.org', link: 'teams.thecuratorgroup.org' },
+  { name: 'Parameter Golf', kind: 'ML experiment', text: 'OpenAI’s 16 MB, 10-minute language-model challenge: 16 experiment branches in PyTorch, adding document-aware sliding-window evaluation, multi-hash bigram embeddings and a sweepable int5/int6 export path.' },
+  { name: 'Kalakari', kind: 'Marketplace', text: 'A marketplace for artisans, shipped in October 2025 on React, TypeScript, Tailwind CSS and Node.js.', url: 'https://www.kalakari-shop.tech/', link: 'kalakari-shop.tech' },
+  { name: 'Portfolio Evolution', kind: 'Essay', text: 'Four portfolios, and what each one said about how I wanted to be understood.', slug: 'evolution', link: 'Read the essay' },
+];
+
+export const writing = [
+  { year: '2026', kind: 'Journal article', title: 'From Data to Mind: A Critical Evaluation of AGI and Machine Consciousness', where: 'International Journal of Artificial Intelligence and Machine Learning, 6(12s), 1141–1147. Co-author.', url: 'https://doi.org/10.51483/IJAIML.6.12s.2026.1141-1147' },
+  { year: '2026', kind: 'Preprint', title: 'Human-Centered Cyber Hygiene Against AI-Enabled Phishing: A Narrative Review and Layered Defense Framework', where: 'ResearchGate. Sole author.', url: 'https://www.researchgate.net/publication/414009969_Human-Centered_Cyber_Hygiene_Against_AI-Enabled_Phishing_A_Narrative_Review_and_Layered_Defense_Framework' },
+  { year: '2026', kind: 'Preprint', title: 'The Quantum Disruption: A Chronicle of the Global Transition to a New Cryptographic Era', where: 'ResearchGate. Sole author.', url: 'https://www.researchgate.net/publication/400146061_The_Quantum_Disruption_A_Chronicle_of_the_Global_Transition_to_a_New_Cryptographic_Era' },
+  { year: '2026', kind: 'Series', title: 'Post-quantum cryptography, in four parts', where: 'Medium, January 2026.', url: 'https://medium.com/@harshmbhogayata' },
+];

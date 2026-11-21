@@ -1,16 +1,13 @@
+# Build output
+dist/
+node_modules/
+
 # Private working notes and local tooling
 ORCHESTRATOR.md
 .orchestrator/
 tools/
 design/
 __pycache__/
-node_modules/
-
-# 3D sources and scripts behind earlier hero experiments; no page uses them
-assets/*.blend
-assets/*.blend1
-assets/*.glb
-assets/*.py
 
 # Build previews
 resume/resume-preview.png

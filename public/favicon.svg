@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <style>rect{fill:#131310}path{stroke:#f3f2ee}@media (prefers-color-scheme:dark){rect{fill:#f3f2ee}path{stroke:#131310}}</style>
+  <rect width="64" height="64" rx="32"/>
+  <path transform="translate(15.5 12.5) scale(.9)" fill="none" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" d="M3 3v37M19 3v37M3 21h16M19 3h7a9 9 0 0 1 0 18h-7m0 0h7a9.5 9.5 0 0 1 0 19h-7"/>
+</svg>

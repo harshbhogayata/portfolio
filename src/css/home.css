@@ -1,0 +1,78 @@
+/* The opening: one sentence, with the work inside it. */
+.hero { position: relative; min-height: 100svh; display: grid; isolation: isolate; overflow: clip; }
+.hero-ink { position: absolute; inset: 0; z-index: -1; width: 100%; height: 100%; pointer-events: none; opacity: 0; transition: opacity 1.2s ease; }
+.hero-ink.on { opacity: 1; }
+.hero-inner { display: grid; grid-template-rows: auto 1fr auto; gap: clamp(1.5rem, 3vw, 2.5rem); padding-top: clamp(5.5rem, 9vw, 7.5rem); padding-bottom: clamp(1.25rem, 2.4vw, 2rem); }
+.hero-eyebrow { animation: fade-up 1s var(--ease-out) .1s both; }
+.hero-eyebrow > span:first-child { color: var(--ink); }
+
+.hero-title {
+  align-self: center; font: 300 clamp(2.45rem, 6.5vw, 7.25rem)/1.04 var(--serif); letter-spacing: -.036em; font-optical-sizing: auto;
+  max-width: 21ch; text-wrap: balance;
+}
+.hero-title em { font-style: italic; color: var(--ink-3); letter-spacing: -.03em; }
+.hero-title .w > span { animation: rise 1.2s var(--ease-out) both; animation-delay: calc(var(--i) * 34ms + 120ms); }
+.hero-title .nb { white-space: nowrap; }
+.hero-title .w--chip { overflow: visible; padding-inline: 0; margin-inline: 0; }
+.hero-title .w--chip > span { animation-name: chip-in; }
+@keyframes chip-in { from { opacity: 0; transform: scale(.4) rotate(-8deg); } }
+
+/* A picture set in the line like a word. It is a link to the case study it shows. */
+.chip {
+  display: inline-block; position: relative; height: .7em; width: 1.12em; border-radius: .18em; overflow: hidden; vertical-align: baseline;
+  box-shadow: 0 0 0 1px var(--rule), 0 .08em .3em -.1em rgb(0 0 0 / .4); transition: width .6s var(--ease-out), border-radius .6s var(--ease-out);
+}
+.chip img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .8s var(--ease-out); }
+.chip-tip {
+  position: absolute; left: .5rem; bottom: .45rem; display: inline-flex; align-items: center; gap: .4em; padding: .35em .6em; border-radius: 999px;
+  background: rgb(12 12 11 / .78); color: #f3f2ee; -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px);
+  font: 500 .68rem/1 var(--mono); letter-spacing: .05em; text-transform: uppercase; white-space: nowrap; font-style: normal;
+  opacity: 0; transform: translateY(.5rem); transition: opacity .3s var(--ease), transform .5s var(--ease-out);
+}
+@media (hover: hover) and (min-width: 900px) {
+  .chip:hover, .chip:focus-visible { width: 2.15em; }
+  .chip:hover img, .chip:focus-visible img { transform: scale(1.06); }
+  .chip:hover .chip-tip, .chip:focus-visible .chip-tip { opacity: 1; transform: none; transition-delay: .12s; }
+}
+
+.hero-foot { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 1.5rem clamp(1.5rem, 3vw, 3rem); padding-top: 1.25rem; border-top: 1px solid var(--rule-strong); animation: fade-up 1.1s var(--ease-out) .95s both; }
+.hero-cell { display: grid; gap: .6rem; align-content: start; font-size: .98rem; line-height: 1.45; color: var(--ink-2); max-width: 32ch; }
+.hero-cell .link { color: var(--ink); }
+.hero-index { display: grid; grid-template-columns: 1fr 1fr; gap: .15rem 1rem; }
+.hero-index a { display: inline-flex; gap: .6em; align-items: baseline; color: var(--ink); padding-block: .1rem; }
+.hero-index a span { font: 500 .68rem/1 var(--mono); color: var(--ink-3); }
+.hero-index a { background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .5s var(--ease-out); }
+@media (hover: hover) { .hero-index a:hover { background-size: 100% 1px; } }
+.hero-reach { display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; }
+.hero-reach .link { font-weight: 500; }
+.hero-ink-note { position: absolute; right: var(--gutter); top: clamp(5.5rem, 9vw, 7.5rem); white-space: nowrap; animation: fade-up 1.2s var(--ease-out) 1.6s both; }
+
+@media (max-width: 1180px) { .hero-ink-note { display: none; } }
+@media (max-width: 900px) {
+  .hero-foot { grid-template-columns: 1fr 1fr; }
+  .hero-title { max-width: none; text-wrap: pretty; }
+}
+@media (max-width: 480px) {
+  .hero-foot { gap: 1.25rem 1rem; }
+  .hero-cell { font-size: .92rem; }
+  .hero-index { grid-template-columns: 1fr; }
+}
+
+/* More work, smaller. */
+.more { padding-block: clamp(3rem, 7vw, 6rem) 0; display: grid; gap: 1.5rem; }
+.more-list { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--rule-strong); }
+.more-list li { display: grid; align-content: start; gap: .6rem; padding: 1.5rem clamp(1rem, 2vw, 2rem) 1.5rem 0; border-right: 1px solid var(--rule); font-size: .98rem; color: var(--ink-2); line-height: 1.5; }
+.more-list li + li { padding-left: clamp(1rem, 2vw, 2rem); }
+.more-list li:last-child { border-right: 0; padding-right: 0; }
+.more-list h3 { font: 350 1.7rem/1.1 var(--serif); letter-spacing: -.02em; color: var(--ink); }
+.more-list .link { justify-self: start; color: var(--ink); margin-top: .25rem; font-weight: 500; }
+@media (max-width: 1000px) {
+  .more-list { grid-template-columns: 1fr 1fr; }
+  .more-list li { border-bottom: 1px solid var(--rule); }
+  .more-list li:nth-child(2n) { border-right: 0; padding-right: 0; }
+  .more-list li:nth-child(2n + 1) { padding-left: 0; }
+}
+@media (max-width: 560px) {
+  .more-list { grid-template-columns: 1fr; }
+  .more-list li, .more-list li + li { border-right: 0; padding-inline: 0; }
+}

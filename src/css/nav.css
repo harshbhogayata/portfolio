@@ -1,0 +1,44 @@
+/* Three small panes of glass: who, where, tools. They leave when you scroll down and return when you scroll up. */
+.nav {
+  position: fixed; inset: 0 0 auto 0; z-index: 60; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: .5rem;
+  padding: clamp(.6rem, 1.2vw, 1rem) clamp(.75rem, 1.6vw, 1.5rem); pointer-events: none;
+  transition: transform .6s var(--ease-out);
+}
+.nav[data-away] { transform: translateY(-130%); }
+.nav-pill {
+  pointer-events: auto; display: inline-flex; align-items: center; height: var(--nav-h); padding: 0 .4rem; border-radius: 999px;
+  background: var(--glass); border: 1px solid var(--rule); -webkit-backdrop-filter: blur(18px) saturate(1.5); backdrop-filter: blur(18px) saturate(1.5);
+  box-shadow: 0 1px 0 rgb(255 255 255 / .06) inset, 0 8px 30px -14px rgb(0 0 0 / .35);
+}
+.nav-brand { justify-self: start; gap: .65rem; padding: 0 1rem 0 .4rem; font-weight: 600; font-size: .95rem; letter-spacing: -.01em; }
+.nav-mark { display: grid; place-items: center; width: 2.2rem; height: 2.2rem; border-radius: 50%; background: var(--ink); color: var(--paper); font: italic 400 1rem/1 var(--serif); letter-spacing: -.04em; padding-right: .08em; }
+.nav-links { gap: 2px; }
+.nav-links a { display: inline-flex; align-items: center; height: 2.2rem; padding: 0 .95rem; border-radius: 999px; font-size: .9rem; font-weight: 500; color: var(--ink-2); transition: background-color .3s var(--ease), color .3s var(--ease); }
+.nav-links a[aria-current="true"] { background: var(--ink); color: var(--paper); }
+.nav-tools { justify-self: end; gap: 2px; }
+.nav-tools button { display: inline-flex; align-items: center; gap: .55rem; height: 2.2rem; padding: 0 .75rem; border-radius: 999px; font-size: .9rem; font-weight: 500; color: var(--ink-2); transition: background-color .3s var(--ease), color .3s var(--ease); }
+.nav-theme { width: 2.2rem; justify-content: center; padding: 0 !important; }
+.nav-theme .i { font-size: 1.05rem; transition: transform .6s var(--ease-out); }
+:root[data-theme="dark"] .nav-theme .i { transform: rotate(180deg); }
+.nav-search kbd { border: 0; padding: 0; color: var(--ink-3); }
+@media (hover: hover) {
+  .nav-links a:not([aria-current="true"]):hover, .nav-tools button:hover { background: var(--shade); color: var(--ink); }
+}
+
+@media (max-width: 1060px) {
+  .nav-name { display: none; }
+  .nav-brand { padding: 0 .4rem; }
+  .nav-search span, .nav-search kbd { display: none; }
+  .nav-search { width: 2.2rem; justify-content: center; padding: 0 !important; }
+}
+/* On a phone the sections move to a dock under the thumb. */
+@media (max-width: 720px) {
+  .nav { grid-template-columns: 1fr 1fr; }
+  .nav-links { position: fixed; left: 50%; bottom: max(.75rem, env(safe-area-inset-bottom)); translate: -50% 0; max-width: calc(100vw - 1rem); transition: transform .6s var(--ease-out); }
+  .nav-links a { padding: 0 .7rem; font-size: .82rem; }
+  .nav-links a[data-nav-link="stack"] { display: none; }
+  .nav[data-away] { transform: none; }
+  .nav[data-away] .nav-brand, .nav[data-away] .nav-tools { transform: translateY(-160%); }
+  .nav-brand, .nav-tools { transition: transform .6s var(--ease-out); }
+  .contact { padding-bottom: 4.5rem; }
+}
