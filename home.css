@@ -1,53 +1,50 @@
-/* The home page: one screen. The sky's colours arrive as custom properties from scene.js; the values here are noon, for before it runs. */
-:root{--sky:linear-gradient(to bottom,#e9eef8 0,#f1f4f9 43%,#f7f8fa 70%,#eef1f7 70%,#dfe6f3 100%);--ui:#16181d;--ui-soft:#5d6470;--ui-line:#c3c9d6;--accent:#2445f1;--sky-ink:#f1f4f9;--water:#dfe6f3;--water-ui:#16181d;--water-soft:#5d6470;--card:#fff;--card-ui:#16181d;--horizon:70vh;--pad:clamp(20px,4.4vw,68px);--pad-y:clamp(20px,5.2vh,52px);--mono:"Geist Mono",ui-monospace,Consolas,monospace}
+/* The home page: Sursagar at night, filling the screen, with the page's words laid over it. */
+:root{--ui:#faf3e0;--ui-soft:#b3b9cc;--ui-line:#39415c;--accent:#deed58;--night:#0a1226;--card:#0d1322;--pad:clamp(20px,4.4vw,68px);--pad-y:clamp(20px,5.2vh,52px);--mono:"Geist Mono",ui-monospace,Consolas,monospace}
 *{box-sizing:border-box}
 html,body{height:100%;margin:0;overflow:hidden;overscroll-behavior:none}
-body{background:#f7f8fa;color:var(--ui);font-family:Geist,Arial,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
+body{background:var(--night);color:var(--ui);font-family:Geist,Arial,sans-serif;font-size:16px;line-height:1.45;-webkit-font-smoothing:antialiased;-webkit-text-size-adjust:100%}
 a{color:inherit;text-decoration:none}button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
 a,button{-webkit-tap-highlight-color:transparent}
 :focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:2px}
 ::selection{background:#2445f1;color:#fff}
 
-.home{position:fixed;inset:0;overflow:hidden;background:var(--sky);transition:color .6s}
-#scene-shapes,#scene-canvas{position:absolute;left:0;top:0;z-index:2;pointer-events:none;opacity:0;transition:opacity .9s}
-.scene-on #scene-shapes,.scene-on #scene-canvas{opacity:1}
+/* Until the scene is running, and wherever it cannot run, a still of it stands in. */
+.home{position:fixed;inset:0;overflow:hidden;background:var(--night) url(assets/scene/still-wide.jpg) center/cover no-repeat}
+#scene3d{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity 1.1s;touch-action:none;cursor:crosshair}
+.scene-on #scene3d{opacity:1}
+/* The sky darkens a little behind the name, and the water behind the rail, so the words read wherever the boat is. */
+.veil{position:absolute;left:0;right:0;top:0;height:46%;pointer-events:none;background:linear-gradient(to bottom,rgba(5,8,18,.78) 0,rgba(5,8,18,.42) 55%,transparent)}
+.shade{position:absolute;left:0;right:0;bottom:0;height:34%;pointer-events:none;background:linear-gradient(to top,rgba(4,7,15,.94) 0,rgba(4,7,15,.82) 42%,transparent)}
 
-/* The name sits under the canvas, so cloud and stars cross it; everything else sits above. */
-.ident{position:absolute;left:var(--pad);top:var(--pad-y);max-width:calc(100% - 2*var(--pad))}
-.name{position:relative;z-index:1;margin:0 0 0 -.045em;font-size:clamp(46px,7.3vw,132px);font-weight:680;letter-spacing:-.058em;line-height:.9;color:var(--ui);white-space:nowrap}
+.ident{position:absolute;left:var(--pad);top:var(--pad-y);max-width:calc(100% - 2*var(--pad));z-index:3;pointer-events:none}
+.ident>*{pointer-events:auto}
+.name{margin:0 0 0 -.045em;font-size:clamp(46px,7.3vw,132px);font-weight:680;letter-spacing:-.058em;line-height:.9;white-space:nowrap;pointer-events:none}
 .name b{font-weight:inherit;color:var(--accent)}
-.role{position:relative;z-index:3;margin:clamp(12px,1.6vw,22px) 0 0;font:500 clamp(11px,.86vw,13px)/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ui)}
+.role{display:inline-block;margin:clamp(12px,1.6vw,22px) 0 0;font:500 clamp(11px,.86vw,13px)/1 var(--mono);letter-spacing:.16em;text-transform:uppercase}
 .role i{font-style:normal;color:var(--accent);padding:0 .15em}
-.links{position:relative;z-index:3;display:flex;flex-wrap:wrap;align-items:center;gap:6px clamp(14px,1.5vw,24px);margin-top:clamp(16px,2vw,26px);font-size:clamp(14px,1.02vw,15.5px);font-weight:470;letter-spacing:-.01em}
-.links a,.links button{padding:5px 0;color:var(--ui);border-bottom:1px solid transparent;transition:border-color .2s}
+.links{display:flex;flex-wrap:wrap;align-items:center;gap:6px clamp(14px,1.5vw,24px);margin-top:clamp(16px,2vw,26px);font-size:clamp(14px,1.02vw,15.5px);font-weight:470;letter-spacing:-.01em}
+.links a,.links button{padding:5px 0;border-bottom:1px solid transparent;transition:border-color .2s}
 .links a:hover,.links button:hover{border-bottom-color:currentColor}
-.links .mail{padding:9px 16px 10px;border:1px solid var(--ui);background:var(--ui);color:var(--sky-ink);font-weight:540;transition:background .2s,color .2s}
+.links .mail{padding:9px 16px 10px;border:1px solid var(--ui);background:var(--ui);color:#0b0d12;font-weight:540;transition:background .2s,color .2s}
 .links .mail:hover{background:transparent;color:var(--ui)}
 
-.clock{position:fixed;right:var(--pad);top:var(--pad-y);z-index:3;display:grid;gap:5px;text-align:right;font:500 11.5px/1.2 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ui-soft)}
-.clock b{font-weight:600;color:var(--ui);margin-left:.5em}
-.clock:hover .clock-sky{color:var(--ui)}
-.dial{position:fixed;right:var(--pad);top:calc(var(--pad-y) + 46px);z-index:4;display:grid;gap:8px;width:min(320px,calc(100% - 2*var(--pad)));padding:14px 16px 12px;background:var(--card);color:var(--card-ui);border:1px solid var(--ui-line);font:500 11px/1.2 var(--mono);letter-spacing:.08em;text-transform:uppercase}
-.dial[hidden]{display:none}
-.dial input{width:100%;accent-color:var(--accent)}
-.dial button{justify-self:start;padding:4px 0;border-bottom:1px solid currentColor;text-transform:inherit;letter-spacing:inherit}
+.place{position:absolute;right:var(--pad);top:var(--pad-y);z-index:3;display:grid;gap:5px;margin:0;text-align:right;font:500 11.5px/1.3 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ui-soft);pointer-events:none}
+.place b{font-weight:600;color:var(--ui)}
 
-/* The rail stands in the water, which is darkened under it so the words read at any hour. */
-.shade{position:absolute;left:0;right:0;bottom:0;height:min(34vh,calc(100% - var(--horizon) + 30px));z-index:2;pointer-events:none;background:linear-gradient(to top,var(--water) 0,var(--water) 46%,transparent)}
-.rail{position:absolute;left:var(--pad);right:var(--pad);bottom:clamp(18px,4.4vh,44px);z-index:3;display:grid;grid-template-columns:auto auto;justify-content:space-between;gap:clamp(24px,3vw,56px);color:var(--water-ui)}
-.group h2{display:flex;align-items:center;gap:14px;margin:0 0 12px;font:500 11px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--water-soft)}
+.rail{position:absolute;left:var(--pad);right:var(--pad);bottom:clamp(18px,4.4vh,44px);z-index:3;display:grid;grid-template-columns:auto auto;justify-content:space-between;gap:clamp(24px,3vw,56px)}
+.group h2{display:flex;align-items:center;gap:14px;margin:0 0 12px;font:500 11px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ui-soft)}
 .group h2::after{content:"";flex:1;height:1px;background:currentColor;opacity:.45}
 .group ul{display:grid;grid-template-columns:repeat(4,auto);justify-content:start;gap:8px clamp(12px,1.4vw,34px);margin:0;padding:0;list-style:none}
 .group li{min-width:0}
 .rail a{display:grid;gap:3px;padding:2px 0 4px;transition:opacity .25s}
 .rail strong{position:relative;font-size:clamp(15px,1.22vw,22px);font-weight:560;letter-spacing:-.028em;line-height:1.15;white-space:nowrap}
-.rail strong::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:2px;background:var(--water-accent,var(--accent));transform:scaleX(0);transform-origin:left;transition:transform .28s cubic-bezier(.2,.7,.2,1)}
+.rail strong::after{content:"";position:absolute;left:0;right:0;bottom:-3px;height:2px;background:var(--accent);transform:scaleX(0);transform-origin:left;transition:transform .28s cubic-bezier(.2,.7,.2,1)}
 .rail a:hover strong::after,.rail a:focus-visible strong::after,.rail a.is-open strong::after{transform:scaleX(1)}
-.rail small{font-size:clamp(11px,.8vw,13.5px);color:var(--water-soft);letter-spacing:-.005em;white-space:nowrap}
-.rail.has-open a:not(.is-open){opacity:.42}
+.rail small{font-size:clamp(11px,.8vw,13.5px);color:var(--ui-soft);letter-spacing:-.005em;white-space:nowrap}
+.rail.has-open a:not(.is-open){opacity:.45}
 
-/* The card: the one place a real picture appears. */
-.card{position:absolute;z-index:5;left:0;bottom:0;width:min(348px,calc(100% - 2*var(--pad)));display:grid;grid-template-columns:76px 1fr;gap:10px 14px;padding:14px;background:var(--card);color:var(--card-ui);border:1px solid var(--ui-line);box-shadow:0 18px 50px -18px rgba(8,10,20,.45);opacity:0;transform:translateY(6px);transition:opacity .18s,transform .22s cubic-bezier(.2,.7,.2,1)}
+/* The card: what the boat has come to. The one place a picture of the work appears. */
+.card{position:absolute;z-index:5;left:0;bottom:0;width:min(348px,calc(100% - 2*var(--pad)));display:grid;grid-template-columns:76px 1fr;gap:10px 14px;padding:14px;background:var(--card);border:1px solid var(--ui-line);box-shadow:0 18px 50px -18px rgba(0,0,0,.7);opacity:0;transform:translateY(6px);transition:opacity .18s,transform .22s cubic-bezier(.2,.7,.2,1)}
 .card[hidden]{display:none}
 .card.is-on{opacity:1;transform:none}
 .card-pic{width:76px;height:56px;overflow:hidden;background:rgba(127,127,127,.14)}
@@ -55,51 +52,48 @@ a,button{-webkit-tap-highlight-color:transparent}
 .card.no-pic{grid-template-columns:1fr}.card.no-pic .card-pic{display:none}
 .card-head{display:grid;align-content:center;gap:3px;min-width:0}
 .card-head strong{font-size:19px;font-weight:600;letter-spacing:-.03em;line-height:1.1}
-.card-head span{font:500 10.5px/1.3 var(--mono);letter-spacing:.09em;text-transform:uppercase;opacity:.66}
+.card-head span{font:500 10.5px/1.3 var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--ui-soft)}
 .card p{grid-column:1/-1;margin:0;font-size:14.5px;line-height:1.42;letter-spacing:-.008em}
 .card-go{grid-column:1/-1;justify-self:start;font-size:14px;font-weight:560;border-bottom:1px solid currentColor;padding-bottom:1px}
 .card-go b{font-weight:400}
-@media (hover:hover) and (pointer:fine){.card-go{display:none}}
 
-.about{width:min(560px,calc(100% - 32px));max-height:calc(100% - 32px);padding:30px 32px 26px;border:1px solid var(--ui-line);background:var(--card);color:var(--card-ui);overflow:auto}
-.about::backdrop{background:rgba(8,10,20,.42)}
+.about{width:min(560px,calc(100% - 32px));max-height:calc(100% - 32px);padding:30px 32px 26px;border:1px solid var(--ui-line);background:var(--card);color:var(--ui);overflow:auto}
+.about::backdrop{background:rgba(3,5,12,.6)}
 .about form{display:flex;justify-content:flex-end;margin:-10px -8px 0 0}
 .about-close{padding:6px 8px;font:500 11px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase}
-.about h2{margin:0 0 12px;font:500 11px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;opacity:.66}
+.about h2{margin:0 0 12px;font:500 11px/1 var(--mono);letter-spacing:.16em;text-transform:uppercase;color:var(--ui-soft)}
 .about-lead{margin:0 0 20px;font-size:21px;line-height:1.3;letter-spacing:-.025em;font-weight:520}
 .about dl{margin:0;display:grid;gap:13px}
 .about dl div{display:grid;grid-template-columns:84px 1fr;gap:14px}
-.about dt{font:500 10.5px/1.7 var(--mono);letter-spacing:.1em;text-transform:uppercase;opacity:.66}
+.about dt{font:500 10.5px/1.7 var(--mono);letter-spacing:.1em;text-transform:uppercase;color:var(--ui-soft)}
 .about dd{margin:0;font-size:14.5px;line-height:1.48}
 .about-links{display:flex;flex-wrap:wrap;gap:8px 22px;margin:22px 0 0;font-size:15px;font-weight:540}
 .about-links a{border-bottom:1px solid currentColor;padding-bottom:1px}
-.about-credit{margin:18px 0 0;font-size:12px;line-height:1.5;opacity:.62}
+.about-credit{margin:18px 0 0;font-size:12px;line-height:1.5;color:var(--ui-soft)}
 
 @media (max-width:1279px){
   .rail strong{font-size:17px}.rail small{font-size:12px}
-  .group ul{gap:10px 26px}
-  .group ul{grid-template-columns:repeat(2,auto)}
+  .group ul{grid-template-columns:repeat(2,auto);gap:10px 26px}
+}
+@media (max-width:699px),(max-aspect-ratio:3/4){
+  .home{background-image:url(assets/scene/still-tall.jpg)}
 }
 @media (max-width:699px){
   :root{--pad:20px;--pad-y:22px}
   .name{font-size:clamp(50px,16.4vw,76px);white-space:normal;line-height:.88}
   .name span{display:block}
-  .clock{position:relative;right:auto;top:auto;z-index:3;margin-top:18px;text-align:left;font-size:10.5px;gap:4px}
-  .clock b{margin-left:.4em}
-  .dial{left:var(--pad);right:auto;top:calc(var(--horizon) - 150px)}
   .links{gap:4px 16px;font-size:14.5px}
-  .shade{height:min(46vh,calc(100% - var(--horizon) + 40px))}
+  .place{position:absolute;left:var(--pad);right:auto;top:auto;bottom:calc(34% + 6px);text-align:left;font-size:10.5px;gap:3px}
+  .veil{height:52%}.shade{height:44%}
   .rail{grid-template-columns:1fr 1fr;gap:18px;bottom:max(16px,env(safe-area-inset-bottom))}
   .group ul{grid-template-columns:1fr;gap:9px}
-  .group h2{letter-spacing:.07em;white-space:nowrap}
+  .group h2{letter-spacing:.07em;white-space:nowrap;margin-bottom:9px}
   .group h2::after{display:none}
-  .rail strong{font-size:17px}
-  .rail small{font-size:12px}
-  .group h2{margin-bottom:9px}
+  .rail strong{font-size:17px}.rail small{font-size:12px}
   .card{left:var(--pad)!important;right:var(--pad);width:auto}
   .about{padding:24px 22px 22px}.about-lead{font-size:19px}.about dl div{grid-template-columns:1fr;gap:1px}
 }
-@media (max-height:520px){.role{display:none}.links{margin-top:10px}.group h2{margin-bottom:6px}}
+@media (max-height:520px){.role{display:none}.links{margin-top:10px}.group h2{margin-bottom:6px}.place span{display:none}}
 /* Moving between this page and a case study cross-fades, as the case studies already do among themselves. */
 @view-transition{navigation:auto}
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}

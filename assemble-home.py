@@ -1,10 +1,8 @@
-"""Build index.html, the one-screen home page, from home.html, home.css, home.js, scene.js and the drawings in scene/.
+"""Build index.html, the one-screen home page, from home.html, home.css and home.js. The 3D scene is scene3d.bundle.js.
 
 The facts on the rail come from PROJECTS in assemble-articles.py, so a case study and its link never disagree.
 """
-import base64
 import html
-import json
 import runpy
 from pathlib import Path
 
@@ -31,7 +29,7 @@ RAIL = [
          "dek": "A separate product inside Curator: morning briefs written for investment teams.",
          "img": "assets/work/curator-brief-to-reader.poster.webp", "go": "Read the Curator case study"},
         study("morrow", "Film and series for TV"),
-        study("flood", "Vadodara flood history", river=True),
+        study("flood", "Vadodara flood history"),
     ]),
     ("Experiments & writing", [
         study("bokuka", "Generative ink and music"),
@@ -52,45 +50,17 @@ def rail():
         for it in items:
             attrs = f'href="{esc(it["href"])}" data-name="{esc(it["name"])}" data-meta="{esc(it["meta"])}" data-dek="{esc(it["dek"])}" data-go="{esc(it["go"])}"'
             if it.get("img"): attrs += f' data-img="{esc(it["img"])}"'
-            if it.get("river"): attrs += ' data-river="1"'
             if it.get("out"): attrs += ' target="_blank" rel="noopener noreferrer"'
             rows.append(f'<li><a {attrs}><strong>{esc(it["name"])}</strong><small>{esc(it["kind"])}</small></a></li>')
         out.append(f'    <section class="group"><h2>{esc(label)}</h2><ul>{"".join(rows)}</ul></section>')
     return "\n".join(out)
 
 
-def drawings():
-    """scene/*.txt as data: per place and size, the day drawing, the night drawing and the mask."""
-    places, credits = {}, []
-    for path in sorted((root / "scene").glob("*.txt")):
-        meta, sizes, cur, part = {}, {}, None, None
-        for line in path.read_text(encoding="utf-8").split("\n"):
-            if line.startswith("== "):
-                cur, part = line[3:].strip(), "art"; sizes[cur] = {"art": [], "night": [], "mask": []}
-            elif line.startswith("-- "):
-                part = line[3:].strip()
-            elif cur is None:
-                if ":" in line: k, v = line.split(":", 1); meta[k.strip()] = v.strip()
-            else:
-                sizes[cur][part].append(line)
-        for size, s in sizes.items():
-            for k in s:
-                while s[k] and not s[k][-1].strip(): s[k].pop()
-            outline = root / "scene" / f"{path.stem}.{size}.png"      # the true outline, drawn as a flat shape under the characters
-            if outline.exists(): s["shape"] = "data:image/png;base64," + base64.b64encode(outline.read_bytes()).decode()
-        places[path.stem] = {"meta": meta, "sizes": sizes}
-        if meta.get("photo"): credits.append(meta["photo"].split(",")[0])
-    return places, credits
-
-
-places, credits = drawings()
-names = sorted(set(credits))
-credit_line = ", ".join(names[:-1]) + " and " + names[-1] if len(names) > 1 else "".join(names)
-body = read("home.html").replace("<!-- RAIL -->", rail()).replace("<!-- CREDITS -->", html.escape(credit_line) + " (Wikimedia Commons)")
+body = read("home.html").replace("<!-- RAIL -->", rail())
 esc = lambda t: t.replace("&", "&amp;").replace('"', "&quot;")
 head = (
     '<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">'
-    '<meta name="theme-color" content="#e9eef8">'
+    '<meta name="theme-color" content="#0a1226">'
     f'<meta name="description" content="{esc(DESCRIPTION)}"><link rel="canonical" href="{SITE}/">'
     f'<meta property="og:type" content="website"><meta property="og:site_name" content="Harsh Bhogayata"><meta property="og:title" content="{esc(TITLE)}">'
     f'<meta property="og:description" content="{esc(DESCRIPTION)}"><meta property="og:url" content="{SITE}/">'
@@ -99,7 +69,7 @@ head = (
     '<link rel="icon" type="image/svg+xml" href="assets/hb-favicon.svg"><link rel="apple-touch-icon" href="assets/hb-favicon.svg">'
     f"<title>{TITLE}</title><style>" + read("portfolio-font.css") + read("scene-font.css") + read("home.css") + "</style></head><body>"
 )
-page = (head + body + "<script>window.SCENE=" + json.dumps({"places": places}, separators=(",", ":")).replace("</", "<\\/") + ";</script>"
-        + "<script>" + read("scene.js") + read("home.js") + "</script></body></html>\n")
+# The scene is one bundled script (npm run scene); it stays a separate file so the page itself arrives quickly.
+page = head + body + '<script src="scene3d.bundle.js"></script><script>' + read("home.js") + "</script></body></html>\n"
 (root / "index.html").write_text(page, encoding="utf-8", newline="\n")   # the same bytes on any machine
-print(f"Built index.html ({len(page) // 1024} KB, {len(places)} places)")
+print(f"Built index.html ({len(page) // 1024} KB)")

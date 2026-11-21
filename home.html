@@ -1,12 +1,12 @@
 <main class="home" id="top">
-  <canvas id="scene-shapes" aria-hidden="true"></canvas>
-  <canvas id="scene-canvas" aria-hidden="true"></canvas>
+  <canvas id="scene3d" aria-hidden="true"></canvas>
+  <div class="veil" aria-hidden="true"></div>
 
   <header class="ident">
-    <h1 class="name" data-quiet><span>Harsh</span> <span>Bhogayata<b>.</b></span></h1>
-    <p class="role" data-quiet>Software Engineer <i>&amp;</i> Founder</p>
-    <nav class="links" aria-label="Contact and profiles" data-quiet>
-      <a class="mail" href="mailto:work.harsh.bhogayata@gmail.com">Email me</a>
+    <h1 class="name"><span>Harsh</span> <span>Bhogayata<b>.</b></span></h1>
+    <p class="role">Software Engineer <i>&amp;</i> Founder</p>
+    <nav class="links" aria-label="Contact and profiles">
+      <a class="mail" id="mail" href="mailto:work.harsh.bhogayata@gmail.com">Email me</a>
       <a href="assets/Harsh-Resume.pdf" target="_blank" rel="noopener noreferrer">Résumé</a>
       <a href="https://github.com/harshbhogayata" target="_blank" rel="noopener noreferrer">GitHub</a>
       <a href="https://www.linkedin.com/in/harshbhogayata" target="_blank" rel="noopener noreferrer">LinkedIn</a>
@@ -14,17 +14,9 @@
       <a href="https://www.researchgate.net/profile/Harsh-Bhogayata" target="_blank" rel="noopener noreferrer">ResearchGate</a>
       <button type="button" id="about-open" aria-haspopup="dialog">About</button>
     </nav>
-    <button class="clock" id="clock" type="button" data-quiet aria-label="The sky follows the time in Vadodara. Press to move through the day.">
-      <span class="clock-place">Vadodara <b id="clock-time">IST</b></span>
-      <span class="clock-sky" id="clock-sky">The sky over the city, now</span>
-    </button>
   </header>
 
-  <div class="dial" id="dial" hidden>
-    <label for="dial-range">Time in Vadodara</label>
-    <input id="dial-range" type="range" min="0" max="1439" step="5" value="720">
-    <button type="button" id="dial-now">Back to now</button>
-  </div>
+  <p class="place" id="place"><b>Sursagar, Vadodara</b><span id="hint">The boat goes round the lake by itself</span></p>
 
   <div class="shade" aria-hidden="true"></div>
   <nav class="rail" aria-label="Work">
@@ -49,6 +41,6 @@
       <div><dt>Works in</dt><dd>TypeScript, React, Next.js, React Native, SwiftUI, Python, Django, Node.js, Hono, Go, PostgreSQL, Redis, Docker, Cloudflare.</dd></div>
     </dl>
     <p class="about-links"><a href="assets/Harsh-Resume.pdf" target="_blank" rel="noopener noreferrer">Read my résumé <b aria-hidden="true">↗</b></a><a href="mailto:work.harsh.bhogayata@gmail.com">work.harsh.bhogayata@gmail.com</a></p>
-    <p class="about-credit">The skyline is Vadodara, converted to characters from photographs by <!-- CREDITS -->. The drawings are shared under CC BY-SA 4.0.</p>
+    <p class="about-credit">The lake is Sursagar in Vadodara, with the city’s landmarks gathered on its banks. The statue’s outline is taken from a photograph by Rajeswaran Sivasankar (Wikimedia Commons, CC BY-SA 3.0).</p>
   </dialog>
 </main>

@@ -1,0 +1,12 @@
+{
+  "name": "portfolio-scene",
+  "private": true,
+  "description": "Only the 3D scene on the home page needs Node: it is bundled once into scene3d.bundle.js, which the Python build then uses.",
+  "scripts": {
+    "scene": "esbuild scene3d/main.js --bundle --minify --format=iife --target=es2020 --outfile=scene3d.bundle.js"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "three": "^0.180.0"
+  }
+}
