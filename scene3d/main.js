@@ -151,11 +151,11 @@ export function start(canvas, stops, hooks = {}) {
   }
 
   /* ----- the camera: always looking north, nearly level, keeping the boat in the lower middle ----- */
-  const cam = new THREE.Vector3(), look = new THREE.Vector3(0, -0.035, -1).normalize(); let back = 200, up = 36, drift = 0;
+  const cam = new THREE.Vector3(), look = new THREE.Vector3(0, -0.035, -1).normalize(); let back = 200, up = 36, drift = 0, sharp = 1.6, slow = 0, tier = 0;
   function frame() {
     const w = canvas.clientWidth, h = canvas.clientHeight, tall = h > w;
     camera.aspect = w / h; camera.fov = tall ? 58 : w / h < 1.5 ? 44 : 38; back = tall ? 240 : 200; up = tall ? 24 : 36; camera.updateProjectionMatrix();
-    const dpr = Math.min(devicePixelRatio || 1, tall ? 2 : 1.6); renderer.setPixelRatio(dpr); renderer.setSize(w, h, false); composer.setPixelRatio(dpr); composer.setSize(w, h); stars.material.uniforms.dpr.value = dpr;
+    const dpr = Math.min(devicePixelRatio || 1, tall ? sharp + 0.4 : sharp); renderer.setPixelRatio(dpr); renderer.setSize(w, h, false); composer.setPixelRatio(dpr); composer.setSize(w, h); stars.material.uniforms.dpr.value = dpr;
     const scale = h * dpr / (2 * Math.tan(camera.fov * DEG / 2)); sparks.material.uniforms.scale.value = scale; traffic.material.uniforms.scale.value = scale;
   }
   function follow(dt, snap) {
@@ -171,6 +171,8 @@ export function start(canvas, stops, hooks = {}) {
     raf = requestAnimationFrame(tick);
     const dt = Math.min(0.05, (now - last) / 1000); last = now; clock += dt;
     steer(dt); follow(dt); live(dt); composer.render();
+    // a machine that cannot keep up gets a softer picture rather than a slow one: fewer pixels first, then no bloom
+    if (clock > 4) { slow = dt > 0.034 ? slow + dt : Math.max(0, slow - dt * 0.5); if (slow > 2.5 && tier < 3) { tier++; slow = 0; sharp = [1.6, 1.25, 1, 1][tier]; if (tier === 3) bloom.enabled = false; frame(); } }
   }
   const go = () => { cancelAnimationFrame(raf); last = performance.now(); if (running && !document.hidden) { if (still.matches) { steer(0.016); follow(0, true); live(0); composer.render(); } else raf = requestAnimationFrame(tick); } };
   addEventListener('resize', () => { frame(); if (still.matches) go(); });

@@ -33,6 +33,7 @@ The résumé PDF in `assets/` is built from `resume/resume.html`. The home page'
 - The boat tours the landing stages by itself. Arrow keys steer it, pressing the water sends it there, and choosing a link on the rail sends it to that stage. Arriving opens that part's card.
 - The camera always looks north and follows the boat.
 - Light is worked out once, when the page loads, and painted onto the buildings, so the scene costs little to draw. It stops when the tab is hidden.
+- On a machine that cannot keep up, the scene drops to fewer pixels, then gives up its bloom, rather than slowing down.
 - Where WebGL is missing a still of the scene stands in (`assets/scene/`); for visitors who ask for reduced motion the scene holds still and the boat is simply at the stage they choose.
 - Sources and licence: `scene3d/CREDITS.md`.
 

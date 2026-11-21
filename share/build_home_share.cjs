@@ -13,7 +13,7 @@ const local = process.env.LOCALAPPDATA && path.join(process.env.LOCALAPPDATA, 'm
 const executablePath = [process.env.CHROMIUM, local].find(p => p && fs.existsSync(p));
 
 (async () => {
-  const browser = await playwright.chromium.launch({ ...(executablePath ? { executablePath } : {}), args: ['--ignore-gpu-blocklist', '--enable-unsafe-swiftshader'] });   // the scene needs WebGL, with or without a graphics card
+  const browser = await playwright.chromium.launch({ ...(executablePath ? { executablePath } : {}), args: ['--ignore-gpu-blocklist', '--enable-unsafe-swiftshader', ...(process.env.CHROMIUM_ARGS || '').split(' ').filter(Boolean)] });   // the scene needs WebGL, with or without a graphics card
   const tab = await browser.newPage({ viewport: { width: 1200, height: 630 } });
   await tab.goto(pathToFileURL(path.join(root, 'index.html')).href);
   await tab.waitForFunction(() => document.documentElement.classList.contains('scene-on'), null, { timeout: 90000 });
