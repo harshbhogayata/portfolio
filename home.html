@@ -1,0 +1,54 @@
+<main class="home" id="top">
+  <canvas id="scene-shapes" aria-hidden="true"></canvas>
+  <canvas id="scene-canvas" aria-hidden="true"></canvas>
+
+  <header class="ident">
+    <h1 class="name" data-quiet><span>Harsh</span> <span>Bhogayata<b>.</b></span></h1>
+    <p class="role" data-quiet>Software Engineer <i>&amp;</i> Founder</p>
+    <nav class="links" aria-label="Contact and profiles" data-quiet>
+      <a class="mail" href="mailto:work.harsh.bhogayata@gmail.com">Email me</a>
+      <a href="assets/Harsh-Resume.pdf" target="_blank" rel="noopener noreferrer">Résumé</a>
+      <a href="https://github.com/harshbhogayata" target="_blank" rel="noopener noreferrer">GitHub</a>
+      <a href="https://www.linkedin.com/in/harshbhogayata" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+      <a href="https://medium.com/@harshmbhogayata" target="_blank" rel="noopener noreferrer">Medium</a>
+      <a href="https://www.researchgate.net/profile/Harsh-Bhogayata" target="_blank" rel="noopener noreferrer">ResearchGate</a>
+      <button type="button" id="about-open" aria-haspopup="dialog">About</button>
+    </nav>
+    <button class="clock" id="clock" type="button" data-quiet aria-label="The sky follows the time in Vadodara. Press to move through the day.">
+      <span class="clock-place">Vadodara <b id="clock-time">IST</b></span>
+      <span class="clock-sky" id="clock-sky">The sky over the city, now</span>
+    </button>
+  </header>
+
+  <div class="dial" id="dial" hidden>
+    <label for="dial-range">Time in Vadodara</label>
+    <input id="dial-range" type="range" min="0" max="1439" step="5" value="720">
+    <button type="button" id="dial-now">Back to now</button>
+  </div>
+
+  <div class="shade" aria-hidden="true"></div>
+  <nav class="rail" aria-label="Work">
+<!-- RAIL -->
+  </nav>
+
+  <aside class="card" id="card" hidden>
+    <span class="card-pic"><img id="card-img" alt="" decoding="async"></span>
+    <div class="card-head"><strong id="card-name"></strong><span id="card-meta"></span></div>
+    <p id="card-dek"></p>
+    <a class="card-go" id="card-go" href="#"><span id="card-go-label">Read the case study</span> <b aria-hidden="true">→</b></a>
+  </aside>
+
+  <dialog class="about" id="about" aria-labelledby="about-title">
+    <form method="dialog"><button class="about-close" aria-label="Close">Close <span aria-hidden="true">×</span></button></form>
+    <h2 id="about-title">About</h2>
+    <p class="about-lead">Software engineer in Vadodara, India. I build full-stack products across web, mobile, TV and backend, from the first interaction to the systems behind it.</p>
+    <dl>
+      <div><dt>Now</dt><dd>Full Stack Developer at Quantaura Design Tech, since July 2026. Built IDA GCC Desk, a Frappe and ERPNext app of 46 custom DocTypes, and EventSorted, a multi-tenant event and rental inventory product on React, Hono and Cloudflare Workers.</dd></div>
+      <div><dt>Also</dt><dd>Founder of The Curator Group, which makes Curator, a news app that keeps every source attached to the story.</dd></div>
+      <div><dt>Studied</dt><dd>Master of Computer Applications, Parul University, 2024 to 2026.</dd></div>
+      <div><dt>Works in</dt><dd>TypeScript, React, Next.js, React Native, SwiftUI, Python, Django, Node.js, Hono, Go, PostgreSQL, Redis, Docker, Cloudflare.</dd></div>
+    </dl>
+    <p class="about-links"><a href="assets/Harsh-Resume.pdf" target="_blank" rel="noopener noreferrer">Read my résumé <b aria-hidden="true">↗</b></a><a href="mailto:work.harsh.bhogayata@gmail.com">work.harsh.bhogayata@gmail.com</a></p>
+    <p class="about-credit">The skyline is Vadodara, converted to characters from photographs by <!-- CREDITS -->. The drawings are shared under CC BY-SA 4.0.</p>
+  </dialog>
+</main>

@@ -166,6 +166,8 @@ def article(i, p):
 
 
 
-(root / "work").mkdir(exist_ok=True)
-for i, p in enumerate(PROJECTS):
-    article(i, p)
+# assemble-home.py reads PROJECTS from this file without building, so the facts live in one place.
+if __name__ == "__main__":
+    (root / "work").mkdir(exist_ok=True)
+    for i, p in enumerate(PROJECTS):
+        article(i, p)
