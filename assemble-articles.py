@@ -42,13 +42,12 @@ def page(title, content, prefix, home, meta=""):
         + read(root / "site-main-header.html") + read(root / "site-menu.html") + content + read(root / "site-main.html")
         + "<script>" + read(root / "site-writing.js") + read(root / "site-main.js") + read(root / "site-articles.js") + "</script></body></html>"
     )
-    # Shared assets live at the site root; home anchors from an article go back to the home page.
-    out = re.sub(r'(src|href)="(assets/|stories\.html)', rf'\1="{prefix}\2', out)
+    # Shared assets live at the site root; the home page and the other studies are reached from inside work/.
+    out = re.sub(r'(src|href)="(assets/|index\.html)', rf'\1="{prefix}\2', out)
+    out = out.replace('href="work/', 'href="')
     out = out.replace("url(assets/", f"url({prefix}assets/").replace("url('assets/", f"url('{prefix}assets/").replace('url("assets/', f'url("{prefix}assets/')
-    out = out.replace('href="portfolio-site.html#', f'href="{home}#').replace("'portfolio-site.html#'", f"'{home}#'")
-    out = re.sub(r'href="#(about|skills|experience|work|contact|top)"', rf'href="{home}#\1"', out)
+    out = out.replace("'index.html#'", f"'{home}#'")
     out = out.replace("url:'work/", "url:'")
-    out = out.replace("'portfolio-site.html#portfolio'", "'../portfolio-site.html#portfolio'")
     return out
 
 
@@ -138,7 +137,7 @@ def article(i, p):
       {figure}
       <nav class="art-toc" aria-label="In this case study"><ol>{toc}</ol></nav>
       <div class="art-title">
-        <p class="art-crumb"><a href="../portfolio-site.html#work">Selected work</a><i aria-hidden="true"></i><span>{i + 1:02d} / {len(PROJECTS):02d}</span><a class="art-step" href="{prev['slug']}.html" aria-label="Previous: {prev['name']}">‹</a><a class="art-step" href="{nxt['slug']}.html" aria-label="Next: {nxt['name']}">›</a></p>
+        <p class="art-crumb"><a href="../index.html">Home</a><i aria-hidden="true"></i><span>{i + 1:02d} / {len(PROJECTS):02d}</span><a class="art-step" href="{prev['slug']}.html" aria-label="Previous: {prev['name']}">‹</a><a class="art-step" href="{nxt['slug']}.html" aria-label="Next: {nxt['name']}">›</a></p>
         <h1>{p['name']}<span>.</span></h1>
       </div>
     </header>
@@ -160,8 +159,9 @@ def article(i, p):
   </article>
 </main>
 """
-    (root / "work" / f"{p['slug']}.html").write_text(page(f"{p['name']} — Harsh Bhogayata", content, prefix, "../portfolio-site.html",
-             share_tags(f"{p['name']} — Harsh Bhogayata", p["standfirst"], f"work/{p['slug']}.html", p["slug"], "article")), encoding="utf-8")
+    # The built pages have always carried Windows line endings; say so, and they come out the same on any machine.
+    (root / "work" / f"{p['slug']}.html").write_text(page(f"{p['name']} — Harsh Bhogayata", content, prefix, "../index.html",
+             share_tags(f"{p['name']} — Harsh Bhogayata", p["standfirst"], f"work/{p['slug']}.html", p["slug"], "article")), encoding="utf-8", newline="\r\n")
     print(f"Built work/{p['slug']}.html ({words} words)")
 
 

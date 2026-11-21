@@ -321,20 +321,20 @@
   }
 
   /* ---------- running ---------- */
-  const listeners = []; let last = 0, told = 0, raf = 0, slowTicks = 0, gap = 100;
+  // A timer sets the pace and the browser picks the moment to paint, so the page wakes ten times a second, not sixty.
+  const listeners = []; let told = 0, raf = 0, timer = 0, slowTicks = 0, gap = 100;
+  const halt = () => { cancelAnimationFrame(raf); clearTimeout(timer); };
   function loop(now) {
-    raf = requestAnimationFrame(loop);
-    if (now - last < gap) return;
-    last = now;
+    timer = setTimeout(() => { raf = requestAnimationFrame(loop); }, gap - 8);
     if (scrub === null && now - told > 30000) { told = now; tell(); }
     lift += (liftTo - lift) * 0.16; if (Math.abs(liftTo - lift) < 0.02) lift = liftTo;
     const began = performance.now(); frame(now / 1000);
     if (performance.now() - began > 14) { if (++slowTicks > 20) gap = 180; } else slowTicks = Math.max(0, slowTicks - 1);   // ease off on a slow machine
   }
-  function start() { cancelAnimationFrame(raf); told = performance.now(); tell(); if (still.matches) frame(0); else raf = requestAnimationFrame(loop); }
+  function start() { halt(); told = performance.now(); tell(); if (still.matches) frame(0); else raf = requestAnimationFrame(loop); }
   let resizing = 0;
   addEventListener('resize', () => { clearTimeout(resizing); resizing = setTimeout(() => { measure(); start(); }, 120); });
-  document.addEventListener('visibilitychange', () => { if (document.hidden) cancelAnimationFrame(raf); else start(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) halt(); else start(); });
   still.addEventListener('change', start);
   setInterval(() => { if (still.matches && !document.hidden) { tell(); frame(0); } }, 60000);
 

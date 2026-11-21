@@ -35,7 +35,7 @@
   if (menu && !document.getElementById('about')) {
     menu.querySelectorAll('a[href^="#"]').forEach(link => {
       const target = link.getAttribute('href').slice(1);
-      if (!document.getElementById(target)) link.href = 'portfolio-site.html#' + target;
+      if (!document.getElementById(target)) link.href = 'index.html#' + target;
     });
   }
   menu?.addEventListener('keydown', event => {
@@ -81,7 +81,7 @@
     talent:{name:'Morrow',description:'A film and series app for one family’s evenings, with every copy behind one Play button.',label:'Read the Morrow case study',url:'work/morrow.html',accent:'#7358d7',signal:'press play, nothing else'},
     kalakari:{name:'Bokuka',description:'A living ink painting, drawn stroke by stroke in the browser and scored live with Web Audio.',label:'Read the Bokuka case study',url:'work/bokuka.html',accent:'#bd6845',signal:'let the ink find its line'},
     flood:{name:'Flood Archive',description:'Historical flood reports from Vadodara, organized by location on a map.',label:'Explore the Flood Archive',url:'https://vadodara-flood-archive-relief.vercel.app',accent:'#167f8b',signal:'remember where water went'},
-    portfolio:{name:'Portfolio Evolution',description:'Three versions of the same practice: from a security portfolio, to shipped products, to a system for showing the work.',label:'See how it evolved',url:'#portfolio',accent:'#a87827',signal:'follow the work taking shape'}
+    portfolio:{name:'Portfolio Evolution',description:'Three versions of the same practice: from a security portfolio, to shipped products, to a system for showing the work.',label:'See how it evolved',url:'work/evolution.html',accent:'#a87827',signal:'follow the work taking shape'}
   };
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   const mobile = window.matchMedia('(max-width: 600px)');
@@ -143,7 +143,7 @@
     $('#detail-name').textContent = project.name;
     $('#detail-title').textContent = project.description;
     $('#detail-label').textContent = project.label;
-    $('#detail-link').href = project.url === '#portfolio' && !document.getElementById('portfolio') ? 'portfolio-site.html#portfolio' : project.url;
+    $('#detail-link').href = project.url;
     const subject = 'About ' + project.name;
     const href = 'mailto:' + email + '?subject=' + encodeURIComponent(subject);
     $('#project-email').textContent = 'Ask about ' + project.name;

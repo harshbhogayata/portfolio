@@ -7,7 +7,7 @@ const { chromium } = require(path.join(__dirname, '../tools/capture/node_modules
 
 const root = path.join(__dirname, '..');
 const CARDS = [
-  { slug: 'home', label: 'Portfolio', title: 'Harsh Bhogayata', dek: 'Software engineer building full-stack products across web, mobile, TV and backend.', img: 'assets/work/portfolio-v3.webp', bg: '#eef1f8' },
+  // the home page's card is a picture of the page itself: see build_home_share.cjs
   { slug: 'curator', label: 'Case study 01', title: 'Curator', dek: 'A news app that keeps every source attached to the story.', img: 'assets/work/curator-phones.webp', bg: '#ece6da' },
   { slug: 'morrow', label: 'Case study 02', title: 'Morrow', dek: 'Apple TV’s calm on an ordinary television, with one Play button for every copy.', img: 'assets/work/morrow-home.webp', bg: '#0b0d12' },
   { slug: 'bokuka', label: 'Case study 03', title: 'Bokuka', dek: 'Ink, blossoms and live music, generated in the browser as you watch.', img: 'assets/work/bokuka-home-1920x1200.webp', bg: '#efe6d6' },

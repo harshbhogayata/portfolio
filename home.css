@@ -100,4 +100,6 @@ a,button{-webkit-tap-highlight-color:transparent}
   .about{padding:24px 22px 22px}.about-lead{font-size:19px}.about dl div{grid-template-columns:1fr;gap:1px}
 }
 @media (max-height:520px){.role{display:none}.links{margin-top:10px}.group h2{margin-bottom:6px}}
-@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+/* Moving between this page and a case study cross-fades, as the case studies already do among themselves. */
+@view-transition{navigation:auto}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}}

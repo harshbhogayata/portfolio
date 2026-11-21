@@ -5,7 +5,12 @@
   "redirects": [
     {
       "source": "/stories.html",
-      "destination": "/portfolio-site.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/portfolio-site.html",
+      "destination": "/",
       "permanent": true
     }
   ],
