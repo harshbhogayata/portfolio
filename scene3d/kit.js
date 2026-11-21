@@ -12,9 +12,10 @@ const UP = new THREE.Vector3(0, 1, 0);
 export const LAMPS = [], SPARKS = [];                      // lamps light the solids near them; sparks are the points of light you see
 const white = new THREE.DataTexture(new Uint8Array([255, 255, 255, 255]), 1, 1); white.needsUpdate = true; white.colorSpace = THREE.SRGBColorSpace;
 const black = new THREE.DataTexture(new Uint8Array([0, 0, 0, 255]), 1, 1); black.needsUpdate = true;
-export const glowing = [];                                 // materials whose lit windows breathe a little
+export const glowing = [];
+export const UNMIRRORED = new Set(), unmirrored = m => { UNMIRRORED.add(m); return m; };   // too small or too far back to show in the lake: drawn once, not twice                                 // materials whose lit windows breathe a little
 const made = new Map();
-export function painted({ map = white, emissiveMap = black, glow = 1.5, tint = 0xffffff, side = THREE.FrontSide, key = null } = {}) {
+export function painted({ map = white, emissiveMap = black, glow = 1.5, tint = 0xffffff, side = THREE.FrontSide, key = null, cut = false } = {}) {
   const id = key || (map === white && emissiveMap === black ? 'plain' + tint + side : null); if (id && made.has(id)) return made.get(id);
   const m = new THREE.ShaderMaterial({
     uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { map: { value: null }, emissiveMap: { value: null }, glow: { value: glow }, tint: { value: new THREE.Color(tint) } }]),
@@ -25,12 +26,16 @@ export function painted({ map = white, emissiveMap = black, glow = 1.5, tint = 0
       }`,
     fragmentShader: `uniform sampler2D map; uniform sampler2D emissiveMap; uniform float glow; uniform vec3 tint; varying vec3 vC; varying vec2 vUv;
       #include <fog_pars_fragment>
-      void main() { gl_FragColor = vec4(texture2D(map, vUv).rgb * tint * vC + texture2D(emissiveMap, vUv).rgb * glow, 1.0);
+      void main() { vec4 t = texture2D(map, vUv);
+      #ifdef CUT
+      if (t.a < 0.32) discard;
+      #endif
+      gl_FragColor = vec4(t.rgb * tint * vC + texture2D(emissiveMap, vUv).rgb * glow, 1.0);
       #include <fog_fragment>
       #include <tonemapping_fragment>
       #include <colorspace_fragment>
       }`,
-    vertexColors: true, fog: true, side,
+    vertexColors: true, fog: true, side: cut ? THREE.DoubleSide : side, defines: cut ? { CUT: '' } : {},
   });
   m.uniforms.map.value = map; m.uniforms.emissiveMap.value = emissiveMap; m.userData.glow = glow;
   if (emissiveMap !== black) glowing.push(m);
@@ -57,7 +62,7 @@ export class Builder {
   build() {
     for (const l of this.lights) LAMPS.push({ x: l.x, y: l.y, z: l.z, r: l.colour.r * l.power, g: l.colour.g * l.power, b: l.colour.b * l.power, reach2: l.reach * l.reach, far: l.reach * 6 });
     SPARKS.push(...this.sparks);
-    const g = new THREE.Group(); for (const [m, list] of this.bins) if (list.length) g.add(new THREE.Mesh(mergeGeometries(list.map(s => s.index ? s.toNonIndexed() : s), false), m)); return g;
+    const g = new THREE.Group(); for (const [m, list] of this.bins) if (list.length) { const mesh = new THREE.Mesh(mergeGeometries(list.map(s => s.index ? s.toNonIndexed() : s), false), m); if (UNMIRRORED.has(m)) mesh.layers.set(1); g.add(mesh); } return g;
   }
 }
 // Work out the light on every corner of every solid: a little from the sky and the moon, the rest from the lamps within reach.
@@ -71,11 +76,13 @@ export function paint(group) {
     const g = o.geometry, p = g.attributes.position, nn = g.attributes.normal, c = new Float32Array(p.count * 3); nm.getNormalMatrix(o.matrixWorld);
     for (let i = 0; i < p.count; i++) {
       v.fromBufferAttribute(p, i).applyMatrix4(o.matrixWorld); n.fromBufferAttribute(nn, i).applyMatrix3(nm).normalize();
-      const sky = 0.55 + 0.45 * n.y, m = Math.max(0, n.dot(moon)) * 0.5;
-      let r = 0.030 * sky + 0.050 * m, gg = 0.040 * sky + 0.062 * m, b = 0.075 * sky + 0.10 * m;
+      const sky = 0.55 + 0.45 * n.y, m = Math.max(0, n.dot(moon)) * 0.78;
+      // where a wall meets the ground it is darker, and so is the underside of anything that overhangs
+      const foot = Math.abs(n.y) < 0.6 ? 0.5 + 0.5 * Math.min(1, Math.max(0, (v.y - 1.5) / 3)) : n.y < -0.6 ? 0.55 : 1, lampFoot = 0.45 + 0.55 * foot;
+      let r = (0.030 * sky + 0.050 * m) * foot, gg = (0.040 * sky + 0.062 * m) * foot, b = (0.075 * sky + 0.10 * m) * foot;
       for (const l of grid.get(key(Math.floor(v.x / cell) + 2048, Math.floor(v.z / cell) + 2048)) || none) {
         const dx = l.x - v.x, dy = l.y - v.y, dz = l.z - v.z, d2 = dx * dx + dy * dy + dz * dz; if (d2 > l.far * l.far) continue;
-        const d = Math.sqrt(d2) || 1, facing = Math.max(0, ((n.x * dx + n.y * dy + n.z * dz) / d + 0.22) / 1.22), k = facing / (1 + d2 / l.reach2);
+        const d = Math.sqrt(d2) || 1, facing = Math.max(0, ((n.x * dx + n.y * dy + n.z * dz) / d + 0.22) / 1.22), k = facing / (1 + d2 / l.reach2) * lampFoot;
         r += l.r * k; gg += l.g * k; b += l.b * k;
       }
       c[i * 3] = r; c[i * 3 + 1] = gg; c[i * 3 + 2] = b;
@@ -192,4 +199,73 @@ export function words(lines, { w = 1024, h = 320, ground = '#0d1326', edge = '#f
   k.fillStyle = ground; k.fillRect(0, 0, w, h); if (edge) { k.strokeStyle = edge; k.lineWidth = 6; k.strokeRect(9, 9, w - 18, h - 18); }
   for (const { text, y, size, colour, font = 'Geist, Arial, sans-serif', weight = 600, fit = w - 108 } of lines) { let s = size; do { k.font = weight + ' ' + s + 'px ' + font; s -= 4; } while (k.measureText(text).width > fit && s > 24); k.fillStyle = colour; k.textBaseline = 'middle'; k.fillText(text, 54, y); }
   return tex(c, false);
+}
+
+/* ---------- leaves and the shade under them ---------- */
+// A leaf picture: small strokes lighter and darker than the green, so a crown reads as leaves and not as a smooth ball.
+export function leafy(rgb, key, flower = null, blooms = 520) {
+  const id = 'leaf' + key; if (made.has(id)) return made.get(id);
+  const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d'), q = rng(key.length * 31 + rgb[1]);
+  const col = k => 'rgb(' + rgb.map(v => Math.max(0, Math.min(255, v * k)) | 0).join(',') + ')'; g.fillStyle = col(0.62); g.fillRect(0, 0, 128, 128);
+  for (let i = 0; i < 1500; i++) { const x = q() * 128, y = q() * 128, k = q(); g.fillStyle = k < 0.16 ? col(0.3) : col(0.75 + q() * 0.95); g.beginPath(); g.ellipse(x, y, 1.5 + q() * 3, 0.8 + q() * 1.4, q() * 3.14, 0, 6.3); g.fill(); }
+  if (flower) for (let i = 0; i < blooms; i++) { g.fillStyle = flower[(q() * flower.length) | 0]; g.beginPath(); g.arc(q() * 128, q() * 128, 1 + q() * 2.2, 0, 6.3); g.fill(); }
+  return painted({ map: tex(c, true, 2), key: id });
+}
+// One bough's worth of leaves: a lumpy mass, fuller above than below.
+export function clump(s, x, y, z, k = 0, flat = 0.8, repeat = 2.4) {
+  const g = new THREE.IcosahedronGeometry(1, 1), p = g.attributes.position, uv = g.attributes.uv;
+  for (let i = 0; i < p.count; i++) { const X = p.getX(i), Y = p.getY(i), Z = p.getZ(i), d = 1 + 0.2 * Math.sin(X * 3.1 + k) * Math.sin(Y * 2.7 + k * 1.7) + 0.15 * Math.sin(Z * 4.3 + k * 2.3 + X * 2);
+    p.setXYZ(i, X * d * s, (Y < 0 ? Y * 0.62 : Y) * d * s * flat, Z * d * s); uv.setXY(i, uv.getX(i) * repeat * 2, uv.getY(i) * repeat); }
+  return g.translate(x, y, z);
+}
+// The soft dark under a tree or along the foot of a wall: what makes a thing stand on the ground instead of floating over it.
+let shadeM = null;
+export const shadeMat = () => shadeM || (shadeM = unmirrored(new THREE.MeshBasicMaterial({ color: 0x000000, map: spot(64, 0.05, 1.45), transparent: true, opacity: 0.62, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2, polygonOffsetUnits: -2 })));
+export const shade = (rx, rz, x, y, z) => new THREE.PlaneGeometry(rx * 2, rz * 2).rotateX(-Math.PI / 2).translate(x, y + 0.07, z);
+
+// Leaves as they are: sprays of them on cards, with the night showing between. Four different sprays to a picture.
+export function sprays(rgb, key, flower = null, blooms = 0) {
+  const id = 'spray' + key; if (made.has(id)) return made.get(id);
+  const c = document.createElement('canvas'); c.width = c.height = 256; const g = c.getContext('2d'), q = rng(key.length * 17 + rgb[0]);
+  const col = k => 'rgb(' + rgb.map(v => Math.max(0, Math.min(255, v * k)) | 0).join(',') + ')';
+  for (let cell = 0; cell < 4; cell++) { const ox = (cell % 2) * 128 + 64, oy = ((cell / 2) | 0) * 128 + 64;
+    for (let i = 0; i < 150; i++) { const a = q() * 6.283, d = Math.pow(q(), 0.6) * 50; g.fillStyle = q() < 0.2 ? col(0.4) : col(0.68 + q() * 0.95); g.beginPath(); g.ellipse(ox + Math.cos(a) * d, oy + Math.sin(a) * d * 0.88, 5 + q() * 6, 2.2 + q() * 2.6, q() * 3.14, 0, 6.3); g.fill(); }
+    if (flower) for (let i = 0; i < blooms; i++) { const a = q() * 6.283, d = Math.pow(q(), 0.6) * 50; g.fillStyle = flower[(q() * flower.length) | 0]; g.beginPath(); g.arc(ox + Math.cos(a) * d, oy + Math.sin(a) * d * 0.88, 2.4 + q() * 3.6, 0, 6.3); g.fill(); } }
+  return painted({ map: tex(c, false, 4), key: id, cut: true });
+}
+// A palm frond: a rib with leaflets down both sides, narrowing to the tip.
+export function frondMat() {
+  if (made.has('frond')) return made.get('frond');
+  const c = document.createElement('canvas'); c.width = 256; c.height = 64; const g = c.getContext('2d'); g.lineCap = 'round';
+  for (let x = 6; x < 250; x += 5) { const half = 28 * (1 - Math.pow(x / 256, 1.6)) + 3, k = 0.75 + ((x * 7) % 5) * 0.09; g.strokeStyle = 'rgb(' + [44 * k, 104 * k, 62 * k].map(v => v | 0).join(',') + ')'; g.lineWidth = 3.4; for (const s of [-1, 1]) { g.beginPath(); g.moveTo(x, 32); g.lineTo(x + 12, 32 + s * half); g.stroke(); } }
+  g.strokeStyle = 'rgb(70,120,70)'; g.lineWidth = 2.5; g.beginPath(); g.moveTo(0, 32); g.lineTo(254, 32); g.stroke();
+  return painted({ map: tex(c, false, 4), key: 'frond', cut: true });
+}
+// A card from one point to another, w wide, lying roughly level: a length of frond.
+export function strip(a, b, w, u0 = 0, u1 = 1) {
+  const A = new THREE.Vector3(...a), B = new THREE.Vector3(...b), side = new THREE.Vector3().subVectors(B, A).cross(UP).normalize().multiplyScalar(w / 2), g = new THREE.BufferGeometry();
+  const p = [A.clone().sub(side), A.clone().add(side), B.clone().add(side), B.clone().sub(side)], P = [], order = [0, 1, 2, 0, 2, 3], uv = [[u0, 0], [u0, 1], [u1, 1], [u1, 0]], U = [], N = [];
+  for (const i of order) { P.push(p[i].x, p[i].y, p[i].z); U.push(...uv[i]); N.push(0, 1, 0); }
+  g.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); g.setAttribute('normal', new THREE.Float32BufferAttribute(N, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(U, 2)); return g;
+}
+// The head of a tree: n cards of leaves set about an ellipsoid. Each card takes the light of the crown's surface where it sits, so the crown is lit as one thing.
+export function crown(x, y, z, rx, ry, rz, n, seed, size = 2.8) {
+  const q = rng(seed * 13 + 5), P = [], N = [], U = [], f = new THREE.Vector3(), right = new THREE.Vector3(), up = new THREE.Vector3(), c = new THREE.Vector3(), v = new THREE.Vector3();
+  for (let i = 0; i < n; i++) {
+    const u = q() * 2 - 1, a = q() * 6.283, s = Math.sqrt(1 - u * u), k = 0.5 + q() * 0.55, dy = u < -0.25 ? u * 0.45 : u, w = size * (0.72 + q() * 0.6) / 2, cell = (q() * 4) | 0, u0 = (cell % 2) * 0.5, v0 = ((cell / 2) | 0) * 0.5;
+    c.set(x + Math.cos(a) * s * rx * k, y + dy * ry * k, z + Math.sin(a) * s * rz * k);
+    f.set(Math.cos(a) * s + (q() - 0.5) * 1.1, dy + (q() - 0.5) * 1.1, Math.sin(a) * s + (q() - 0.5) * 1.1).normalize(); right.crossVectors(f, Math.abs(f.y) > 0.9 ? new THREE.Vector3(1, 0, 0) : UP).normalize(); up.crossVectors(right, f);
+    const nx = Math.cos(a) * s, ny = dy + 0.3, nz = Math.sin(a) * s, nl = Math.hypot(nx, ny, nz) || 1;
+    for (const [sx, sy] of [[-1, -1], [1, -1], [1, 1], [-1, -1], [1, 1], [-1, 1]]) { v.copy(c).addScaledVector(right, sx * w).addScaledVector(up, sy * w); P.push(v.x, v.y, v.z); N.push(nx / nl, ny / nl, nz / nl); U.push(u0 + (sx + 1) * 0.25, v0 + (sy + 1) * 0.25); }
+  }
+  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); g.setAttribute('normal', new THREE.Float32BufferAttribute(N, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(U, 2)); return g;
+}
+// The pool of light a lamp lays on the ground under it.
+const pools = new Map();
+export const poolMat = (r = 1, g = 0.76, b = 0.46) => { const k = r + ',' + g + ',' + b; if (!pools.has(k)) pools.set(k, unmirrored(new THREE.MeshBasicMaterial({ color: new THREE.Color(r, g, b), map: spot(64, 0.02, 1.1), transparent: true, opacity: 0.34, depthWrite: false, blending: THREE.AdditiveBlending, polygonOffset: true, polygonOffsetFactor: -3, polygonOffsetUnits: -3 }))); return pools.get(k); };
+// A spire or a dome with ribs up it: the cross-section is a star, not a circle.
+export function ribbed(pts, ribs = 16, depth = 0.1) {
+  const g = new THREE.LatheGeometry(pts, ribs * 2), p = g.attributes.position, n = pts.length;
+  for (let i = 0; i < p.count; i++) if (((i / n) | 0) % 2) { p.setX(i, p.getX(i) * (1 - depth)); p.setZ(i, p.getZ(i) * (1 - depth)); }
+  const flat = g.toNonIndexed(); flat.computeVertexNormals(); return plain(flat);
 }

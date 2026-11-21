@@ -23,8 +23,7 @@
     card.hidden = false;
     const r = s.el.getBoundingClientRect(), w = card.offsetWidth, pad = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--pad')) || 20, onRail = rail.contains(s.el);
     card.style.left = Math.max(pad, Math.min(innerWidth - w - pad, r.left - 14)) + 'px';
-    if (phone.matches && place) { card.style.bottom = 'auto'; card.style.top = place.getBoundingClientRect().top + 'px'; }   // on a phone it takes the place of the lake's own label, and the boat stays in sight
-    else if (onRail) { card.style.top = 'auto'; card.style.bottom = innerHeight - rail.getBoundingClientRect().top + 14 + 'px'; }   // above the whole rail, so it never sits on a label
+    if (onRail || phone.matches) { card.style.top = 'auto'; card.style.bottom = innerHeight - rail.getBoundingClientRect().top + (phone.matches ? 12 : 14) + 'px'; }   // above the whole rail, so it never sits on a label; on a phone that is where the lake's own label was
     else { card.style.bottom = 'auto'; card.style.top = r.bottom + 14 + 'px'; }
     requestAnimationFrame(() => card.classList.add('is-on'));
     links.forEach(l => l.classList.toggle('is-open', l === s.el)); rail.classList.toggle('has-open', onRail);
@@ -59,6 +58,10 @@
     about.addEventListener('click', e => { if (e.target === about) about.close(); });
   }
 
+  // the list's height, for whatever sits just above it
+  const measure = () => document.documentElement.style.setProperty('--rail-h', Math.round(innerHeight - rail.getBoundingClientRect().top) + 'px');
+  measure(); addEventListener('resize', measure); if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+
   // the scene, where the browser can draw it
   const able = (() => { try { const c = document.createElement('canvas'); return !!(c.getContext('webgl2') || c.getContext('webgl')); } catch (e) { return false; } })();
   if (canvas && able && window.Scene3D) {
@@ -66,12 +69,13 @@
       scene = window.Scene3D.start(canvas, stops.map(s => ({ name: s.name, group: s.group })), {
         arrive: i => { docked = stops[i]; settle(); },
         leave: () => { docked = null; settle(); },
-        band: () => [ident.getBoundingClientRect().bottom + 4, rail.getBoundingClientRect().top - 6],   // the open picture between the words and the rail
+        band: () => [ident.getBoundingClientRect().bottom + 4, (phone.matches && place ? place.getBoundingClientRect().top : rail.getBoundingClientRect().top) - 6],   // the open picture between the words above and the label or the rail below
       });
       document.documentElement.classList.add('scene-on');
       const touch = matchMedia('(pointer:coarse)').matches;
       if (hint) hint.textContent = touch ? 'Tap the water to sail there' : 'Arrow keys steer · press the water to sail there';
       canvas.addEventListener('pointerdown', () => { if (peek) { peek = null; settle(); } });
+      const read = () => place && phone.matches && place.classList.add('is-gone'); setTimeout(read, 9000); canvas.addEventListener('pointerdown', read, { once: true });   // on a phone the hint gives the lake back once it has been read
       window.Lake = scene;
     } catch (e) { scene = null; }
   }

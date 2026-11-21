@@ -1,13 +1,13 @@
 // The other places gathered on the banks. Each is built facing south at the origin; main.js sets it down and turns it.
 import * as THREE from 'three';
-import { Builder, painted, lit, wall, box, slab, drum, dome, chhatri, arch, ball, cone, rod, plain, facade, rng, WARM, LAMP, COOL } from './kit.js';
+import { Builder, painted, lit, wall, box, slab, drum, dome, chhatri, arch, ball, cone, rod, plain, facade, leafy, clump, shade, shadeMat, sprays, crown, ribbed, rng, WARM, LAMP, COOL } from './kit.js';
 
 const gold = () => lit(1.9, 1.35, 0.42), globe = () => lit(1.8, 1.4, 0.8);
 
 /* Kirti Mandir: the Gaekwads' memorial. A tall curved spire crowned with the sun, the moon and the earth, an open pavilion on either side. */
 export function kirtiMandir() {
   const tile = facade({ cols: 6, rows: 2, lit: 0.16, seed: 9, stone: [208, 196, 172], opening: 0.36, jali: 0.5 }), T = { u: 6 * 4.4, v: 2 * 8.5 };
-  const S = painted({ map: tile.map, emissiveMap: tile.emissiveMap, glow: 1.3, key: 'kirti' }), D = painted({ tint: 0xd9d0bb }), G = lit(1.25, 0.8, 0.36), b = new Builder();
+  const S = painted({ map: tile.map, emissiveMap: tile.emissiveMap, glow: 1.3, key: 'kirti' }), D = painted({ tint: 0xd9d0bb }), G = lit(0.74, 0.43, 0.17), b = new Builder();
   b.put(S, wall(40, 17, 26, 0, 0, -13, T), wall(22, 5, 16, 0, 17, -12, T, 0.3)); b.put(D, box(42, 0.7, 28, 0, 8.3, -13), box(43, 0.8, 29, 0, 17, -13), box(24, 0.6, 18, 0, 22, -12), box(46, 1, 32, 0, 0, -13));
   for (let x = -20.6; x <= 20.6; x += 1.4) b.put(D, slab(0.2, 0.8, 0.2, x, 17.8, 1.1)); b.put(D, slab(42, 0.14, 0.22, 0, 18.6, 1.1));
   for (let i = 0; i < 6; i++) b.put(D, slab(12 - i * 0.5, 0.26, 1, 0, 0.9 - i * 0.2, 1 + i));                                  // the steps
@@ -19,8 +19,8 @@ export function kirtiMandir() {
     for (const cz of [-1, 1]) b.put(D, chhatri(1.6, 1.7, sx * 20, 17.8, -13 + cz * 11.5));
   }
   // the shikhara, in ribbed stone
-  const pts = []; for (let i = 0; i <= 22; i++) { const t = i / 22; pts.push(new THREE.Vector2(Math.max(0.5, 9.2 * (1 - Math.pow(t, 1.9) * 0.93)), 20 * t)); }
-  b.put(D, plain(new THREE.LatheGeometry(pts, 16)).translate(0, 22.6, -12), drum(1.9, 1.1, 0, 42.6, -12, 12), ball(1.1, 0, 44.7, -12));
+  const pts = [], grey = painted({ tint: 0xc9c2b2 }); for (let i = 0; i <= 22; i++) { const t = i / 22, rr = Math.max(0.5, 9.2 * (1 - Math.pow(t, 1.9) * 0.93)); pts.push(new THREE.Vector2(rr, 20 * t)); if (i % 3 === 2 && i < 21) pts.push(new THREE.Vector2(rr * 1.06, 20 * t + 0.05), new THREE.Vector2(rr * 1.06, 20 * t + 0.4), new THREE.Vector2(rr * 0.99, 20 * t + 0.45)); }   // a band every few courses
+  b.put(grey, ribbed(pts, 16, 0.085).translate(0, 22.6, -12), ribbed([[0.02, 0], [1.7, 0.1], [2.4, 0.6], [1.7, 1.1], [0.02, 1.2]].map(p => new THREE.Vector2(...p)), 12, 0.16).translate(0, 42.5, -12)); b.put(D, ball(1.0, 0, 44.5, -12));
   for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; b.put(D, dome(1.3, 2.2, Math.cos(a) * 8.2, 22.6, -12 + Math.sin(a) * 8.2, { seg: 8 })); }   // little spires round its foot
   b.put(gold(), plain(new THREE.TorusGeometry(1.0, 0.16, 6, 14, Math.PI)).rotateZ(Math.PI).translate(0, 47.2, -12), ball(0.75, 0, 48.3, -12), ball(0.5, 0, 46.2, -12, 8));
   for (let x = -16; x <= 16; x += 8) b.light(x, 0.6, 16, LAMP, 0.34, 15);
@@ -30,12 +30,13 @@ export function kirtiMandir() {
 
 /* Mandvi Gate: the pavilion at the middle of the old city. Three arches a side, three storeys stepping in, a clock, a round tower at one corner. */
 export function mandvi() {
-  const D = painted({ tint: 0xe6e0d2 }), G = lit(1.25, 0.8, 0.36), W = painted({ tint: 0x6b4a36 }), b = new Builder();
-  b.put(D, box(34, 10.5, 34, 0, 0, -17), box(35.5, 1.6, 35.5, 0, 10.5, -17));
+  const tile = facade({ cols: 6, rows: 2, lit: 0.5, seed: 17, stone: [228, 206, 160], opening: 0.46, pointed: true, jali: 0.5 }), T = { u: 6 * 2.5, v: 2 * 5.6 }, S = painted({ map: tile.map, emissiveMap: tile.emissiveMap, glow: 1.4, key: 'mandvi' });
+  const D = painted({ tint: 0xeadfc4 }), G = lit(0.74, 0.43, 0.17), W = painted({ tint: 0x6b4a36 }), b = new Builder();
+  b.put(S, wall(34, 10.5, 34, 0, 0, -17, { u: 34 / 3, v: 21 }, 0.02)); b.put(D, box(35.5, 1.6, 35.5, 0, 10.5, -17));
   for (const x of [-10.5, 0, 10.5]) { b.put(G, arch(7.6, 8.2, x, 0.3, 0.08, 0.55)); const side = arch(7.6, 8.2, 0, 0.3, 0, 0.55).rotateY(Math.PI / 2).translate(17.08, 0, -17 + x); b.put(G, side, side.clone().rotateY(Math.PI).translate(0, 0, -34)); }
   for (let x = -17; x <= 17; x += 1.7) b.put(D, slab(0.4, 0.5, 0.6, x, 9.9, 0.3));                                             // the brackets under the cornice
   let y = 12.1; for (const [w, h] of [[21, 6.2], [14, 5.6], [7, 4.8]]) {                                                      // three storeys, each smaller, each under a wide roof and behind a rail
-    b.put(D, box(w, h, w, 0, y, -17)); b.put(W, slab(w - 1.4, h * 0.34, w + 0.1, 0, y + h * 0.56, -17), slab(w + 0.1, h * 0.34, w - 1.4, 0, y + h * 0.56, -17));
+    b.put(S, wall(w, h, w, 0, y, -17, { u: T.u, v: h * 2 }, 0.04));
     b.put(D, box(w + 4.4, 0.5, w + 4.4, 0, y + h, -17)); for (let px = -w / 2 - 1.6; px <= w / 2 + 1.6; px += 1.3) b.put(W, slab(0.1, 1, 0.1, px, y, -17 + w / 2 + 1.7)); b.put(W, slab(w + 3.4, 0.1, 0.1, 0, y + 1, -17 + w / 2 + 1.7)); y += h + 0.5;
   }
   b.put(D, slab(2.6, 2.6, 2.6, 0, y, -17), dome(1.7, 1.6, 0, y + 2.6, -17, { seg: 8, swell: 0 })); b.put(gold(), ball(0.3, 0, y + 5, -17, 8));
@@ -50,7 +51,7 @@ export function mandvi() {
 /* Nyay Mandir: the old court, which in the real city does stand on Sursagar's bank. A long arcaded front, a dome over the middle, a tower at each end. */
 export function nyayMandir() {
   const tile = facade({ cols: 8, rows: 2, lit: 0.26, seed: 15, stone: [196, 150, 112], opening: 0.46, pointed: true, jali: 0.1 }), T = { u: 8 * 3.4, v: 2 * 7 };
-  const S = painted({ map: tile.map, emissiveMap: tile.emissiveMap, glow: 1.4, key: 'nyay' }), D = painted({ tint: 0xd8c2a0 }), roof = painted({ tint: 0x8b5a44 }), G = lit(1.25, 0.8, 0.36), b = new Builder();
+  const S = painted({ map: tile.map, emissiveMap: tile.emissiveMap, glow: 1.4, key: 'nyay' }), D = painted({ tint: 0xd8c2a0 }), roof = painted({ tint: 0x8b5a44 }), G = lit(0.74, 0.43, 0.17), b = new Builder();
   b.put(S, wall(72, 14, 24, 0, 0, -12, T), wall(18, 18.5, 28, 0, 0, -11, T, 0.2)); b.put(D, box(74, 0.6, 26, 0, 6.9, -12), box(75, 0.8, 27, 0, 14, -12), box(20, 0.8, 30, 0, 18.5, -11), box(76, 1, 30, 0, 0, -12));
   for (let x = -36; x <= 36; x += 1.5) if (Math.abs(x) > 10) b.put(D, slab(0.2, 0.8, 0.2, x, 14.8, 0.4));
   b.put(G, arch(7, 10.5, 0, 1, 3.08, 0.5), arch(2.4, 4.6, -5.6, 9.4, 3.08, 0.5), arch(2.4, 4.6, 5.6, 9.4, 3.08, 0.5));
@@ -68,7 +69,7 @@ export function nyayMandir() {
 /* The Arts Faculty of the university: brick and stone in bands, and one of the largest masonry domes in India over the middle. */
 export function artsDome() {
   const tile = facade({ cols: 8, rows: 3, lit: 0.24, seed: 21, stone: [178, 104, 78], shadow: [40, 24, 20], opening: 0.44, jali: 0.15 }), T = { u: 8 * 3.2, v: 3 * 5.4 };
-  const S = painted({ map: tile.map, emissiveMap: tile.emissiveMap, glow: 1.4, key: 'arts' }), D = painted({ tint: 0xe0cfae }), brick = painted({ tint: 0xb46a50 }), G = lit(1.25, 0.8, 0.36), b = new Builder();
+  const S = painted({ map: tile.map, emissiveMap: tile.emissiveMap, glow: 1.4, key: 'arts' }), D = painted({ tint: 0xe0cfae }), brick = painted({ tint: 0xb46a50 }), G = lit(0.74, 0.43, 0.17), b = new Builder();
   b.put(S, wall(30, 19, 30, 0, 0, -15, T), wall(24, 11, 20, -27, 0, -12, T, 0.3), wall(24, 11, 20, 27, 0, -12, T, 0.5));
   b.put(D, box(31.4, 0.7, 31.4, 0, 19, -15), box(25.2, 0.6, 21.2, -27, 11, -12), box(25.2, 0.6, 21.2, 27, 11, -12), box(82, 1, 34, 0, 0, -14));
   for (const y of [5.4, 10.8]) b.put(D, box(30.8, 0.4, 30.8, 0, y, -15)); b.put(D, box(24.8, 0.4, 20.8, -27, 5.4, -12), box(24.8, 0.4, 20.8, 27, 5.4, -12));
@@ -131,11 +132,12 @@ export function kalaGhoda() {
 
 /* A banyan, the tree the city is named for: many trunks, roots hanging from the boughs, a stone seat round the foot, lanterns in the branches. */
 export function banyan(seed = 4) {
-  const bark = painted({ tint: 0x6a5846 }), leaf = painted({ tint: 0x1d4630 }), leaf2 = painted({ tint: 0x2a5a3a }), stone = painted({ tint: 0xa09684 }), b = new Builder(), r = rng(seed);
+  const bark = painted({ tint: 0x6a5846 }), leaf = leafy([30, 70, 46], 'in'), leaf2 = leaf, stone = painted({ tint: 0xa09684 }), b = new Builder(), r = rng(seed);
   b.put(stone, drum(8.5, 1.1, 0, 0, 0, 20), drum(9.3, 0.3, 0, 1.1, 0, 20));
   for (let i = 0; i < 7; i++) { const a = r() * 6.28, d = i ? 1.2 + r() * 3 : 0, x = Math.cos(a) * d, z = Math.sin(a) * d; b.put(bark, rod([x, 1.2, z], [x * 1.9 + (r() - 0.5) * 2, 11 + r() * 3, z * 1.9 + (r() - 0.5) * 2], i ? 0.5 + r() * 0.5 : 1.3, 7)); }
   for (let i = 0; i < 9; i++) { const a = i / 9 * 6.28 + r(), d = 9 + r() * 9; b.put(bark, rod([Math.cos(a) * 2, 10, Math.sin(a) * 2], [Math.cos(a) * d, 11.5 + r() * 3, Math.sin(a) * d], 0.34, 5)); }      // boughs
-  for (let i = 0; i < 26; i++) { const a = r() * 6.28, d = 4 + r() * 15, s = 3.6 + r() * 3.4; b.put(r() < 0.5 ? leaf : leaf2, plain(new THREE.IcosahedronGeometry(s, 1)).scale(1.15, 0.7, 1.15).translate(Math.cos(a) * d, 13.5 + r() * 5, Math.sin(a) * d)); }
+  for (let i = 0; i < 9; i++) { const a = r() * 6.28, d = 3 + r() * 11; b.put(leaf, clump(4.6 + r() * 2, Math.cos(a) * d, 14.5 + r() * 3, Math.sin(a) * d, i, 0.6, 3.4)); }   // the dark inside the head
+  b.put(sprays([44, 100, 62], 'a'), crown(0, 16.6, 0, 20, 6.4, 20, 130, seed, 4.6)); b.put(sprays([58, 116, 70], 'b'), crown(0, 17.6, 0, 15, 5.4, 15, 60, seed + 3, 4.2)); b.put(shadeMat(), shade(24, 24, 0, 0, 0));
   for (let i = 0; i < 46; i++) { const a = r() * 6.28, d = 5 + r() * 13, x = Math.cos(a) * d, z = Math.sin(a) * d, top = 11 + r() * 2; b.put(bark, rod([x, top, z], [x + (r() - 0.5) * 0.6, d > 9.5 ? 0 : 1.3 + r() * 5, z + (r() - 0.5) * 0.6], 0.05 + r() * 0.07, 4)); }   // roots hanging down
   for (let i = 0; i < 16; i++) { const a = r() * 6.28, d = 3 + r() * 13, x = Math.cos(a) * d, z = Math.sin(a) * d, y = 6.5 + r() * 3.5; b.put(bark, rod([x, y, z], [x, 11.5, z], 0.03, 3)); b.put(lit(2.0, 1.3, 0.5), ball(0.24, x, y, z, 6)); b.light(x, y, z, WARM, 0.5, 4.2, 1.9); }   // lanterns
   b.light(0, 2.4, 7, WARM, 0.5, 8).light(0, 2.4, -7, WARM, 0.4, 8);

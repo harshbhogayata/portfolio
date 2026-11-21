@@ -1,7 +1,7 @@
 // The ordinary city behind the banks: blocks of flats with tanks and stair heads on their roofs, shop fronts lit at street level,
 // and among them the things that make an Indian skyline: a temple spire, a minaret, a water tower, masts with a red light, hoardings.
 import * as THREE from 'three';
-import { Builder, painted, lit, wall, slab, drum, dome, ball, cone, rod, plain, block, rng, at, R, DEG, WARM, LAMP, COOL, RED, TEAL, ROSE } from './kit.js';
+import { Builder, painted, lit, wall, slab, drum, dome, ball, cone, rod, plain, block, unmirrored, rng, at, R, DEG, WARM, LAMP, COOL, RED, TEAL, ROSE } from './kit.js';
 import { free } from './shore.js';
 
 const south = deg => { const a = ((deg % 360) + 360) % 360; return a > 204 && a < 336; };
@@ -9,7 +9,7 @@ const south = deg => { const a = ((deg % 360) + 360) % 360; return a > 204 && a 
 export function town() {
   const w = new Builder(), r = rng(5), T = { u: 8 * 3.3, v: 8 * 3.2 };
   const kinds = [[84, 90, 110], [104, 94, 84], [72, 84, 104], [112, 104, 96]].map((c, i) => { const t = block({ seed: 40 + i, lit: 0.13 + i * 0.04, wall: c }); return painted({ map: t.map, emissiveMap: t.emissiveMap, glow: 1.3, key: 'block' + i }); });
-  const roof = painted({ tint: 0x4a4c58 }), tank = painted({ tint: 0x1c1d24 }), tin = painted({ tint: 0x6a6f7c }), iron = painted({ tint: 0x30323a });
+  const roof = unmirrored(painted({ tint: 0x4a4c58 })), tank = unmirrored(painted({ tint: 0x1c1d24 })), tin = unmirrored(painted({ tint: 0x6a6f7c })), iron = unmirrored(painted({ tint: 0x30323a }));
   const signs = [lit(1.9, 1.2, 0.5), lit(1.8, 0.35, 0.3), lit(0.4, 1.6, 1.4), lit(1.7, 0.5, 1.1), lit(1.5, 1.6, 1.8), lit(0.5, 1.5, 0.5)], signLight = [WARM, RED, TEAL, ROSE, COOL, TEAL];
   let built = 0;
   for (let i = 0; i < 620 && built < 430; i++) {

@@ -19,7 +19,7 @@ It writes `index.html` and `work/*.html`.
 |---|---|
 | The home page's words, layout and behaviour | `home.html`, `home.css`, `home.js` |
 | The links on the rail and their cards | `RAIL` in `assemble-home.py` (case-study facts come from `PROJECTS` in `assemble-articles.py`) |
-| The 3D scene | `scene3d/*.js` (`main.js` assembles it; `palace.js`, `places.js`, `shore.js`, `town.js`, `lake.js` build the parts; `kit.js` is the toolkit), then `npm run scene` |
+| The 3D scene | `scene3d/*.js` (`main.js` assembles it; `palace.js`, `places.js`, `more.js`, `shore.js`, `town.js`, `lake.js` build the parts; `kit.js` is the toolkit), then `npm run scene` |
 | The case studies | `articles/` and the `site-*` fragments |
 
 The scene is the only part that needs Node. `npm install` once, then `npm run scene` bundles it with three.js into `scene3d.bundle.js`, which is committed, so the Python build and the deploy need nothing else.
@@ -28,12 +28,13 @@ The résumé PDF in `assets/` is built from `resume/resume.html`. The home page'
 
 ## The scene
 
-- The lake is Sursagar, with the Sarveshwar Mahadev statue on its island. Gathered on its banks are Laxmi Vilas Palace, Kirti Mandir, Mandvi Gate, Nyay Mandir, the Arts Faculty dome, the Raopura clock tower, EME Temple, Kala Ghoda and a banyan. Only Nyay Mandir stands by the real lake; the rest are brought together here.
-- Round the water: the walk with its rail, ghats, lamp posts, benches, food carts, people, autos, strings of bulbs, a road with traffic; on it, lamps afloat, a fountain, pedal boats.
+- The lake is Sursagar, with the Sarveshwar Mahadev statue on its island and Nandi sitting before it. Gathered on its banks are Laxmi Vilas Palace, Kirti Mandir, Mandvi Gate, Khanderao Market, Lehripura Gate, Nyay Mandir, the Music College, the Arts Faculty dome, the Raopura clock tower, EME Temple, Kala Ghoda, Sayaji Baug with the Baroda Museum behind it, and a banyan. Nyay Mandir, the Music College and Lehripura Gate stand by the real lake; the rest are brought together here.
+- Between the palace and Kirti Mandir is a garba ground: a mast with strings of bulbs, and the dancers going round the lamp in rings. On the near bank are the roofs of the old city. Pavagadh stands on the horizon to the north-east, with the lights of the climb.
+- Round the water: the walk with its rail, ghats, lamp posts, benches, food carts, people, autos, strings of bulbs, neem, peepal, ashoka, gulmohar and amaltas, a children's train, a road with traffic; on it, lamps afloat, lotus, a fountain, pedal boats. Now and then, fireworks behind the palace.
 - The boat tours the landing stages by itself. Arrow keys steer it, pressing the water sends it there, and choosing a link on the rail sends it to that stage. Arriving opens that part's card.
 - The camera always looks north and follows the boat.
 - Light is worked out once, when the page loads, and painted onto the buildings, so the scene costs little to draw. It stops when the tab is hidden.
-- On a machine that cannot keep up, the scene drops to fewer pixels, then gives up its bloom, rather than slowing down.
+- Small things and the near bank are left out of the lake's mirror, so they are drawn once and not twice. On a machine that cannot keep up, the scene drops to fewer pixels, mirrors the lake every other frame, then gives up its bloom, rather than slowing down.
 - Where WebGL is missing a still of the scene stands in (`assets/scene/`); for visitors who ask for reduced motion the scene holds still and the boat is simply at the stage they choose.
 - Sources and licence: `scene3d/CREDITS.md`.
 

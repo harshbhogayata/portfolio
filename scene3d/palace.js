@@ -3,11 +3,12 @@
 // three domed pavilions on the left wing, three great bays on the right.
 import * as THREE from 'three';
 import { Builder, painted, lit, wall, box, slab, drum, dome, chhatri, arch, ball, cone, rod, facade, rng, WARM, LAMP, COOL } from './kit.js';
+import { palm } from './shore.js';
 
 export function palace() {
   const tile = facade({ cols: 8, rows: 4, lit: 0.22, seed: 3 }), T = { u: 8 * 3.3, v: 4 * 6 };
   const S = painted({ map: tile.map, emissiveMap: tile.emissiveMap, glow: 1.5, key: 'palace' }), D = painted({ tint: 0xdcc096 }), dark = painted({ tint: 0x9b8158 });
-  const G = lit(1.3, 0.82, 0.36), gold = lit(1.9, 1.35, 0.42), b = new Builder(), r = rng(8);
+  const G = lit(0.74, 0.43, 0.17), gold = lit(1.9, 1.35, 0.42), b = new Builder(), r = rng(8);
   // one stretch of the building: its wall, a string course at each floor, a roof edge with a balustrade, pilasters, and balconies on the first floor
   const part = (x0, x1, h, d, zf, { cupolas = true, balconies = true } = {}) => {
     const w = x1 - x0, x = (x0 + x1) / 2, z = zf - d / 2;
@@ -75,13 +76,13 @@ export function palace() {
     b.put(path, drum(5.2, 0.7, fx, 1.6, 24, 16), drum(1.1, 1.3, fx, 2.3, 24, 10)); b.put(water, plain2(new THREE.CircleGeometry(4.7, 20)).rotateX(-Math.PI / 2).translate(fx, 2.32, 24));
     b.light(fx, 3.2, 24, COOL, 0.8, 5); for (let i = 0; i < 14; i++) b.spark(fx + (r() - 0.5) * 1.4, 3.6 + r() * 3.6, 24 + (r() - 0.5) * 1.4, COOL, 0.9, 1);
   }
-  for (let x = -70; x <= 70; x += 14) if (Math.abs(x - 12.5) > 8) { const z = 17 + (Math.abs(x) % 28 ? 0 : 3); b.put(trunk, rod([x, 1.6, z], [x + 0.5, 9.6, z + 0.3], 0.3, 6)); for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; b.put(leaf, rod([x + 0.5, 9.5, z + 0.3], [x + 0.5 + Math.cos(a) * 3.6, 8.2 + (i % 2) * 0.7, z + 0.3 + Math.sin(a) * 3.6], 0.22, 4)); } b.put(leaf, ball(0.8, x + 0.5, 9.6, z + 0.3, 6)); }   // palms
+  { const pm = [palm(4), palm(5), palm(6)]; let i = 0; for (let x = -70; x <= 70; x += 14) if (Math.abs(x - 12.5) > 8) { const z = 17 + (Math.abs(x) % 28 ? 0 : 3); b.stamp(pm[i++ % 3], x, z, i * 1.3, 1, 1.6); } }   // palms along the front
   for (let x = -76; x <= 76; x += 4) if (Math.abs(x - 12.5) > 5) b.put(leaf, slab(3.6, 1.3, 1.5, x, 1.6, 38.2));                // the hedge along the road
   for (const sx of [-5.2, 5.2]) { b.put(D, slab(1.8, 5.4, 1.8, 12.5 + sx, 1.5, 38.4), slab(2.3, 0.4, 2.3, 12.5 + sx, 6.9, 38.4), dome(0.9, 1.1, 12.5 + sx, 7.3, 38.4, { seg: 8 })); b.put(lit(1.8, 1.4, 0.8), ball(0.34, 12.5 + sx, 6.3, 39.5, 8)); b.light(12.5 + sx, 6.3, 39.8, LAMP, 0.8, 5, 2.4); }
 
   // its floodlights: a row in the grass before the front, and a few higher for the tower and the domes
-  for (let x = -72; x <= 72; x += 9) b.light(x, 0.6, 20, WARM, 0.36, 17);
-  b.light(tx, 24, 14, WARM, 0.55, 13).light(tx, 40, 11, WARM, 0.5, 10).light(tx, 52, 9, WARM, 0.4, 8).light(12.5, 30, 16, WARM, 0.7, 13).light(12.5, 40, 12, WARM, 0.45, 10).light(58, 20, 14, WARM, 0.4, 9).light(-46, 21, 13, WARM, 0.4, 9).light(-58, 20, 12, WARM, 0.3, 8).light(-33, 20, 12, WARM, 0.3, 8);
+  for (let x = -72; x <= 72; x += 9) b.light(x, 0.6, 20, LAMP, 0.3, 12);            // floodlights at the foot: bright below, falling away up the walls
+  b.light(tx, 24, 14, LAMP, 0.40, 13).light(tx, 40, 11, LAMP, 0.36, 10).light(tx, 52, 9, LAMP, 0.29, 8).light(12.5, 30, 16, LAMP, 0.50, 13).light(12.5, 40, 12, LAMP, 0.32, 10).light(58, 20, 14, LAMP, 0.29, 9).light(-46, 21, 13, LAMP, 0.29, 9).light(-58, 20, 12, LAMP, 0.22, 8).light(-33, 20, 12, LAMP, 0.22, 8);
   return b;
 }
 const plain2 = g => { const uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, 0.004, 0.004); return g; };

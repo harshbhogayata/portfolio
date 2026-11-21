@@ -13,6 +13,7 @@ import { kirtiMandir, mandvi, nyayMandir, artsDome, clockTower, emeTemple, kalaG
 import { shore, claim } from './shore.js';
 import { town } from './town.js';
 import { island, statue, afloat, pedalBoats, boat } from './lake.js';
+import { khanderao, lehripura, musicCollege, museum, oldCity, garba, lotus } from './more.js';
 
 const ANGLES = [126, 102, 78, 54, 28, 6, -16, -38, 162, -90];   // where each landing stage sits, in the order the page lists its parts
 const TOUR = [9, 8, 0, 1, 2, 3, 4, 5, 6, 7];               // the round trip: from the home jetty, clockwise
@@ -40,32 +41,49 @@ export function start(canvas, stops, hooks = {}) {
     vertexShader: 'attribute float size; attribute float phase; uniform float time; uniform float dpr; varying float tw; void main(){ tw = 0.72 + 0.28 * sin(time * (0.6 + phase * 0.25) + phase * 9.0); gl_PointSize = size * dpr; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
     fragmentShader: 'varying float tw; void main(){ float d = length(gl_PointCoord - 0.5); float a = smoothstep(0.5, 0.05, d) * tw; gl_FragColor = vec4(vec3(0.92, 0.95, 1.0) * a * 1.5, a); }' })); scene.add(stars);
   const moonC = document.createElement('canvas'); moonC.width = moonC.height = 256; { const k = moonC.getContext('2d'); k.fillStyle = '#fff6e0'; k.beginPath(); k.arc(128, 128, 96, 0, 7); k.fill(); k.fillStyle = 'rgba(190,180,160,.5)'; for (const [x, y, s] of [[150, 100, 16], [176, 150, 11], [130, 170, 9], [190, 110, 7]]) { k.beginPath(); k.arc(x, y, s, 0, 7); k.fill(); } k.globalCompositeOperation = 'destination-out'; k.beginPath(); k.arc(72, 116, 92, 0, 7); k.fill(); }
-  const moon = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(moonC), color: new THREE.Color(2.4, 2.3, 2.0), fog: false, depthWrite: false })); moon.scale.set(150, 150, 1); moon.position.set(980, 1050, -2900); scene.add(moon);
+  const moon = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(moonC), color: new THREE.Color(2.4, 2.3, 2.0), fog: false, depthWrite: false })); moon.scale.set(150, 150, 1); moon.position.set(980, 600, -2900); scene.add(moon);
   const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: spot(256), color: 0x6f8fd8, fog: false, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.32 })); halo.scale.set(1500, 1500, 1); halo.position.copy(moon.position); scene.add(halo);
   const cloudC = document.createElement('canvas'); cloudC.width = cloudC.height = 256; { const k = cloudC.getContext('2d'), im = k.createImageData(256, 256), q = rng(19), w = []; for (let i = 0; i < 22; i++) w.push([1 + ((q() * 5) | 0), 1 + ((q() * 5) | 0), q() * 6.28, q()]);
     for (let y = 0; y < 256; y++) for (let x = 0; x < 256; x++) { let s = 0; for (const [fx, fy, ph, am] of w) s += Math.sin((x * fx + y * fy) / 256 * 6.2832 + ph) * am / (fx + fy); const v = Math.max(0, Math.min(1, s * 0.9 - 0.12)), i = (y * 256 + x) * 4; im.data[i] = 150; im.data[i + 1] = 170; im.data[i + 2] = 215; im.data[i + 3] = v * v * 255; } k.putImageData(im, 0, 0); }
   const cloudT = new THREE.CanvasTexture(cloudC); cloudT.wrapS = cloudT.wrapT = THREE.RepeatWrapping; cloudT.repeat.set(3, 3);
-  const clouds = new THREE.Mesh(new THREE.PlaneGeometry(9000, 9000).rotateX(Math.PI / 2), new THREE.MeshBasicMaterial({ map: cloudT, transparent: true, opacity: 0.2, depthWrite: false, fog: false })); clouds.position.y = 620; scene.add(clouds);
+  const clouds = new THREE.Mesh(new THREE.PlaneGeometry(9000, 9000).rotateX(Math.PI / 2), new THREE.MeshBasicMaterial({ map: cloudT, transparent: true, opacity: 0.2, depthWrite: false, fog: false })); clouds.position.y = 620; clouds.layers.set(1); scene.add(clouds);
+
+  // Pavagadh, the hill that stands on the city's horizon; the climb to the temple on its top is lit all night. Here it rises behind the statue.
+  { const s = new THREE.Shape(), prof = [[-290, 0], [-215, 14], [-165, 24], [-125, 44], [-85, 58], [-55, 80], [-30, 92], [-10, 104], [9, 108], [30, 98], [55, 92], [85, 64], [130, 42], [170, 26], [225, 12], [300, 0]]; s.moveTo(-290, -40); for (const [x, y] of prof) s.lineTo(x, y); s.lineTo(300, -40);
+    const hill = new THREE.Mesh(new THREE.ShapeGeometry(s), new THREE.MeshBasicMaterial({ color: 0x101a36, fog: false })), p = at(91.5, 3350); hill.position.set(p.x, 0, p.z); hill.lookAt(0, 0, 0); scene.add(hill); hill.userData.at = p; scene.userData.hill = hill; }
 
   /* ----- the water ----- */
   const nc = document.createElement('canvas'); nc.width = nc.height = 256; { const k = nc.getContext('2d'), im = k.createImageData(256, 256), q = rng(3), w = []; for (let i = 0; i < 30; i++) w.push([3 + ((q() * 14) | 0), 3 + ((q() * 14) | 0), q() * 6.28, 0.4 + q()]);
     const hgt = (x, y) => { let s = 0; for (const [fx, fy, ph, am] of w) s += Math.sin((x * fx + y * fy) / 256 * 6.2832 + ph) * am / (fx + fy); return s; };
     for (let y = 0; y < 256; y++) for (let x = 0; x < 256; x++) { const dx = hgt(x + 1, y) - hgt(x - 1, y), dy = hgt(x, y + 1) - hgt(x, y - 1), l = Math.hypot(dx * 4, dy * 4, 1), i = (y * 256 + x) * 4; im.data[i] = (-dx * 4 / l * 0.5 + 0.5) * 255; im.data[i + 1] = (-dy * 4 / l * 0.5 + 0.5) * 255; im.data[i + 2] = (1 / l * 0.5 + 0.5) * 255; im.data[i + 3] = 255; } k.putImageData(im, 0, 0); }
   const normals = new THREE.CanvasTexture(nc); normals.wrapS = normals.wrapT = THREE.RepeatWrapping;
-  const water = new Water(new THREE.CircleGeometry(R + 1, 96), { textureWidth: 1024, textureHeight: 1024, waterNormals: normals, sunDirection: new THREE.Vector3(0.3, 0.34, -0.9).normalize(), sunColor: 0x5f74b4, waterColor: NIGHT.water, distortionScale: 1.5, fog: true });
-  water.rotation.x = -Math.PI / 2; water.material.uniforms.size.value = 0.55; scene.add(water);
+  const water = new Water(new THREE.CircleGeometry(R + 1, 96), { textureWidth: innerWidth < 700 ? 512 : 1024, textureHeight: innerWidth < 700 ? 512 : 1024, waterNormals: normals, sunDirection: new THREE.Vector3(0.3, 0.34, -0.9).normalize(), sunColor: 0x2a3760, waterColor: NIGHT.water, distortionScale: 2.4, fog: true });
+  water.rotation.x = -Math.PI / 2; water.material.uniforms.size.value = 0.95; water.material.fragmentShader = water.material.fragmentShader.replace('vec3( 0.1 )', 'vec3( 0.006, 0.01, 0.022 )'); scene.add(water);
+  const mirror = water.onBeforeRender; let turns = 0; water.onBeforeRender = function (...a) { if (tier < 1 || (turns++ & 1) === 0) mirror.apply(this, a); };   // a machine that is struggling mirrors the lake every other frame
 
   /* ----- the city: each place is built facing south, then set on its bank and turned part of the way towards the camera ----- */
   const world = new Builder(), turn = deg => { const p = at(deg, 1); return Math.atan2(-p.x, -p.z) * 0.62; };
   const set = (make, deg, dist, plot, facing = turn(deg)) => { const p = at(deg, dist), c = at(deg, dist + plot[2]); claim(c.x, c.z, plot[0], plot[1]); world.stamp(make(), p.x, p.z, facing, 1, 1.5); return p; };
-  claim(0, -(R + 68), 86, 44); world.stamp(palace(), 0, -(R + 70), 0, 1, 0.3);
-  set(kirtiMandir, 134, R + 44, [30, 30, 14]); set(nyayMandir, 198, R + 46, [44, 36, 14]); set(artsDome, 48, R + 54, [48, 42, 15]); set(mandvi, 14, R + 44, [26, 26, 17]);
-  set(clockTower, -14, R + 40, [24, 18, 7]); set(emeTemple, -38, R + 42, [22, 22, 15]); set(() => banyan(4), 171, R + 47, [21, 21, 0], 0); set(() => banyan(9), 86, R + 150, [21, 21, 0], 0);
-  set(sayajiBaug, 152, R + 74, [36, 36, 0], 0);                                                      // the garden, behind Kala Ghoda as in the real city
-  { const p = at(153, R + 8); claim(p.x, p.z, 7, 7); world.stamp(kalaGhoda(), p.x, p.z, Math.atan2(-p.x, -p.z), 1, 1.7); }
-  world.stamp(island()); world.stamp(afloat(ANGLES)); world.stamp(shore(ANGLES)); world.stamp(town());
-  const built = world.build(); scene.add(built); paint(built);
+  // The banks are laid out for the first view: the statue stands clear against the dark, the garba ground's lights at its feet,
+  // Kirti Mandir to its left and the palace to its right.
+  const PAL = at(60, R + 70), palTurn = turn(60), palAt = (lx, lz) => new THREE.Vector3(lx, 0, lz).applyAxisAngle(new THREE.Vector3(0, 1, 0), palTurn).add(PAL);
+  for (const t of [-58, 0, 58]) { const c = palAt(t, 4); claim(c.x, c.z, 40, 50); } world.stamp(palace(), PAL.x, PAL.z, palTurn, 1, 0.3);
+  set(kirtiMandir, 110, R + 44, [30, 30, 14]); set(nyayMandir, 177, R + 46, [44, 36, 14]); set(artsDome, 20, R + 54, [40, 42, 15]); set(mandvi, -11, R + 44, [26, 26, 17]);
+  set(clockTower, 197, R + 40, [24, 18, 7]); set(emeTemple, -38, R + 42, [22, 22, 15]); set(() => banyan(4), 146, R + 47, [21, 21, 0], 0); set(() => banyan(9), 86, R + 150, [21, 21, 0], 0);
+  set(sayajiBaug, 128, R + 74, [36, 36, 0], 0);                                                      // the garden, behind Kala Ghoda as in the real city
+  { const p = at(129, R + 8); claim(p.x, p.z, 7, 7); world.stamp(kalaGhoda(), p.x, p.z, Math.atan2(-p.x, -p.z), 1, 1.7); }
+  set(khanderao, 3.5, R + 50, [28, 20, 6]); set(musicCollege, -24.5, R + 46, [21, 16, 5]); set(museum, 132, R + 126, [27, 18, 6]);
+  { const p = at(158.5, R + 36), out = at(158.5, R + 60); claim(out.x, out.z, 30, 22); world.stamp(lehripura(), p.x, p.z, Math.atan2(-p.x, -p.z), 1, 1.5); }   // the gate stands across its own road
+  const dance = garba(), dp = at(96, R + 52), dturn = Math.atan2(-dp.x, -dp.z); claim(dp.x, dp.z, 28, 28); world.stamp(dance.b, dp.x, dp.z, dturn, 1, 1.5);
+  world.stamp(island()); world.stamp(afloat(ANGLES)); world.stamp(lotus()); world.stamp(shore(ANGLES, [158.5, 3.5, 60])); world.stamp(town());
+  // the old city lies on the near bank, behind the camera's shoulder: nothing of it is ever mirrored in the lake, so the mirror is spared drawing it
+  const near = new Builder(); near.stamp(oldCity());
+  const built = world.build(), nearBuilt = near.build(); nearBuilt.traverse(o => o.layers.set(1)); camera.layers.enable(1); scene.add(built, nearBuilt);
+  const rings = dance.rings.map(({ rad, q }) => { const g = q.build(); g.position.set(dp.x, 1.66, dp.z); g.userData.rad = rad; g.traverse(o => o.layers.set(1)); scene.add(g); return g; });
+  paint(built); paint(nearBuilt); rings.forEach(paint);
   const centre = new THREE.Group(); scene.add(centre); statue(centre);
+  { const aura = new THREE.Sprite(new THREE.SpriteMaterial({ map: spot(128, 0, 1.3), color: 0xffa84a, transparent: true, opacity: 0.14, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); aura.scale.set(44, 62, 1); aura.position.set(0.6, 33, -1.5); aura.layers.set(1); scene.add(aura);
+    const spray = new THREE.Sprite(new THREE.SpriteMaterial({ map: spot(128, 0, 1.5), color: 0x9fc4ff, transparent: true, opacity: 0.13, depthWrite: false, blending: THREE.AdditiveBlending })); spray.scale.set(20, 17, 1); spray.position.set(-78, 6.5, -46); spray.layers.set(1); scene.add(spray); }
 
   // every point of light: lamp globes, bulbs on strings, lamps afloat, the fountain, the red lights on the masts
   const sparkMat = () => new THREE.ShaderMaterial({ transparent: true, depthWrite: false, fog: false, blending: THREE.AdditiveBlending, uniforms: { map: { value: spot(64) }, time: { value: 0 }, scale: { value: 800 } },
@@ -81,23 +99,24 @@ export function start(canvas, stops, hooks = {}) {
     g.setAttribute('position', new THREE.BufferAttribute(P, 3)); g.setAttribute('tint', new THREE.BufferAttribute(C, 3)); g.setAttribute('size', new THREE.BufferAttribute(S, 1)); g.setAttribute('phase', new THREE.BufferAttribute(F, 1)); g.setAttribute('mode', new THREE.BufferAttribute(M, 1));
     const m = new THREE.Points(g, sparkMat()); m.frustumCulled = false; scene.add(m); return m; };
   const sparks = points(SPARKS);
+  { const h = scene.userData.hill, climb = []; for (let i = 0; i < 13; i++) { const t = i / 12, v = new THREE.Vector3(-120 + t * 128 + Math.sin(t * 9) * 16, 20 + t * 86, 4).applyMatrix4(h.matrixWorld.identity().compose(h.position, h.quaternion, h.scale)); climb.push({ x: v.x, y: v.y, z: v.z, colour: new THREE.Color(1, 0.74, 0.4), size: i === 12 ? 15 : 6, flicker: 1 }); } points(climb); }
   // traffic on the road round the lake: white lamps in front, red behind
   const WHITE = new THREE.Color(1.0, 0.95, 0.85), REDL = new THREE.Color(1.0, 0.16, 0.1), cars = []; for (let i = 0; i < 26; i++) cars.push({ a: r() * 360, v: (i % 2 ? 1 : -1) * (5 + r() * 5), d: i % 2 ? R + 19.4 : R + 24 });
   const traffic = points(cars.flatMap(() => [{ x: 0, y: 2.3, z: 0, colour: WHITE, size: 3.2 }, { x: 0, y: 2.3, z: 0, colour: REDL, size: 2.4 }]));
   // shafts of light standing over the lit places
   const shaftC = document.createElement('canvas'); shaftC.width = 4; shaftC.height = 128; { const k = shaftC.getContext('2d'), gr = k.createLinearGradient(0, 128, 0, 0); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.3, 'rgba(255,255,255,.4)'); gr.addColorStop(0.7, 'rgba(255,255,255,.08)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); k.fillStyle = gr; k.fillRect(0, 0, 4, 128); }
-  const shaftT = new THREE.CanvasTexture(shaftC), shaft = (x, z, h, spread, colour = 0xffc27a, o = 0.07) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(spread, 1.2, h, 20, 1, true), new THREE.MeshBasicMaterial({ map: shaftT, color: colour, transparent: true, opacity: o, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false })); m.position.set(x, h / 2 + 1, z); scene.add(m); return m; };
-  const pz = -(R + 70); for (const [x, z, h, s] of [[-19.5, pz + 6, 74, 9], [12.5, pz + 8, 62, 12], [-46, pz + 8, 44, 8], [58, pz + 8, 40, 8]]) shaft(x, z, h, s);
-  { const k = at(134, R + 50), a = at(48, R + 62), c = at(-14, R + 44), e = at(-38, R + 52); shaft(k.x, k.z, 60, 9); shaft(a.x, a.z, 58, 12); shaft(c.x, c.z, 50, 6); shaft(e.x, e.z, 40, 10, 0x9fc4ff, 0.06); }
+  const shaftT = new THREE.CanvasTexture(shaftC), shaft = (x, z, h, spread, colour = 0xffc27a, o = 0.042) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(spread, 1.2, h, 20, 1, true), new THREE.MeshBasicMaterial({ map: shaftT, color: colour, transparent: true, opacity: o, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false })); m.position.set(x, h / 2 + 1, z); m.layers.set(1); scene.add(m); return m; };
+  for (const [x, z, h, s] of [[-19.5, 6, 74, 9], [12.5, 8, 62, 12], [-46, 8, 44, 8], [58, 8, 40, 8]]) { const p = palAt(x, z); shaft(p.x, p.z, h, s); }
+  { const k = at(110, R + 50), a = at(20, R + 62), c = at(197, R + 44), e = at(-38, R + 52); shaft(k.x, k.z, 60, 9); shaft(a.x, a.z, 58, 12); shaft(c.x, c.z, 50, 6); shaft(e.x, e.z, 40, 10, 0x9fc4ff, 0.04); }
 
   // mist lying on the water, far side
-  const mistT = spot(256, 0, 1.6), mists = []; for (let i = 0; i < 10; i++) { const m = new THREE.Sprite(new THREE.SpriteMaterial({ map: mistT, color: 0x33487a, transparent: true, opacity: 0.11, depthWrite: false, blending: THREE.AdditiveBlending })); const p = at(10 + i * 17 + r() * 10, R - 14 - r() * 22, 5); m.position.copy(p); m.scale.set(190 + r() * 110, 26 + r() * 10, 1); m.userData.a = r() * 6.28; mists.push(m); scene.add(m); }
+  const mistT = spot(256, 0, 1.6), mists = []; for (let i = 0; i < 10; i++) { const m = new THREE.Sprite(new THREE.SpriteMaterial({ map: mistT, color: 0x33487a, transparent: true, opacity: 0.07, depthWrite: false, blending: THREE.AdditiveBlending })); const p = at(10 + i * 17 + r() * 10, R - 14 - r() * 22, 5); m.position.copy(p); m.scale.set(190 + r() * 110, 26 + r() * 10, 1); m.userData.a = r() * 6.28; m.layers.set(1); mists.push(m); scene.add(m); }
   // the board at each landing stage: on the near bank it stands beside the stage, so it never comes between the camera and the boat
-  stops.forEach((s, i) => { const deg = ANGLES[i], near = Math.sin(deg * DEG) < -0.3, bp = at(near ? deg + 11 : deg, R + 9, near ? 7.6 : 10.2);
+  stops.forEach((s, i) => { const deg = ANGLES[i], near = Math.sin(deg * DEG) < -0.3, bp = at(near ? deg + 10 : deg, R + 9, near ? 6.4 : 8.6);
     const t = words([{ text: String(i + 1).padStart(2, '0') + '   ' + s.group.toUpperCase(), y: 84, size: 44, colour: '#f2c66a', font: '"Geist Mono", ui-monospace, monospace', weight: 500 }, { text: s.name, y: 206, size: 132, colour: '#fff6e2' }]);
-    const board = new THREE.Mesh(new THREE.PlaneGeometry(19.2, 6), new THREE.MeshBasicMaterial({ map: t, color: new THREE.Color(1.5, 1.5, 1.5) })); board.position.copy(bp); scene.add(board);
-    for (const x of [-8.6, 8.6]) { const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, bp.y - 1.4), new THREE.MeshBasicMaterial({ color: 0x1a1d2a })); leg.position.set(bp.x + x, (bp.y + 1.4) / 2 - 1.4, bp.z - 0.1); scene.add(leg); }
-    for (const x of [-7, 0, 7]) { const lampOver = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.2, 0.5), new THREE.MeshBasicMaterial({ color: new THREE.Color(2, 1.6, 0.9) })); lampOver.position.set(bp.x + x, bp.y + 3.4, bp.z + 0.9); scene.add(lampOver); } });
+    const board = new THREE.Mesh(new THREE.PlaneGeometry(15, 4.7), new THREE.MeshBasicMaterial({ map: t, color: new THREE.Color(1.35, 1.35, 1.35) })); board.position.copy(bp); board.layers.set(1); scene.add(board);
+    for (const x of [-6.7, 6.7]) { const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, bp.y - 1.4), new THREE.MeshBasicMaterial({ color: 0x1a1d2a })); leg.position.set(bp.x + x, (bp.y + 1.4) / 2 - 1.4, bp.z - 0.1); leg.layers.set(1); scene.add(leg); }
+    for (const x of [-5.4, 0, 5.4]) { const lampOver = new THREE.Mesh(new THREE.BoxGeometry(1, 0.18, 0.45), new THREE.MeshBasicMaterial({ color: new THREE.Color(2, 1.6, 0.9) })); lampOver.position.set(bp.x + x, bp.y + 2.7, bp.z + 0.8); lampOver.layers.set(1); scene.add(lampOver); } });
 
   const others = pedalBoats(scene), vessel = boat(); scene.add(vessel);
   const train = toyTrain(); scene.add(train.g);
@@ -109,7 +128,7 @@ export function start(canvas, stops, hooks = {}) {
   const FN = 70, shells = [0, 1, 2].map(() => ({ t: -1, o: new THREE.Vector3(), c: [1, 1, 1] })), flung = []; for (let i = 0; i < 3 * FN; i++) { const u = r() * 2 - 1, a = r() * 6.283, q = Math.sqrt(1 - u * u), v = 0.55 + r() * 0.45; flung.push(Math.cos(a) * q * v, u * v, Math.sin(a) * q * v); }
   const fire = points(flung.map((_, i) => i % 3 ? null : { x: 0, y: -80, z: 0, colour: new THREE.Color(0, 0, 0), size: 6.5 }).filter(Boolean)); let nextShell = 7;
   function fireworks(dt) {
-    nextShell -= dt; if (nextShell <= 0) { const b = shells.find(x => x.t < 0); if (b) { b.t = 0; b.o.set((r() - 0.5) * 300, 120 + r() * 80, -(R + 170) - r() * 130); b.c = [[1, 0.7, 0.3], [1, 0.35, 0.3], [0.5, 0.9, 1], [1, 0.5, 0.9], [0.7, 1, 0.5], [1, 0.95, 0.8]][(r() * 6) | 0]; } nextShell = r() < 0.55 ? 0.5 + r() * 0.9 : 10 + r() * 14; }
+    nextShell -= dt; if (nextShell <= 0) { const b = shells.find(x => x.t < 0); if (b) { b.t = 0; b.o.set(PAL.x + (r() - 0.5) * 260, 120 + r() * 80, PAL.z - 80 - r() * 120); b.c = [[1, 0.7, 0.3], [1, 0.35, 0.3], [0.5, 0.9, 1], [1, 0.5, 0.9], [0.7, 1, 0.5], [1, 0.95, 0.8]][(r() * 6) | 0]; } nextShell = r() < 0.55 ? 0.5 + r() * 0.9 : 10 + r() * 14; }
     const P = fire.geometry.attributes.position, C = fire.geometry.attributes.tint; let any = false;
     shells.forEach((b, i) => { if (b.t < 0) return; b.t += dt; any = true; const k = b.t / 2.4, out = 66 * (1 - Math.exp(-b.t * 2.6)), fade = k >= 1 ? 0 : Math.pow(1 - k, 1.4) * 2.2;
       for (let j = 0; j < FN; j++) { const n = (i * FN + j) * 3; P.setXYZ(i * FN + j, b.o.x + flung[n] * out, b.o.y + flung[n + 1] * out - 7 * b.t * b.t, b.o.z + flung[n + 2] * out); C.setXYZ(i * FN + j, b.c[0] * fade, b.c[1] * fade, b.c[2] * fade); }
@@ -148,7 +167,7 @@ export function start(canvas, stops, hooks = {}) {
     const ex = pos.x / 44, ez = pos.y / 26, e = Math.hypot(ex, ez); if (e < 1) { const n = new THREE.Vector2(ex / 44, ez / 26).normalize(); pos.set(pos.x / Math.max(e, 0.01), pos.y / Math.max(e, 0.01)); vel.addScaledVector(n, -Math.min(0, vel.dot(n))); }   // the island
     const speed = vel.length(); if (speed > 0.6) { const want = Math.atan2(vel.x, vel.y); let da = want - heading; da = Math.atan2(Math.sin(da), Math.cos(da)); heading += da * Math.min(1, dt * 3.2); }
     vessel.position.set(pos.x, Math.sin(clock * 1.7) * 0.06 - 0.12, pos.y); vessel.rotation.set(Math.sin(clock * 1.3) * 0.02 - Math.min(0.06, speed * 0.003), heading, Math.sin(clock * 1.1) * 0.03);
-    vessel.userData.flag.rotation.y = Math.sin(clock * 6) * 0.3; for (const h of vessel.userData.lights) h.material.opacity = 0.82 + Math.sin(clock * 11 + h.position.z) * 0.08;
+    vessel.userData.flag.rotation.y = Math.sin(clock * 6) * 0.3; for (const h of vessel.userData.lights) h.material.opacity = 0.52 + Math.sin(clock * 11 + h.position.z) * 0.07;
     wakeT -= dt; if (speed > 2 && wakeT <= 0) { wakeT = 0.16; const w = wake.reduce((a, b) => a.userData.age > b.userData.age ? a : b); w.userData.age = 0; w.position.set(pos.x - Math.sin(heading) * 7, 0.07, pos.y - Math.cos(heading) * 7); w.userData.s = Math.min(1, speed / 16); }
     for (const w of wake) { w.userData.age += dt; const a = w.userData.age, k = Math.min(1, a / 3.2); w.scale.setScalar(1.6 + k * 11); w.material.opacity = a < 3.2 ? (1 - k) * 0.3 * (w.userData.s || 0) : 0; }
   }
@@ -161,26 +180,29 @@ export function start(canvas, stops, hooks = {}) {
     const tp = traffic.geometry.attributes.position; cars.forEach((c, i) => { c.a += c.v / c.d / DEG * dt; const lead = c.v > 0 ? 0.55 : -0.55, f = at(c.a + lead, c.d), b = at(c.a - lead, c.d); tp.setXYZ(i * 2, f.x, 2.3, f.z); tp.setXYZ(i * 2 + 1, b.x, 2.3, b.z); }); tp.needsUpdate = true;
     for (const o of others) { const a = clock * o.speed + o.phase; o.g.position.set(o.cx + Math.cos(a) * o.rx, Math.sin(clock * 1.5 + o.phase) * 0.05, o.cz + Math.sin(a) * o.rz); o.g.rotation.y = Math.atan2(-Math.sin(a) * o.rx * Math.sign(o.speed), Math.cos(a) * o.rz * Math.sign(o.speed)); }
     if (!still.matches) fireworks(dt);
+    rings.forEach((g, i) => { g.rotation.y = clock * 1.15 / g.userData.rad; g.scale.setScalar(1 + Math.sin(clock * 2.6 + i * 0.6) * 0.016); });   // garba: round the lamp, a step in and a step out
     train.cars.forEach((c, i) => { const a = 2.2 + clock * 0.05 - i * 0.0245; c.position.set(Math.cos(a) * (R + 14.9), 1.42, Math.sin(a) * (R + 14.9)); c.rotation.y = -a; });   // the children's train goes round the lake
     fall -= dt; if (fall <= 0 && falling < 0) { falling = 0; fall = 14 + r() * 16; streak.userData = { x: (r() - 0.5) * 2400, y: 1500 + r() * 500, vx: (r() < 0.5 ? -1 : 1) * (700 + r() * 500) }; streak.rotation.z = streak.userData.vx > 0 ? -0.32 : 0.32; }
     if (falling >= 0) { falling += dt; const u = streak.userData; streak.position.set(u.x + u.vx * falling, u.y - 380 * falling, -3000); streak.material.opacity = Math.max(0, Math.sin(Math.min(1, falling / 0.9) * Math.PI)) * 0.9; if (falling > 0.9) falling = -1; }
   }
 
   /* ----- the camera: always looking north, nearly level, keeping the boat in the lower middle ----- */
-  const cam = new THREE.Vector3(); let back = 200, up = 36, tilt = -0.035, drift = 0, sharp = 1.6, slow = 0, tier = 0;
+  const cam = new THREE.Vector3(); let back = 188, up = 31, tilt = -0.03, drift = 0, sharp = 1.6, slow = 0, tier = 0;
   function frame() {
     const w = canvas.clientWidth, h = canvas.clientHeight, tall = h > w;
-    camera.aspect = w / h; camera.fov = w / h < 1.5 ? 44 : 38; back = tall ? 240 : 200; up = tall ? 24 : 36; tilt = -0.035;
-    if (tall) {   // a tall screen has only a band of open picture between the words above and the rail below: the lake is fitted to that band, from the statue's head down to the boat
-      const band = hooks.band && hooks.band(), top = band ? band[0] : h * 0.42, bottom = band ? band[1] : h * 0.74, above = 4.6 * DEG, below = 7.4 * DEG;
-      let f = Math.max(80, bottom - top) / (Math.tan(above) + Math.tan(below)); camera.fov = Math.min(48, Math.max(34, 2 * Math.atan(h / 2 / f) / DEG)); f = h / 2 / Math.tan(camera.fov * DEG / 2);
+    camera.aspect = w / h; camera.fov = w / h < 1.5 ? 44 : 38; back = tall ? 240 : 188; up = tall ? 40 : 31; tilt = -0.03;
+    if (tall) {   // a tall screen has only a band of open picture between the words above and the rail below: the lake is fitted to that band, from the statue's head down to the boat, most of it water
+      const band = hooks.band && hooks.band(), top = band ? band[0] : h * 0.42, bottom = band ? band[1] : h * 0.74, above = 3.0 * DEG, below = 10.4 * DEG;
+      let f = Math.max(80, bottom - top) / (Math.tan(above) + Math.tan(below)); camera.fov = Math.min(54, Math.max(34, 2 * Math.atan(h / 2 / f) / DEG)); f = h / 2 / Math.tan(camera.fov * DEG / 2);
       tilt = Math.tan((above - below) / 2 - Math.atan((h / 2 - (top + bottom) / 2) / f));
     }
     camera.updateProjectionMatrix();
     const dpr = Math.min(devicePixelRatio || 1, tall ? sharp + 0.4 : sharp); renderer.setPixelRatio(dpr); renderer.setSize(w, h, false); composer.setPixelRatio(dpr); composer.setSize(w, h); stars.material.uniforms.dpr.value = dpr;
     const scale = h * dpr / (2 * Math.tan(camera.fov * DEG / 2)); sparks.material.uniforms.scale.value = scale; traffic.material.uniforms.scale.value = scale; fire.material.uniforms.scale.value = scale;
   }
+  let spy = null;                                            // a fixed viewpoint, for looking the scene over while it is being built
   function follow(dt, snap) {
+    if (spy) { camera.position.set(...spy.from); camera.lookAt(...spy.to); return; }
     // it never comes nearer the island than the south side of the lake, so the statue is seen whole, with the far bank behind it
     const tall = canvas.clientHeight > canvas.clientWidth, tx = pos.x * (tall ? 0.9 : 0.86) + drift, tz = Math.max(pos.y + back, tall ? 240 : 105), k = snap ? 1 : 1 - Math.exp(-dt * 1.7);
     cam.x += (tx - cam.x) * k; cam.z += (tz - cam.z) * k; cam.y = up + Math.sin(clock * 0.31) * 0.5;
@@ -211,7 +233,8 @@ export function start(canvas, stops, hooks = {}) {
   addEventListener('pointermove', e => { drift = (e.clientX / innerWidth - 0.5) * 10; });
 
   const stepOnce = dt => { clock += dt; steer(dt); follow(dt); live(dt); composer.render(); };
-  const api = { step(dt) { running = false; cancelAnimationFrame(raf); stepOnce(dt); },
+  const api = { look(from, to, fov) { spy = from ? { from, to } : null; frame(); if (spy && fov) { camera.fov = fov; camera.updateProjectionMatrix(); } },
+    step(dt) { running = false; cancelAnimationFrame(raf); stepOnce(dt); },
     skip(seconds) { for (let t = 0; t < seconds; t += 1 / 30) { clock += 1 / 30; steer(1 / 30); follow(1 / 30); } live(1 / 30); composer.render(); },   // run time forward without drawing it: for tests and stills
     sail(i) { lastTouch = clock; if (docked === i) return; if (docked >= 0) hooks.leave && hooks.leave();
       if (still.matches) { api.jump(i); hooks.arrive && hooks.arrive(i); live(0); composer.render(); } else sail(i); },   // with motion turned down the boat is simply there
