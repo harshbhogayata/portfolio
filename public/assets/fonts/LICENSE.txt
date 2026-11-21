@@ -1,7 +1,0 @@
-The fonts in this folder are served under the SIL Open Font License, Version 1.1 (https://openfontlicense.org).
-
-Fraunces            Copyright 2020 The Fraunces Project Authors (github.com/undercasetype/Fraunces)
-Instrument Sans     Copyright 2022 The Instrument Sans Project Authors (github.com/Instrument/instrument-sans)
-Geist Mono          Copyright 2024 The Geist Project Authors (github.com/vercel/geist-font)
-
-Each file is the Latin subset of the variable font, as packaged by Fontsource.
