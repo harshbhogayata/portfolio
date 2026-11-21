@@ -5,24 +5,26 @@
   const rail = document.querySelector('.rail'), card = document.getElementById('card'), canvas = document.getElementById('scene3d'), hint = document.getElementById('hint');
   const links = rail ? [...rail.querySelectorAll('a[data-name]')] : [];
   const about = document.getElementById('about'), aboutOpen = document.getElementById('about-open'), mail = document.getElementById('mail');
-  const go = document.getElementById('card-go');
+  const go = document.getElementById('card-go'), ident = document.querySelector('.ident'), place = document.getElementById('place');
   // every stop has something on the page it belongs to, and the words for its card
   const stops = links.map(a => ({ el: a, name: a.dataset.name, group: a.closest('.group').querySelector('h2').textContent, meta: a.dataset.meta, dek: a.dataset.dek, go: a.dataset.go, img: a.dataset.img, href: a.href, target: a.target }));
   if (aboutOpen) stops.push({ el: aboutOpen, name: 'About', group: 'Harsh Bhogayata', meta: 'Software engineer and founder', dek: 'Full Stack Developer at Quantaura Design Tech, and founder of The Curator Group. Based in Vadodara.', go: 'Read more', act: () => about.showModal() });
   if (mail) stops.push({ el: mail, name: 'Contact', group: 'Harsh Bhogayata', meta: 'Email', dek: 'Bring a useful problem. I answer at work.harsh.bhogayata@gmail.com.', go: 'Email me', href: mail.href });
   let shown = null, docked = null, peek = null, hiding = 0, scene = null;
+  const phone = matchMedia('(max-width:699px)');
 
   function show(s) {
     clearTimeout(hiding);
     if (shown === s) return;
     shown = s;
     document.getElementById('card-name').textContent = s.name; document.getElementById('card-meta').textContent = s.meta; document.getElementById('card-dek').textContent = s.dek;
-    document.getElementById('card-go-label').textContent = s.go; go.href = s.href || '#'; go.target = s.target || ''; go.rel = s.target ? 'noopener noreferrer' : ''; go.onclick = s.act ? e => { e.preventDefault(); s.act(); } : null;
+    document.getElementById('card-go-label').textContent = phone.matches ? 'Open' : s.go; go.href = s.href || '#'; go.target = s.target || ''; go.rel = s.target ? 'noopener noreferrer' : ''; go.onclick = s.act ? e => { e.preventDefault(); s.act(); } : null;
     const img = document.getElementById('card-img'); card.classList.toggle('no-pic', !s.img); if (s.img) img.src = s.img;
     card.hidden = false;
     const r = s.el.getBoundingClientRect(), w = card.offsetWidth, pad = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--pad')) || 20, onRail = rail.contains(s.el);
     card.style.left = Math.max(pad, Math.min(innerWidth - w - pad, r.left - 14)) + 'px';
-    if (onRail) { card.style.top = 'auto'; card.style.bottom = innerHeight - rail.getBoundingClientRect().top + 14 + 'px'; }   // above the whole rail, so it never sits on a label
+    if (phone.matches && place) { card.style.bottom = 'auto'; card.style.top = place.getBoundingClientRect().top + 'px'; }   // on a phone it takes the place of the lake's own label, and the boat stays in sight
+    else if (onRail) { card.style.top = 'auto'; card.style.bottom = innerHeight - rail.getBoundingClientRect().top + 14 + 'px'; }   // above the whole rail, so it never sits on a label
     else { card.style.bottom = 'auto'; card.style.top = r.bottom + 14 + 'px'; }
     requestAnimationFrame(() => card.classList.add('is-on'));
     links.forEach(l => l.classList.toggle('is-open', l === s.el)); rail.classList.toggle('has-open', onRail);
@@ -64,10 +66,12 @@
       scene = window.Scene3D.start(canvas, stops.map(s => ({ name: s.name, group: s.group })), {
         arrive: i => { docked = stops[i]; settle(); },
         leave: () => { docked = null; settle(); },
+        band: () => [ident.getBoundingClientRect().bottom + 4, rail.getBoundingClientRect().top - 6],   // the open picture between the words and the rail
       });
       document.documentElement.classList.add('scene-on');
       const touch = matchMedia('(pointer:coarse)').matches;
       if (hint) hint.textContent = touch ? 'Tap the water to sail there' : 'Arrow keys steer · press the water to sail there';
+      canvas.addEventListener('pointerdown', () => { if (peek) { peek = null; settle(); } });
       window.Lake = scene;
     } catch (e) { scene = null; }
   }

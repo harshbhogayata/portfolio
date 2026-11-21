@@ -69,6 +69,9 @@ export function shore(stageAngles) {
   // the rail along the water, two bars on posts
   for (let a = 0; a < 360; a += 2) { const p = at(a, R + 0.2); w.put(iron, slab(0.13, 1.15, 0.13, p.x, 1.96, p.z)); }
   for (const y of [2.55, 3.05]) w.put(iron, plain(new THREE.TorusGeometry(R + 0.2, 0.045, 4, 360)).rotateX(Math.PI / 2).translate(0, y, 0));
+  // the children's train has its track at the back of the walk, all the way round the lake
+  const sleeper = painted({ tint: 0x4a3a2c }); for (let i = 0; i < 660; i++) { const a = i / 660 * 360, p = at(a, R + 14.9); w.put(sleeper, plain(new THREE.BoxGeometry(0.3, 0.1, 1.5)).rotateY(a * DEG).translate(p.x, 1.74, p.z)); }
+  for (const d of [14.4, 15.4]) w.put(iron, plain(new THREE.TorusGeometry(R + d, 0.05, 4, 360)).rotateX(Math.PI / 2).translate(0, 1.84, 0));
   // ghats: broad steps down into the water, between the landing stages
   for (const a of [114, 66, 41, -27, 144, 180, 222, 318, 250, 292]) for (let k = 0; k < 7; k++) { w.put(step, ring(R - 0.6 - (k + 1) * 1.05, R - 0.6 - k * 1.05, 1.7 - (k + 1) * 0.32, a - 4.2, 8.4, 240), curtain(R - 0.6 - (k + 1) * 1.05, 1.7 - (k + 2) * 0.32, 0.32, a - 4.2, 8.4, 240)); }
   // lamp posts and benches all the way round; taller plain lamps along the road
@@ -77,7 +80,7 @@ export function shore(stageAngles) {
   for (let a = 0; a < 360; a += 10) { const p = at(a, R + 27.6), q = at(a, R + 25.2); w.put(iron, rod([p.x, 1.7, p.z], [p.x, 8.2, p.z], 0.1, 5), rod([p.x, 8.2, p.z], [q.x, 8.5, q.z], 0.07, 4)); w.put(lit(1.5, 1.7, 1.9), ball(0.26, q.x, 8.4, q.z, 6)); w.light(q.x, 8.3, q.z, COOL, 0.75, 8.5, 4.4); }
   // trees: a row at the back of the walk, groves beyond the road, palms by the ghats; low and sparse along the south
   const kinds = [tree(1), tree(2), tree(3), tree(4, 1.35)], palms = [palm(1), palm(2), palm(3)];
-  for (let a = 1.5; a < 360; a += 5) { if (south(a) && r() < 0.6) continue; const p = at(a + r() * 2, R + 13.4 + r() * 1.4); w.stamp(kinds[(r() * 3) | 0], p.x, p.z, r() * 6.28, south(a) ? 0.62 : 0.8 + r() * 0.3, 1.7); }
+  for (let a = 1.5; a < 360; a += 5) { if (south(a) && r() < 0.6) continue; const p = at(a + r() * 2, R + 12.2 + r() * 1.2); w.stamp(kinds[(r() * 3) | 0], p.x, p.z, r() * 6.28, south(a) ? 0.62 : 0.8 + r() * 0.3, 1.7); }
   for (let i = 0; i < 520; i++) { const a = r() * 360, d = R + 32 + r() * r() * 300, p = at(a, d); if (south(a) || !free(p.x, p.z, 8)) continue; w.stamp(kinds[(r() * 4) | 0], p.x, p.z, r() * 6.28, 0.9 + r() * 0.7, 1.5); }
   for (const a of [118, 110, 70, 62, 45, 37, -23, -31, 148, 140, 184, 176]) { const p = at(a, R + 8 + r() * 4); w.stamp(palms[(r() * 3) | 0], p.x, p.z, r() * 6.28, 1, 1.7); }
   // the evening on the walk: food carts in clusters with people round them, autos at the kerb, strings of bulbs overhead

@@ -9,7 +9,7 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { Water } from 'three/addons/objects/Water.js';
 import { Builder, paint, glowing, SPARKS, spot, words, rng, at, R, DEG } from './kit.js';
 import { palace } from './palace.js';
-import { kirtiMandir, mandvi, nyayMandir, artsDome, clockTower, emeTemple, kalaGhoda, banyan } from './places.js';
+import { kirtiMandir, mandvi, nyayMandir, artsDome, clockTower, emeTemple, kalaGhoda, banyan, sayajiBaug, toyTrain } from './places.js';
 import { shore, claim } from './shore.js';
 import { town } from './town.js';
 import { island, statue, afloat, pedalBoats, boat } from './lake.js';
@@ -61,6 +61,7 @@ export function start(canvas, stops, hooks = {}) {
   claim(0, -(R + 68), 86, 44); world.stamp(palace(), 0, -(R + 70), 0, 1, 0.3);
   set(kirtiMandir, 134, R + 44, [30, 30, 14]); set(nyayMandir, 198, R + 46, [44, 36, 14]); set(artsDome, 48, R + 54, [48, 42, 15]); set(mandvi, 14, R + 44, [26, 26, 17]);
   set(clockTower, -14, R + 40, [24, 18, 7]); set(emeTemple, -38, R + 42, [22, 22, 15]); set(() => banyan(4), 171, R + 47, [21, 21, 0], 0); set(() => banyan(9), 86, R + 150, [21, 21, 0], 0);
+  set(sayajiBaug, 152, R + 74, [36, 36, 0], 0);                                                      // the garden, behind Kala Ghoda as in the real city
   { const p = at(153, R + 8); claim(p.x, p.z, 7, 7); world.stamp(kalaGhoda(), p.x, p.z, Math.atan2(-p.x, -p.z), 1, 1.7); }
   world.stamp(island()); world.stamp(afloat(ANGLES)); world.stamp(shore(ANGLES)); world.stamp(town());
   const built = world.build(); scene.add(built); paint(built);
@@ -99,9 +100,22 @@ export function start(canvas, stops, hooks = {}) {
     for (const x of [-7, 0, 7]) { const lampOver = new THREE.Mesh(new THREE.BoxGeometry(1.2, 0.2, 0.5), new THREE.MeshBasicMaterial({ color: new THREE.Color(2, 1.6, 0.9) })); lampOver.position.set(bp.x + x, bp.y + 3.4, bp.z + 0.9); scene.add(lampOver); } });
 
   const others = pedalBoats(scene), vessel = boat(); scene.add(vessel);
+  const train = toyTrain(); scene.add(train.g);
   const wake = []; for (let i = 0; i < 30; i++) { const m = new THREE.Mesh(new THREE.RingGeometry(0.82, 1, 28).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0x9db9ff, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending })); m.position.y = 0.07; m.userData.age = 9; wake.push(m); scene.add(m); }
   // a shooting star, now and then
   const streak = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), new THREE.MeshBasicMaterial({ map: spot(64, 0, 0.6), color: 0xdfe8ff, transparent: true, opacity: 0, depthWrite: false, blending: THREE.AdditiveBlending, fog: false, side: THREE.DoubleSide })); streak.scale.set(260, 5, 1); scene.add(streak); let fall = 9 + r() * 6, falling = -1;
+
+  // fireworks behind the palace, a few now and then: each burst is seventy sparks flung out, slowing, sinking, fading
+  const FN = 70, shells = [0, 1, 2].map(() => ({ t: -1, o: new THREE.Vector3(), c: [1, 1, 1] })), flung = []; for (let i = 0; i < 3 * FN; i++) { const u = r() * 2 - 1, a = r() * 6.283, q = Math.sqrt(1 - u * u), v = 0.55 + r() * 0.45; flung.push(Math.cos(a) * q * v, u * v, Math.sin(a) * q * v); }
+  const fire = points(flung.map((_, i) => i % 3 ? null : { x: 0, y: -80, z: 0, colour: new THREE.Color(0, 0, 0), size: 6.5 }).filter(Boolean)); let nextShell = 7;
+  function fireworks(dt) {
+    nextShell -= dt; if (nextShell <= 0) { const b = shells.find(x => x.t < 0); if (b) { b.t = 0; b.o.set((r() - 0.5) * 300, 120 + r() * 80, -(R + 170) - r() * 130); b.c = [[1, 0.7, 0.3], [1, 0.35, 0.3], [0.5, 0.9, 1], [1, 0.5, 0.9], [0.7, 1, 0.5], [1, 0.95, 0.8]][(r() * 6) | 0]; } nextShell = r() < 0.55 ? 0.5 + r() * 0.9 : 10 + r() * 14; }
+    const P = fire.geometry.attributes.position, C = fire.geometry.attributes.tint; let any = false;
+    shells.forEach((b, i) => { if (b.t < 0) return; b.t += dt; any = true; const k = b.t / 2.4, out = 66 * (1 - Math.exp(-b.t * 2.6)), fade = k >= 1 ? 0 : Math.pow(1 - k, 1.4) * 2.2;
+      for (let j = 0; j < FN; j++) { const n = (i * FN + j) * 3; P.setXYZ(i * FN + j, b.o.x + flung[n] * out, b.o.y + flung[n + 1] * out - 7 * b.t * b.t, b.o.z + flung[n + 2] * out); C.setXYZ(i * FN + j, b.c[0] * fade, b.c[1] * fade, b.c[2] * fade); }
+      if (k >= 1) b.t = -1; });
+    if (any) { P.needsUpdate = true; C.needsUpdate = true; }
+  }
 
   // bloom over everything bright, then the screen
   const composer = new EffectComposer(renderer); composer.addPass(new RenderPass(scene, camera));
@@ -146,23 +160,31 @@ export function start(canvas, stops, hooks = {}) {
     for (const m of mists) m.position.x += Math.sin(clock * 0.05 + m.userData.a) * dt * 1.2;
     const tp = traffic.geometry.attributes.position; cars.forEach((c, i) => { c.a += c.v / c.d / DEG * dt; const lead = c.v > 0 ? 0.55 : -0.55, f = at(c.a + lead, c.d), b = at(c.a - lead, c.d); tp.setXYZ(i * 2, f.x, 2.3, f.z); tp.setXYZ(i * 2 + 1, b.x, 2.3, b.z); }); tp.needsUpdate = true;
     for (const o of others) { const a = clock * o.speed + o.phase; o.g.position.set(o.cx + Math.cos(a) * o.rx, Math.sin(clock * 1.5 + o.phase) * 0.05, o.cz + Math.sin(a) * o.rz); o.g.rotation.y = Math.atan2(-Math.sin(a) * o.rx * Math.sign(o.speed), Math.cos(a) * o.rz * Math.sign(o.speed)); }
+    if (!still.matches) fireworks(dt);
+    train.cars.forEach((c, i) => { const a = 2.2 + clock * 0.05 - i * 0.0245; c.position.set(Math.cos(a) * (R + 14.9), 1.42, Math.sin(a) * (R + 14.9)); c.rotation.y = -a; });   // the children's train goes round the lake
     fall -= dt; if (fall <= 0 && falling < 0) { falling = 0; fall = 14 + r() * 16; streak.userData = { x: (r() - 0.5) * 2400, y: 1500 + r() * 500, vx: (r() < 0.5 ? -1 : 1) * (700 + r() * 500) }; streak.rotation.z = streak.userData.vx > 0 ? -0.32 : 0.32; }
     if (falling >= 0) { falling += dt; const u = streak.userData; streak.position.set(u.x + u.vx * falling, u.y - 380 * falling, -3000); streak.material.opacity = Math.max(0, Math.sin(Math.min(1, falling / 0.9) * Math.PI)) * 0.9; if (falling > 0.9) falling = -1; }
   }
 
   /* ----- the camera: always looking north, nearly level, keeping the boat in the lower middle ----- */
-  const cam = new THREE.Vector3(), look = new THREE.Vector3(0, -0.035, -1).normalize(); let back = 200, up = 36, drift = 0, sharp = 1.6, slow = 0, tier = 0;
+  const cam = new THREE.Vector3(); let back = 200, up = 36, tilt = -0.035, drift = 0, sharp = 1.6, slow = 0, tier = 0;
   function frame() {
     const w = canvas.clientWidth, h = canvas.clientHeight, tall = h > w;
-    camera.aspect = w / h; camera.fov = tall ? 58 : w / h < 1.5 ? 44 : 38; back = tall ? 240 : 200; up = tall ? 24 : 36; camera.updateProjectionMatrix();
+    camera.aspect = w / h; camera.fov = w / h < 1.5 ? 44 : 38; back = tall ? 240 : 200; up = tall ? 24 : 36; tilt = -0.035;
+    if (tall) {   // a tall screen has only a band of open picture between the words above and the rail below: the lake is fitted to that band, from the statue's head down to the boat
+      const band = hooks.band && hooks.band(), top = band ? band[0] : h * 0.42, bottom = band ? band[1] : h * 0.74, above = 4.6 * DEG, below = 7.4 * DEG;
+      let f = Math.max(80, bottom - top) / (Math.tan(above) + Math.tan(below)); camera.fov = Math.min(48, Math.max(34, 2 * Math.atan(h / 2 / f) / DEG)); f = h / 2 / Math.tan(camera.fov * DEG / 2);
+      tilt = Math.tan((above - below) / 2 - Math.atan((h / 2 - (top + bottom) / 2) / f));
+    }
+    camera.updateProjectionMatrix();
     const dpr = Math.min(devicePixelRatio || 1, tall ? sharp + 0.4 : sharp); renderer.setPixelRatio(dpr); renderer.setSize(w, h, false); composer.setPixelRatio(dpr); composer.setSize(w, h); stars.material.uniforms.dpr.value = dpr;
-    const scale = h * dpr / (2 * Math.tan(camera.fov * DEG / 2)); sparks.material.uniforms.scale.value = scale; traffic.material.uniforms.scale.value = scale;
+    const scale = h * dpr / (2 * Math.tan(camera.fov * DEG / 2)); sparks.material.uniforms.scale.value = scale; traffic.material.uniforms.scale.value = scale; fire.material.uniforms.scale.value = scale;
   }
   function follow(dt, snap) {
     // it never comes nearer the island than the south side of the lake, so the statue is seen whole, with the far bank behind it
-    const tall = canvas.clientHeight > canvas.clientWidth, tx = pos.x * (tall ? 0.55 : 0.86) + drift, tz = Math.max(pos.y + back, tall ? 150 : 105), k = snap ? 1 : 1 - Math.exp(-dt * 1.7);
+    const tall = canvas.clientHeight > canvas.clientWidth, tx = pos.x * (tall ? 0.9 : 0.86) + drift, tz = Math.max(pos.y + back, tall ? 240 : 105), k = snap ? 1 : 1 - Math.exp(-dt * 1.7);
     cam.x += (tx - cam.x) * k; cam.z += (tz - cam.z) * k; cam.y = up + Math.sin(clock * 0.31) * 0.5;
-    camera.position.copy(cam); camera.lookAt(cam.x + look.x * 100, cam.y + look.y * 100, cam.z + look.z * 100);
+    camera.position.copy(cam); camera.lookAt(cam.x, cam.y + tilt * 100, cam.z - 100);
   }
 
   /* ----- running ----- */
@@ -175,7 +197,8 @@ export function start(canvas, stops, hooks = {}) {
     if (clock > 4) { slow = dt > 0.034 ? slow + dt : Math.max(0, slow - dt * 0.5); if (slow > 2.5 && tier < 3) { tier++; slow = 0; sharp = [1.6, 1.25, 1, 1][tier]; if (tier === 3) bloom.enabled = false; frame(); } }
   }
   const go = () => { cancelAnimationFrame(raf); last = performance.now(); if (running && !document.hidden) { if (still.matches) { steer(0.016); follow(0, true); live(0); composer.render(); } else raf = requestAnimationFrame(tick); } };
-  addEventListener('resize', () => { frame(); if (still.matches) go(); });
+  const fit = () => { frame(); if (still.matches) go(); };
+  addEventListener('resize', fit); if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);   // the words settle once their type has loaded, and the band with them
   document.addEventListener('visibilitychange', go); still.addEventListener('change', go);
   addEventListener('keydown', e => { const k = e.key.length === 1 ? e.key.toLowerCase() : e.key; if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'w', 'a', 's', 'd'].includes(k) && !e.metaKey && !e.ctrlKey && !/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement.tagName)) { keys.add(k); if (k.startsWith('Arrow')) e.preventDefault(); } });
   addEventListener('keyup', e => keys.delete(e.key.length === 1 ? e.key.toLowerCase() : e.key)); addEventListener('blur', () => keys.clear());

@@ -141,3 +141,35 @@ export function banyan(seed = 4) {
   b.light(0, 2.4, 7, WARM, 0.5, 8).light(0, 2.4, -7, WARM, 0.4, 8);
   return b;
 }
+
+/* Sayaji Baug: the city's garden. A bandstand, the floral clock, and the track of the children's train that runs round it. */
+export function sayajiBaug() {
+  const lawn = painted({ tint: 0x2c5a3a }), path = painted({ tint: 0xb7a78c }), D = painted({ tint: 0xe2d8c2 }), iron = painted({ tint: 0x30323a }), sleeper = painted({ tint: 0x4a3a2c }), flower = [lit(1.6, 0.5, 0.6), lit(1.7, 1.3, 0.3), lit(1.0, 0.5, 1.5)], b = new Builder();
+  b.put(lawn, drum(34, 0.3, 0, 0, 0, 40)); b.put(path, drum(27.2, 0.36, 0, 0, 0, 40)); b.put(lawn, drum(24.8, 0.42, 0, 0, 0, 40));
+  for (let i = 0; i < 72; i++) { const a = i / 72 * 6.283; b.put(sleeper, plain(new THREE.BoxGeometry(2, 0.12, 0.34)).rotateY(-a).translate(Math.cos(a) * 26, 0.42, Math.sin(a) * 26)); }
+  for (const rr of [25.4, 26.6]) b.put(iron, plain(new THREE.TorusGeometry(rr, 0.06, 4, 96)).rotateX(Math.PI / 2).translate(0, 0.52, 0));
+  // the bandstand: eight posts, a rail, a domed roof
+  b.put(D, drum(6.4, 1.1, 0, 0.4, 0, 8), drum(7.4, 0.4, 0, 6.2, 0, 8), dome(6.6, 3.4, 0, 6.6, 0, { seg: 16, swell: 0.02 })); b.put(lit(1.9, 1.35, 0.42), ball(0.34, 0, 11.4, 0, 8));
+  for (let i = 0; i < 8; i++) { const a = (i + 0.5) * Math.PI / 4; b.put(D, drum(0.24, 4.7, Math.cos(a) * 5.6, 1.5, Math.sin(a) * 5.6, 8)); b.put(lit(1.8, 1.4, 0.8), ball(0.22, Math.cos(a) * 5.6, 5.6, Math.sin(a) * 5.6, 6)); }
+  b.light(0, 5, 0, WARM, 1.1, 8, 3).light(0, 3, 9, WARM, 0.5, 8);
+  // the floral clock: a bank of flowers with a dial laid out on it
+  b.put(lawn, plain(new THREE.CylinderGeometry(6, 6, 0.5, 28)).rotateX(0.5).translate(0, 1.5, 15.5)); for (let i = 0; i < 12; i++) { const a = i / 12 * 6.283; b.put(flower[i % 3], ball(0.34, Math.sin(a) * 4.8, 1.75 + Math.cos(a) * 2.3, 15.9 - Math.cos(a) * 4.2 + 4.1, 6)); }
+  b.put(D, plain(new THREE.BoxGeometry(0.2, 0.1, 3.4)).rotateX(0.5).translate(0, 2.4, 14.4), plain(new THREE.BoxGeometry(2.4, 0.1, 0.2)).rotateX(0.5).translate(1.2, 1.8, 15.6)); b.light(0, 5, 20, LAMP, 0.9, 8, 3);
+  for (let i = 0; i < 16; i++) { const a = i / 16 * 6.283, x = Math.cos(a) * 31, z = Math.sin(a) * 31; b.put(iron, rod([x, 0.3, z], [x, 4.6, z], 0.07, 4)); b.put(lit(1.8, 1.4, 0.8), ball(0.26, x, 4.8, z, 6)); b.light(x, 4.8, z, LAMP, 0.7, 5.5, 3.2); }
+  return b;
+}
+// The train itself: an engine and three open coaches, strung with bulbs.
+export function toyTrain() {
+  const g = new THREE.Group(), cars = [];
+  [[0xc0392b, 1], [0x2e7d5b, 0], [0xd9a021, 0], [0x2f5fa8, 0]].forEach(([colour, engine], i) => {
+    const c = new THREE.Group(), body = new THREE.MeshBasicMaterial({ color: new THREE.Color(colour).multiplyScalar(0.7) }), roof = new THREE.MeshBasicMaterial({ color: 0xe8dcc0 }), black = new THREE.MeshBasicMaterial({ color: 0x15161a });
+    const base = new THREE.Mesh(new THREE.BoxGeometry(1.6, engine ? 1.5 : 0.9, 3.2), body); base.position.y = engine ? 1.25 : 0.95; c.add(base);
+    if (engine) { const boiler = new THREE.Mesh(new THREE.CylinderGeometry(0.6, 0.6, 1.8, 10).rotateX(Math.PI / 2), body); boiler.position.set(0, 1.5, 1.9); c.add(boiler); const stack = new THREE.Mesh(new THREE.CylinderGeometry(0.22, 0.16, 0.9, 8), black); stack.position.set(0, 2.5, 2.3); c.add(stack);
+      const lamp = new THREE.Mesh(new THREE.SphereGeometry(0.2, 8, 6), new THREE.MeshBasicMaterial({ color: new THREE.Color(3, 2.6, 1.8) })); lamp.position.set(0, 1.6, 2.9); c.add(lamp); }
+    else { const top = new THREE.Mesh(new THREE.BoxGeometry(1.8, 0.12, 3.3), roof); top.position.y = 2.6; c.add(top); for (const [x, z] of [[-0.75, -1.5], [0.75, -1.5], [-0.75, 1.5], [0.75, 1.5]]) { const p = new THREE.Mesh(new THREE.BoxGeometry(0.08, 1.3, 0.08), roof); p.position.set(x, 2, z); c.add(p); }
+      const glow = new THREE.Mesh(new THREE.BoxGeometry(1.5, 0.08, 3), new THREE.MeshBasicMaterial({ color: new THREE.Color(2.4, 1.7, 0.8) })); glow.position.y = 2.5; c.add(glow); }
+    for (const z of [-1, 1]) { const w = new THREE.Mesh(new THREE.CylinderGeometry(0.36, 0.36, 1.8, 10).rotateZ(Math.PI / 2), black); w.position.set(0, 0.5, z); c.add(w); }
+    g.add(c); cars.push(c);
+  });
+  return { g, cars };
+}
