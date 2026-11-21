@@ -496,7 +496,11 @@ function prose(c, d, p) {
   });
   html = html.replace(/ autoplay muted loop playsinline preload="none">/g, ' muted loop playsinline controls preload="none" data-autoplay>');
   html = html.replace(/\{MINI\}/g, p.rule ? `<figure class="art-fig art-fig--wide art-mini" style="${paletteVars(p)}"><div class="art-mini-room room--${p.theme}">${mini(c, d, p.rule.mini)}</div><figcaption><b>Try it</b>${esc(p.rule.title)}</figcaption></figure>` : '');
-  html = html.replace(/<ul class="art-timeline">([\s\S]*?)<\/ul>/g, (m, inner) => `<ul class="art-timeline" style="--n:${(inner.match(/<li>/g) || []).length}">${inner}</ul>`);
+  // Releases sit in even rows: up to four across, or two balanced rows when there are more.
+  html = html.replace(/<ul class="art-timeline">([\s\S]*?)<\/ul>/g, (m, inner) => {
+    const n = (inner.match(/<li>/g) || []).length;
+    return `<ul class="art-timeline" style="--cols:${n > 4 ? Math.ceil(n / 2) : n}">${inner}</ul>`;
+  });
   const words = html.replace(/<[^>]+>/g, ' ').split(/\s+/).filter(Boolean).length;
   return { html, toc, minutes: Math.max(1, Math.round(words / 230)) };
 }

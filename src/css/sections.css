@@ -83,7 +83,7 @@
 .contact-colophon a { text-decoration: underline; text-underline-offset: .2em; text-decoration-thickness: 1px; }
 .contact-end { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 2rem; margin-top: clamp(2.5rem, 5vw, 4rem); padding-top: 1.1rem; border-top: 1px solid var(--rule); font: 500 .72rem/1.4 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
 /* The name, as wide as the page. The script sets the size so it fits to the pixel; this is the close guess before it runs. */
-.wordmark { font: 300 var(--fit, 17.4vw)/1 var(--serif); letter-spacing: -.055em; white-space: nowrap; text-align: center; padding: .02em 0 .1em; user-select: none; overflow: hidden; }
+.wordmark { font: 300 var(--fit, 17.4vw)/1 var(--serif); letter-spacing: -.055em; white-space: nowrap; text-align: center; padding: .02em 0 .2em; user-select: none; overflow: hidden; }
 .wordmark > span { display: inline-block; }
 .wordmark .w { padding-bottom: .26em; margin-bottom: -.26em; }
 .wordmark .w:last-child > span { font-style: italic; color: var(--ink-3); }

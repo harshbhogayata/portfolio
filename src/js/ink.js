@@ -120,7 +120,7 @@ if (canvas && canvas.getContext) {
   let width = 0, height = 0, scale = 1, frame = 0, jobs = [];
 
   const palette = () => HUES[S.root.dataset.theme === 'dark' ? 'dark' : 'light'];
-  const strength = () => (S.root.dataset.theme === 'dark' ? 0.95 : 0.8) * (width < 800 ? 0.55 : 1);
+  const strength = () => (S.root.dataset.theme === 'dark' ? 0.82 : 0.8) * (width < 800 ? 0.55 : 1);
 
   function size() {
     scale = Math.min(devicePixelRatio || 1, 2);
