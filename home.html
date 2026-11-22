@@ -1,24 +1,41 @@
 <main class="home" id="top">
   <canvas id="scene3d" aria-hidden="true"></canvas>
   <div class="veil" aria-hidden="true"></div>
+  <div class="shade" aria-hidden="true"></div>
+  <div class="grain" aria-hidden="true"></div>
 
   <header class="ident">
     <h1 class="name"><span>Harsh</span> <span>Bhogayata<b>.</b></span></h1>
     <p class="role">Software Engineer <i>&amp;</i> Founder</p>
-    <nav class="links" aria-label="Contact and profiles">
+    <p class="pitch">Full-stack products across web, mobile, TV and backend, from the first interaction to the systems behind it.</p>
+    <p class="acts">
       <a class="mail" id="mail" href="mailto:work.harsh.bhogayata@gmail.com">Email me</a>
-      <a href="assets/Harsh-Resume.pdf" target="_blank" rel="noopener noreferrer">Résumé</a>
-      <a href="https://github.com/harshbhogayata" target="_blank" rel="noopener noreferrer">GitHub</a>
-      <a href="https://www.linkedin.com/in/harshbhogayata" target="_blank" rel="noopener noreferrer">LinkedIn</a>
-      <a href="https://medium.com/@harshmbhogayata" target="_blank" rel="noopener noreferrer">Medium</a>
-      <a href="https://www.researchgate.net/profile/Harsh-Bhogayata" target="_blank" rel="noopener noreferrer">ResearchGate</a>
-      <button type="button" id="about-open" aria-haspopup="dialog">About</button>
-    </nav>
+      <a class="cv" href="assets/Harsh-Resume.pdf" target="_blank" rel="noopener noreferrer">Résumé <b aria-hidden="true">↗</b></a>
+    </p>
   </header>
 
-  <p class="place" id="place"><b>Sursagar, Vadodara</b><span id="hint">The boat goes round the lake by itself</span></p>
+  <nav class="util" aria-label="Profiles">
+    <a href="https://github.com/harshbhogayata" target="_blank" rel="noopener noreferrer">GitHub</a>
+    <a href="https://www.linkedin.com/in/harshbhogayata" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+    <a href="https://medium.com/@harshmbhogayata" target="_blank" rel="noopener noreferrer">Medium</a>
+    <a href="https://www.researchgate.net/profile/Harsh-Bhogayata" target="_blank" rel="noopener noreferrer">ResearchGate</a>
+    <button type="button" id="about-open" aria-haspopup="dialog">About</button>
+    <span class="clock" id="clock">Vadodara, India</span>
+  </nav>
 
-  <div class="shade" aria-hidden="true"></div>
+  <!-- The lake: a plan of it with the boat on it, and the place the boat is at or bound for. -->
+  <section class="lake" id="lake" aria-label="Sursagar: the places the boat calls at">
+    <div class="plan" id="plan"></div>
+    <div class="spot">
+      <p class="spot-k" id="spot-k">Sursagar, Vadodara</p>
+      <h2 class="spot-name" id="spot-name">Sursagar</h2>
+      <p class="spot-line" id="spot-line">The lake</p>
+      <p class="spot-dek" id="spot-dek">The lake at the heart of the old city. Vadodara comes here in the evening.</p>
+      <p class="spot-acts"><button type="button" id="spot-prev" aria-label="Sail to the place before">←</button><button type="button" id="spot-next">Sail on <b aria-hidden="true">→</b></button></p>
+    </div>
+    <p class="hint" id="hint">The boat goes round the lake by itself</p>
+  </section>
+
   <nav class="rail" aria-label="Work">
 <!-- RAIL -->
   </nav>
@@ -27,7 +44,7 @@
     <span class="card-pic"><img id="card-img" alt="" decoding="async"></span>
     <div class="card-head"><strong id="card-name"></strong><span id="card-meta"></span></div>
     <p id="card-dek"></p>
-    <a class="card-go" id="card-go" href="#"><span id="card-go-label">Read the case study</span> <b aria-hidden="true">→</b></a>
+    <span class="card-go"><span id="card-go-label">Read the case study</span> <b aria-hidden="true">→</b></span>
   </aside>
 
   <dialog class="about" id="about" aria-labelledby="about-title">
@@ -41,6 +58,6 @@
       <div><dt>Works in</dt><dd>TypeScript, React, Next.js, React Native, SwiftUI, Python, Django, Node.js, Hono, Go, PostgreSQL, Redis, Docker, Cloudflare.</dd></div>
     </dl>
     <p class="about-links"><a href="assets/Harsh-Resume.pdf" target="_blank" rel="noopener noreferrer">Read my résumé <b aria-hidden="true">↗</b></a><a href="mailto:work.harsh.bhogayata@gmail.com">work.harsh.bhogayata@gmail.com</a></p>
-    <p class="about-credit">The lake is Sursagar in Vadodara, with the city’s landmarks gathered on its banks. The statue’s outline is taken from a photograph by Rajeswaran Sivasankar (Wikimedia Commons, CC BY-SA 3.0).</p>
+    <p class="about-credit">The lake is Sursagar in Vadodara, with the city’s landmarks gathered on its banks. The buildings are modelled in code; their stone and carving, and the statue, are taken from photographs on Wikimedia Commons by Sharadsy, Snehrashmi, Christian Köhler, Cutekutty_rk and Rajeswaran Sivasankar, used under Creative Commons Attribution-ShareAlike licences. <a href="scene3d/CREDITS.md">Sources and licences</a>.</p>
   </dialog>
 </main>

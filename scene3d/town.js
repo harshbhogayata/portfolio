@@ -22,7 +22,7 @@ export function town() {
     if (r() < 0.3) { const ax = (r() - 0.5) * (wd - 2); b.put(iron, rod([ax, h, -dp / 2], [ax, h + 4 + r() * 3, -dp / 2], 0.04, 3)); }                                                              // an aerial
     if (r() < 0.25) for (let j = 0; j < 3; j++) b.put(tin, slab(0.9, 0.6, 0.5, -wd / 2 + 2 + j * 3, 3 + j * 3.2, 0.25));                                                                           // air conditioners
     if (front || r() < 0.2) {                                                                                                                                                                      // shop fronts: a lit strip and a sign or two
-      const c = (r() * 6) | 0; b.put(lit(1.5, 1.1, 0.6), slab(wd - 1.2, 2.3, 0.08, 0, 0.4, 0.05)); b.put(roof, slab(wd, 0.2, 1.6, 0, 3, 0.8));
+      const c = (r() * 6) | 0; b.put(lit(0.62, 0.42, 0.2), slab(wd - 1.2, 2.3, 0.08, 0, 0.4, 0.05)); b.put(roof, slab(wd, 0.2, 1.6, 0, 3, 0.8));
       for (let j = 0; j < 1 + (r() * 3 | 0); j++) b.put(signs[(c + j) % 6], slab(2.4 + r() * 3, 0.9, 0.12, (r() - 0.5) * (wd - 5), 3.3 + r() * 1.2, 0.12));
       b.light(0, 2, 2.6, signLight[c], 0.7, 7).light(0, 2, 2.6, WARM, 0.5, 9);
     }
@@ -48,6 +48,5 @@ export function town() {
   for (const [a, d] of [[32, 128], [100, 220], [166, 150], [-24, 100]]) spot(a, R + d, mosque);
   for (const [a, d] of [[24, 200], [140, 200], [84, 280]]) spot(a, R + d, waterTower);
   for (const [a, d] of [[40, 170], [118, 130], [158, 230], [4, 210], [78, 330]]) spot(a, R + d, mast);
-  [[26, 34], [64, 36], [120, 34], [150, 60], [186, 36], [-4, 34], [-30, 64], [96, 150]].forEach(([a, d], i) => spot(a, R + d, hoarding(i + 3)));
   return w;
 }

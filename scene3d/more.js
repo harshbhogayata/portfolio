@@ -1,7 +1,7 @@
 // More of Vadodara: Khanderao Market, Lehripura Gate, the Music College, the Baroda Museum; the old city's roofs on the near bank;
 // a garba ground under its roof of bulbs; lotus on the water. Each place is built facing south at the origin, like the others.
 import * as THREE from 'three';
-import { Builder, painted, lit, wall, box, slab, drum, dome, chhatri, arch, ball, cone, rod, plain, ring, facade, block, leafy, clump, shade, shadeMat, unmirrored, rng, at, R, DEG, WARM, LAMP, COOL, TEAL, ROSE } from './kit.js';
+import { Builder, painted, lit, wall, box, slab, drum, dome, chhatri, arch, ball, cone, rod, plain, ring, facade, block, leafy, clump, shade, shadeMat, unmirrored, pitched as tiled, hipped, fromPhoto, rng, at, R, DEG, WARM, LAMP, COOL, TEAL, ROSE } from './kit.js';
 import { free, person, cart } from './shore.js';
 
 const gold = () => lit(1.9, 1.35, 0.42), tiles = () => painted({ tint: 0xa5553a });
@@ -83,22 +83,23 @@ export function musicCollege() {
   return b;
 }
 
-/* The Baroda Museum and Picture Gallery in Sayaji Baug, 1894: red brick banded with cream, a wooden gallery along the upper floor,
-   a domed middle, a tiled roof. */
+/* The Baroda Museum and Picture Gallery in Sayaji Baug, 1894: red brick below, a timber-framed gallery above, steep tiled roofs,
+   and two tall finials over the middle. Its surfaces are taken from a photograph. */
 export function museum() {
-  const tile = facade({ cols: 10, rows: 2, lit: 0.3, seed: 61, stone: [186, 92, 64], shadow: [40, 22, 18], opening: 0.5, jali: 0.5 }), T = { u: 10 * 3.4, v: 2 * 6.2 };
-  const S = painted({ map: tile.map, emissiveMap: tile.emissiveMap, glow: 1.4, key: 'museum' }), C = painted({ tint: 0xeadcbc }), wood = painted({ tint: 0x5a3a28 }), roof = tiles(), b = new Builder(), r = rng(61);
-  b.put(S, wall(48, 12.4, 14, 0, 0, -7, T)); b.put(C, box(48.6, 0.45, 14.6, 0, 6.1, -7), box(49.2, 0.7, 15.2, 0, 12.4, -7), box(49, 0.8, 15, 0, 0, -7)); b.put(roof, pitched(49.8, 15.8, 0, 13.1, -7));
-  b.put(wood, slab(48, 0.25, 1.5, 0, 6.3, 0.75), slab(48.4, 0.2, 1.9, 0, 11.3, 0.85), slab(48, 0.1, 0.12, 0, 7.4, 1.4));    // the gallery
-  for (let x = -23.6; x <= 23.6; x += 3.37) b.put(wood, slab(0.2, 5, 0.2, x, 6.4, 1.35));
-  b.put(S, wall(12, 18, 16, 0, 0, -7, T, 0.25)); b.put(C, box(12.8, 0.7, 16.8, 0, 18, -7), box(12.6, 0.45, 16.6, 0, 9, -7), drum(4.4, 2.2, 0, 18.7, -7, 10), dome(4.3, 5.2, 0, 20.9, -7, { seg: 16, swell: 0.07 })); b.put(lit(0.74, 0.43, 0.17), arch(4.4, 8, 0, 0.8, 1.06));
-  for (const [cx, cz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) b.put(C, chhatri(1.8, 1.9, cx * 5, 18.7, -7 + cz * 7));
-  for (const sx of [-1, 1]) { b.put(S, wall(8, 15, 15.4, sx * 22, 0, -7, T, 0.7)); b.put(C, box(8.8, 0.6, 16.2, sx * 22, 15, -7), box(8.6, 0.45, 16, sx * 22, 7.6, -7)); b.put(roof, pyramid(4.7, 8.5, 4, sx * 22, 15.6, -7)); b.put(C, chhatri(1.3, 1.3, sx * 22, 18.6, -7)); }
-  for (let i = 0; i < 6; i++) b.put(C, slab(9 - i * 0.4, 0.22, 0.8, 0, 0.9 - i * 0.18, 1.4 + i * 0.8));
+  const LOWER = fromPhoto('museum_lower'), UPPER = fromPhoto('museum_upper'), C = painted({ tint: 0xd9c9aa }), wood = painted({ tint: 0x5a3a28 }), roof = painted({ tint: 0x8a4a38 }), brick = painted({ tint: 0x9a4a38 }), b = new Builder(), r = rng(61);
+  b.put(C, box(46, 0.9, 18, 0, 0, -8));
+  b.put(LOWER, wall(44, 7, 15, 0, 0.9, -8, { u: 14.6, v: 7 })); b.put(C, box(44.8, 0.4, 15.8, 0, 7.9, -8));
+  b.put(UPPER, wall(45.2, 6.6, 16.2, 0, 8.3, -8, { u: 15, v: 6.6 })); b.put(wood, box(46.4, 0.3, 17.4, 0, 14.9, -8)); b.put(roof, tiled(46.8, 18, 0, 15.2, -8, 0.6));   // the gallery stands out a little over the brick
+  for (let x = -22; x <= 22; x += 3.67) b.put(wood, slab(0.22, 6.6, 0.22, x, 8.3, 0.2));
+  // the middle: a taller gabled pavilion, its two finials, the door under an arch
+  b.put(LOWER, wall(13, 7.5, 17, 0, 0.9, -7.2, { u: 14.6, v: 7 }, 0.3)); b.put(UPPER, wall(13.6, 9.5, 17.6, 0, 8.4, -7.2, { u: 15, v: 6.6 }, 0.2)); b.put(wood, box(14.8, 0.3, 18.8, 0, 17.9, -7.2)); b.put(roof, hipped(7.6, 9.6, 6, 0, 18.2, -7.2));
+  for (const sx of [-1, 1]) { b.put(brick, drum(0.9, 9, sx * 3.6, 17.9, -2.4, 8)); b.put(C, drum(1.3, 0.4, sx * 3.6, 23.4, -2.4, 8), drum(1.2, 0.4, sx * 3.6, 26.9, -2.4, 8)); b.put(roof, cone(1.3, 2.6, sx * 3.6, 27.3, -2.4, 8)); b.put(lit(1.9, 1.35, 0.42), ball(0.22, sx * 3.6, 30.2, -2.4, 6)); }
+  b.put(lit(0.5, 0.29, 0.11), arch(3.2, 4.8, 0, 0.9, 1.36)); for (let i = 0; i < 5; i++) b.put(C, slab(8 - i * 0.4, 0.2, 0.8, 0, 0.74 - i * 0.18, 1.8 + i * 0.8));
+  // an end pavilion each side under its own steep roof
+  for (const sx of [-1, 1]) { b.put(LOWER, wall(8.6, 7.4, 16.6, sx * 20.6, 0.9, -8, { u: 14.6, v: 7 }, 0.6)); b.put(UPPER, wall(9.2, 8, 17.2, sx * 20.6, 8.3, -8, { u: 15, v: 6.6 }, 0.5)); b.put(wood, box(10.2, 0.3, 18.2, sx * 20.6, 16.3, -8)); b.put(roof, hipped(5.2, 9.2, 4.6, sx * 20.6, 16.6, -8)); b.put(lit(1.9, 1.35, 0.42), ball(0.2, sx * 20.6, 21.4, -8, 6)); }
   const people = folk(8); for (let i = 0; i < 10; i++) b.stamp(people[(r() * 8) | 0], (r() - 0.5) * 36, 5 + r() * 8, r() * 6.28, 1, 0);
-  for (let x = -20; x <= 20; x += 8) b.light(x, 0.6, 10, LAMP, 0.36, 14); b.light(0, 22, 6, LAMP, 0.5, 10).light(0, 5, 4, WARM, 0.8, 7).light(-22, 12, 5, LAMP, 0.3, 8).light(22, 12, 5, LAMP, 0.3, 8);
-  for (let x = -20.2; x <= 20.2; x += 6.74) b.light(x, 9.6, 0.9, WARM, 0.4, 4.2);
-  b.put(shadeMat(), shade(32, 13, 0, 0, -5));
+  for (let x = -18; x <= 18; x += 7.2) b.light(x, 0.6, 10, LAMP, 0.36, 13); b.light(0, 20, 6, LAMP, 0.45, 10).light(0, 5, 4, WARM, 0.8, 7).light(-20.6, 12, 5, LAMP, 0.3, 8).light(20.6, 12, 5, LAMP, 0.3, 8);
+  b.put(shadeMat(), shade(30, 12, 0, 0, -5));
   return b;
 }
 

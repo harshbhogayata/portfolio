@@ -1,83 +1,105 @@
 // The other places gathered on the banks. Each is built facing south at the origin; main.js sets it down and turns it.
 import * as THREE from 'three';
-import { Builder, painted, lit, wall, box, slab, drum, dome, chhatri, arch, ball, cone, rod, plain, facade, leafy, clump, shade, shadeMat, sprays, crown, ribbed, rng, WARM, LAMP, COOL } from './kit.js';
+import { Builder, painted, lit, wall, box, slab, drum, dome, chhatri, arch, ball, cone, rod, plain, facade, leafy, clump, shade, shadeMat, sprays, crown, ribbed, turned, pitched, hipped, fromPhoto, rng, WARM, LAMP, COOL } from './kit.js';
 
 const gold = () => lit(1.9, 1.35, 0.42), globe = () => lit(1.8, 1.4, 0.8);
 
-/* Kirti Mandir: the Gaekwads' memorial. A tall curved spire crowned with the sun, the moon and the earth, an open pavilion on either side. */
+/* Kirti Mandir: the Gaekwads' memorial. The model keeps the real building's measure: a stone block with its carved door, a terrace with an
+   open pavilion at either end, and between them the storey that carries the curved spire, crowned with the sun, the moon and the earth.
+   Its front, its upper storey and the stone of its spire are the building's own, from a photograph. */
 export function kirtiMandir() {
-  const tile = facade({ cols: 6, rows: 2, lit: 0.16, seed: 9, stone: [208, 196, 172], opening: 0.36, jali: 0.5 }), T = { u: 6 * 4.4, v: 2 * 8.5 };
-  const S = painted({ map: tile.map, emissiveMap: tile.emissiveMap, glow: 1.3, key: 'kirti' }), D = painted({ tint: 0xd9d0bb }), G = lit(0.74, 0.43, 0.17), b = new Builder();
-  b.put(S, wall(40, 17, 26, 0, 0, -13, T), wall(22, 5, 16, 0, 17, -12, T, 0.3)); b.put(D, box(42, 0.7, 28, 0, 8.3, -13), box(43, 0.8, 29, 0, 17, -13), box(24, 0.6, 18, 0, 22, -12), box(46, 1, 32, 0, 0, -13));
-  for (let x = -20.6; x <= 20.6; x += 1.4) b.put(D, slab(0.2, 0.8, 0.2, x, 17.8, 1.1)); b.put(D, slab(42, 0.14, 0.22, 0, 18.6, 1.1));
-  for (let i = 0; i < 6; i++) b.put(D, slab(12 - i * 0.5, 0.26, 1, 0, 0.9 - i * 0.2, 1 + i));                                  // the steps
-  b.put(G, arch(6.4, 11, 0, 1, 0.08, 0.5)); b.put(D, slab(9, 0.6, 2.4, 0, 12.4, 1.2)); for (const sx of [-3.9, 3.9]) b.put(D, drum(0.45, 11.4, sx, 1, 1.9, 8));
-  for (const sx of [-1, 1]) {                                                                                                // the two open pavilions on the roof
-    const x = sx * 14.2; b.put(D, box(10.4, 1.4, 10.4, x, 17.8, -6));
-    for (const [px, pz] of [[-1, -1], [1, -1], [-1, 1], [1, 1], [0, 1], [0, -1], [1, 0], [-1, 0]]) b.put(D, slab(0.7, 5, 0.7, x + px * 4.2, 19.2, -6 + pz * 4.2));
-    b.put(D, box(12.4, 0.7, 12.4, x, 24.2, -6), dome(4.6, 3.6, x, 24.9, -6, { seg: 12, swell: 0.02 })); b.put(gold(), ball(0.4, x, 29.9, -6, 8)); b.put(G, slab(5, 0.2, 5, x, 19.3, -6)); b.light(x, 21, -6, WARM, 0.6, 5);
-    for (const cz of [-1, 1]) b.put(D, chhatri(1.6, 1.7, sx * 20, 17.8, -13 + cz * 11.5));
+  const FRONT = fromPhoto('kirti_front'), UPPER = fromPhoto('kirti_upper'), SPIRE = fromPhoto('kirti_spire', 0), D = painted({ tint: 0xd6ccb4 }), G = lit(0.74, 0.43, 0.17), b = new Builder();
+  b.put(FRONT, wall(33, 17, 24, 0, 0, -12, { u: 33, v: 17 })); b.put(D, box(35.4, 1, 26.4, 0, 0, -12), box(34.6, 0.7, 25.6, 0, 17, -12));
+  for (let i = 0; i < 6; i++) b.put(D, slab(11 - i * 0.5, 0.26, 1, 0, 0.9 - i * 0.2, 1 + i));                                   // the steps
+  for (const sx of [-1, 1]) {                                                                                                // the two balconies that stand out from the front, each under its own little roof
+    const x = sx * 10.3; b.put(D, slab(4.4, 0.3, 1.4, x, 7.6, 0.7), slab(4.2, 0.9, 0.1, x, 7.9, 1.35), slab(4.8, 0.25, 1.7, x, 12.2, 0.85)); for (const px of [-1.95, 1.95]) b.put(D, slab(0.18, 4.3, 0.18, x + px, 7.9, 1.3));
+    b.put(D, slab(3.6, 0.3, 1.1, x, 2.6, 0.55), slab(3.9, 0.22, 1.3, x, 6.2, 0.65)); for (const px of [-1.6, 1.6]) b.put(D, slab(0.16, 3.4, 0.16, x + px, 2.9, 1.0));
   }
-  // the shikhara, in ribbed stone
-  const pts = [], grey = painted({ tint: 0xc9c2b2 }); for (let i = 0; i <= 22; i++) { const t = i / 22, rr = Math.max(0.5, 9.2 * (1 - Math.pow(t, 1.9) * 0.93)); pts.push(new THREE.Vector2(rr, 20 * t)); if (i % 3 === 2 && i < 21) pts.push(new THREE.Vector2(rr * 1.06, 20 * t + 0.05), new THREE.Vector2(rr * 1.06, 20 * t + 0.4), new THREE.Vector2(rr * 0.99, 20 * t + 0.45)); }   // a band every few courses
-  b.put(grey, ribbed(pts, 16, 0.085).translate(0, 22.6, -12), ribbed([[0.02, 0], [1.7, 0.1], [2.4, 0.6], [1.7, 1.1], [0.02, 1.2]].map(p => new THREE.Vector2(...p)), 12, 0.16).translate(0, 42.5, -12)); b.put(D, ball(1.0, 0, 44.5, -12));
-  for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; b.put(D, dome(1.3, 2.2, Math.cos(a) * 8.2, 22.6, -12 + Math.sin(a) * 8.2, { seg: 8 })); }   // little spires round its foot
-  b.put(gold(), plain(new THREE.TorusGeometry(1.0, 0.16, 6, 14, Math.PI)).rotateZ(Math.PI).translate(0, 47.2, -12), ball(0.75, 0, 48.3, -12), ball(0.5, 0, 46.2, -12, 8));
-  for (let x = -16; x <= 16; x += 8) b.light(x, 0.6, 16, LAMP, 0.34, 15);
-  b.light(0, 26, 9, LAMP, 0.6, 13).light(0, 38, 4, LAMP, 0.4, 9).light(-14, 19, 4, LAMP, 0.35, 7).light(14, 19, 4, LAMP, 0.35, 7);
+  b.put(D, slab(8.4, 0.5, 1.6, 0, 11.6, 0.8)); for (const sx of [-3.7, 3.7]) b.put(D, drum(0.36, 10.6, sx, 1, 1.3, 8));         // the porch over the door, on two columns
+  for (let x = -5.8; x <= 5.8; x += 0.72) b.put(D, slab(0.16, 0.9, 0.16, x, 17.7, 0.2)); b.put(D, slab(12.2, 0.16, 0.26, 0, 18.6, 0.2));   // the balustrade across the terrace
+  b.put(UPPER, wall(13, 5.2, 13, 0, 17.7, -11.5, { u: 13, v: 5.2, same: true })); b.put(D, box(14.6, 0.6, 14.6, 0, 22.9, -11.5));
+  for (const sx of [-1, 1]) {                                                                                                // the two open pavilions
+    const x = sx * 11.3, z = -5.6; b.put(D, box(10.2, 0.7, 10.2, x, 17.7, z));
+    for (const [px, pz] of [[-1, -1], [0, -1], [1, -1], [-1, 0], [1, 0], [-1, 1], [0, 1], [1, 1]]) b.put(D, drum(0.3, 4.3, x + px * 4.3, 18.4, z + pz * 4.3, 8), slab(0.9, 0.3, 0.9, x + px * 4.3, 22.4, z + pz * 4.3));
+    b.put(D, box(12, 0.45, 12, x, 22.7, z), box(9.6, 0.5, 9.6, x, 23.15, z)); b.put(SPIRE, dome(4.3, 2.7, x, 23.6, z, { seg: 14, swell: 0.02, finial: 0.5, wrap: 2 })); b.put(gold(), ball(0.3, x, 27.9, z, 8));
+    b.put(G, slab(8.2, 0.12, 8.2, x, 18.42, z)); b.light(x, 20.6, z, WARM, 0.7, 5.5);
+  }
+  // the spire: its real stone wrapped round a shape of the real curve, four faces to the round
+  const pts = []; for (let i = 0; i <= 22; i++) { const t = i / 22; pts.push([Math.max(0.45, 6.5 * (1 - Math.pow(t, 1.75) * 0.82)), 13.4 * t]); }
+  b.put(SPIRE, turned(pts, 20, 4).translate(0, 23.5, -11.5)); b.put(D, ribbed([[0.02, 0], [1.5, 0.1], [2.1, 0.55], [1.5, 1.0], [0.02, 1.1]].map(p => new THREE.Vector2(...p)), 12, 0.16).translate(0, 36.8, -11.5), ball(0.9, 0, 38.6, -11.5));
+  for (let i = 0; i < 4; i++) { const a = i * Math.PI / 2 + Math.PI / 4; b.put(SPIRE, dome(1.5, 2.6, Math.cos(a) * 6.3, 23.5, -11.5 + Math.sin(a) * 6.3, { seg: 8, wrap: 1 })); }   // a small spire at each corner of its foot
+  b.put(gold(), plain(new THREE.TorusGeometry(0.9, 0.15, 6, 14, Math.PI)).rotateZ(Math.PI).translate(0, 40.9, -11.5), ball(0.66, 0, 41.9, -11.5), ball(0.45, 0, 39.9, -11.5, 8));
+  for (let x = -13; x <= 13; x += 6.5) b.light(x, 0.6, 14, LAMP, 0.36, 13);
+  b.light(0, 25, 6, LAMP, 0.6, 12).light(0, 34, 2, LAMP, 0.42, 9).light(-11.3, 21, 4, LAMP, 0.3, 7).light(11.3, 21, 4, LAMP, 0.3, 7);
+  b.put(shadeMat(), shade(22, 10, 0, 0, -6));
   return b;
 }
 
-/* Mandvi Gate: the pavilion at the middle of the old city. Three arches a side, three storeys stepping in, a clock, a round tower at one corner. */
+/* Mandvi Gate: the pavilion at the middle of the old city, where its four streets meet. A square white block pierced by three pointed arches
+   on each side, a round tower at one corner, and above it three storeys of screened galleries, each smaller than the last, under wide eaves,
+   with the clock at the top. Its measure and its surfaces are taken from a photograph. */
 export function mandvi() {
-  const tile = facade({ cols: 6, rows: 2, lit: 0.5, seed: 17, stone: [228, 206, 160], opening: 0.46, pointed: true, jali: 0.5 }), T = { u: 6 * 2.5, v: 2 * 5.6 }, S = painted({ map: tile.map, emissiveMap: tile.emissiveMap, glow: 1.4, key: 'mandvi' });
-  const D = painted({ tint: 0xeadfc4 }), G = lit(0.74, 0.43, 0.17), W = painted({ tint: 0x6b4a36 }), b = new Builder();
-  b.put(S, wall(34, 10.5, 34, 0, 0, -17, { u: 34 / 3, v: 21 }, 0.02)); b.put(D, box(35.5, 1.6, 35.5, 0, 10.5, -17));
-  for (const x of [-10.5, 0, 10.5]) { b.put(G, arch(7.6, 8.2, x, 0.3, 0.08, 0.55)); const side = arch(7.6, 8.2, 0, 0.3, 0, 0.55).rotateY(Math.PI / 2).translate(17.08, 0, -17 + x); b.put(G, side, side.clone().rotateY(Math.PI).translate(0, 0, -34)); }
-  for (let x = -17; x <= 17; x += 1.7) b.put(D, slab(0.4, 0.5, 0.6, x, 9.9, 0.3));                                             // the brackets under the cornice
-  let y = 12.1; for (const [w, h] of [[21, 6.2], [14, 5.6], [7, 4.8]]) {                                                      // three storeys, each smaller, each under a wide roof and behind a rail
-    b.put(S, wall(w, h, w, 0, y, -17, { u: T.u, v: h * 2 }, 0.04));
-    b.put(D, box(w + 4.4, 0.5, w + 4.4, 0, y + h, -17)); for (let px = -w / 2 - 1.6; px <= w / 2 + 1.6; px += 1.3) b.put(W, slab(0.1, 1, 0.1, px, y, -17 + w / 2 + 1.7)); b.put(W, slab(w + 3.4, 0.1, 0.1, 0, y + 1, -17 + w / 2 + 1.7)); y += h + 0.5;
-  }
-  b.put(D, slab(2.6, 2.6, 2.6, 0, y, -17), dome(1.7, 1.6, 0, y + 2.6, -17, { seg: 8, swell: 0 })); b.put(gold(), ball(0.3, 0, y + 5, -17, 8));
-  b.put(globe(), plain(new THREE.CircleGeometry(1.25, 20)).translate(0, y - 2.9, -13.45)); b.put(W, slab(0.1, 0.9, 0.05, 0, y - 2.9, -13.4), slab(0.7, 0.1, 0.05, 0.3, y - 2.9, -13.4));   // the clock and its hands
-  for (const sx of [-2.8, 2.8]) { b.put(W, rod([sx, y - 8, -15], [sx, y - 4.6, -15], 0.05)); b.put(lit(1.5, 0.3, 0.2), slab(1.3, 0.8, 0.04, sx + 0.7, y - 5.4, -15)); }          // the red flags
-  b.put(D, drum(3.3, 13.4, 16.2, 0, -1, 14), drum(3.7, 0.6, 16.2, 13.4, -1, 14), chhatri(3.2, 2.4, 16.2, 14, -1));
-  for (const x of [-12, 0, 12]) b.light(x, 0.6, 14, LAMP, 0.36, 14);
-  b.light(0, 16, 9, LAMP, 0.5, 12).light(22, 3, -6, LAMP, 0.4, 12).light(-22, 3, -17, LAMP, 0.3, 12).light(0, 4, -4, WARM, 0.7, 9);
+  const BASE = fromPhoto('mandvi_base', 0.9), T1 = fromPhoto('mandvi_t1', 0.8), T2 = fromPhoto('mandvi_t2', 0.8), T3 = fromPhoto('mandvi_t3', 0), TOWER = fromPhoto('mandvi_tower', 0.6);
+  const D = painted({ tint: 0xeeebe2 }), W = painted({ tint: 0x7a5a48 }), iron = painted({ tint: 0x33353d }), b = new Builder(), cz = -13;
+  b.put(BASE, wall(26, 12.5, 26, 0, 0, cz, { u: 26, v: 12.5, same: true })); b.put(D, box(27.2, 0.5, 27.2, 0, 9.3, cz), box(27.6, 0.7, 27.6, 0, 12.5, cz));
+  for (let x = -13; x <= 13; x += 1.3) b.put(D, slab(0.5, 0.6, 0.4, x, 13.2, 0.1));                                             // the parapet's battlements
+  b.put(TOWER, drum(2.3, 14, 13.4, 0, 0.4, 14, { u: 2 * Math.PI * 2.3, v: 14 })); b.put(D, drum(2.8, 0.5, 13.4, 11.2, 0.4, 14), drum(2.9, 0.5, 13.4, 14, 0.4, 14));   // the round tower at the corner, and the lantern on it
+  for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; b.put(iron, rod([13.4 + Math.cos(a) * 1.9, 14.5, 0.4 + Math.sin(a) * 1.9], [13.4 + Math.cos(a) * 1.9, 17, 0.4 + Math.sin(a) * 1.9], 0.09, 5)); }
+  b.put(D, drum(2.4, 0.3, 13.4, 17, 0.4, 12)); b.put(W, dome(2.1, 2, 13.4, 17.3, 0.4, { seg: 12, swell: 0.02, finial: 0.5 }));
+  // the galleries: each a screened storey behind a rail, under a wide eave
+  const storey = (mat, w, h, y, eave) => { b.put(mat, wall(w, h, w, 0, y, cz, { u: w, v: h, same: true })); b.put(D, box(w + eave, 0.28, w + eave, 0, y + h, cz), box(w + eave - 0.9, 0.22, w + eave - 0.9, 0, y + h + 0.28, cz));
+    for (let px = -w / 2 - 1; px <= w / 2 + 1; px += 1.1) for (const s of [-1, 1]) b.put(iron, slab(0.07, 0.9, 0.07, px, y, cz + s * (w / 2 + 1)), slab(0.07, 0.9, 0.07, s * (w / 2 + 1), y, cz + px));
+    for (const s of [-1, 1]) b.put(iron, slab(w + 2.1, 0.07, 0.07, 0, y + 0.9, cz + s * (w / 2 + 1)), slab(0.07, 0.07, w + 2.1, s * (w / 2 + 1), y + 0.9, cz)); };
+  storey(T1, 13.4, 3.7, 12.9, 3.2); storey(T2, 8.1, 3.1, 17.1, 2.6); storey(T3, 4.8, 2.2, 20.7, 1.6);
+  b.put(D, slab(2.9, 2, 2.9, 0, 23.4, cz), box(3.9, 0.25, 3.9, 0, 25.4, cz)); for (const [sx, sz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) b.put(D, slab(0.2, 2, 0.2, sx * 1.3, 23.4, cz + sz * 1.3));
+  b.put(D, dome(1.5, 1.3, 0, 25.65, cz, { seg: 10, swell: 0, finial: 0.7 })); b.put(gold(), ball(0.26, 0, 28, cz, 8));
+  for (const sx of [-1.6, 1.6]) { b.put(iron, rod([sx, 23, cz + 2.5], [sx, 26.2, cz + 2.5], 0.04)); b.put(lit(1.5, 0.3, 0.2), slab(1.1, 0.7, 0.04, sx + 0.6, 25.5, cz + 2.5)); }   // the red flags
+  for (const x of [-9, 0, 9]) b.light(x, 0.6, 12, LAMP, 0.36, 13); b.light(0, 5, 2, WARM, 0.8, 8).light(0, 15, 4, LAMP, 0.5, 9).light(0, 20, 0, LAMP, 0.4, 7).light(16, 4, 4, LAMP, 0.4, 9).light(-16, 4, -13, LAMP, 0.3, 10);
+  b.put(shadeMat(), shade(19, 19, 0, 0, cz));
   return b;
 }
 
-/* Nyay Mandir: the old court, which in the real city does stand on Sursagar's bank. A long arcaded front, a dome over the middle, a tower at each end. */
+/* Nyay Mandir, the Temple of Justice: banded stone, a tall middle with a great arched door and a turret at either shoulder, a gabled
+   pavilion to each side, and long two-storey wings under tiled roofs. Its measure and its surfaces are taken from a photograph. */
 export function nyayMandir() {
-  const tile = facade({ cols: 8, rows: 2, lit: 0.26, seed: 15, stone: [196, 150, 112], opening: 0.46, pointed: true, jali: 0.1 }), T = { u: 8 * 3.4, v: 2 * 7 };
-  const S = painted({ map: tile.map, emissiveMap: tile.emissiveMap, glow: 1.4, key: 'nyay' }), D = painted({ tint: 0xd8c2a0 }), roof = painted({ tint: 0x8b5a44 }), G = lit(0.74, 0.43, 0.17), b = new Builder();
-  b.put(S, wall(72, 14, 24, 0, 0, -12, T), wall(18, 18.5, 28, 0, 0, -11, T, 0.2)); b.put(D, box(74, 0.6, 26, 0, 6.9, -12), box(75, 0.8, 27, 0, 14, -12), box(20, 0.8, 30, 0, 18.5, -11), box(76, 1, 30, 0, 0, -12));
-  for (let x = -36; x <= 36; x += 1.5) if (Math.abs(x) > 10) b.put(D, slab(0.2, 0.8, 0.2, x, 14.8, 0.4));
-  b.put(G, arch(7, 10.5, 0, 1, 3.08, 0.5), arch(2.4, 4.6, -5.6, 9.4, 3.08, 0.5), arch(2.4, 4.6, 5.6, 9.4, 3.08, 0.5));
-  for (let i = 0; i < 5; i++) b.put(D, slab(13 - i * 0.6, 0.24, 1, 0, 0.8 - i * 0.2, 3.6 + i));
-  b.put(S, drum(6.4, 4.4, 0, 19.3, -11, 12, T)); b.put(D, drum(7, 0.6, 0, 23.7, -11, 12), dome(6.4, 7.2, 0, 24.3, -11, { seg: 24, swell: 0.03 })); b.put(gold(), ball(0.5, 0, 33.8, -11, 8));
-  for (const sx of [-1, 1]) {                                                                                                // a square tower with a pointed roof at each end, and a smaller dome halfway
-    b.put(S, wall(9, 20, 9, sx * 33, 0, -3.5, T, 0.6)); b.put(D, box(10.2, 0.6, 10.2, sx * 33, 20, -3.5)); b.put(roof, cone(6.4, 6, sx * 33, 20.6, -3.5, 4)); b.put(gold(), ball(0.34, sx * 33, 27, -3.5, 8));
-    b.put(S, drum(2.6, 2.4, sx * 17, 14.8, -8, 8, T)); b.put(D, dome(2.7, 3, sx * 17, 17.2, -8, { seg: 12 }));
+  const CENTRE = fromPhoto('nyay_centre'), GABLE = fromPhoto('nyay_gable', 0), PAV = fromPhoto('nyay_pav'), WING = fromPhoto('nyay_wing'), TUR = fromPhoto('nyay_turret', 0);
+  const D = painted({ tint: 0xe3d2ac }), roof = painted({ tint: 0x8b4f3c }), b = new Builder();
+  b.put(D, box(96, 0.9, 26, 0, 0, -11));
+  b.put(CENTRE, wall(27, 21.5, 24, 0, 0, -8, { u: 27, v: 21.5 })); b.put(D, box(28.2, 0.7, 25.2, 0, 21.5, -8));                 // the middle, standing forward
+  b.put(GABLE, wall(10, 6.2, 5, 0, 22.2, 1.4, { u: 10, v: 6.2, same: true })); b.put(D, box(11, 0.4, 5.6, 0, 28.4, 1.4)); for (const sx of [-4.4, 0, 4.4]) b.put(D, dome(0.7, 1.3, sx, 28.8, 1.4, { seg: 8, finial: 0.6 }));
+  b.put(D, slab(11.4, 0.5, 2.2, 0, 8.3, 5.1)); for (let x = -5.2; x <= 5.2; x += 0.8) b.put(D, slab(0.16, 0.9, 0.16, x, 8.8, 6.1));   // the balcony over the door
+  for (const sx of [-1, 1]) {                                                                                                // the two turrets: an eight-sided shaft, an open lantern, a little dome
+    const x = sx * 10.2, z = 2.2; b.put(TUR, drum(2.2, 9.5, x, 21.5, z, 8, { u: 2 * Math.PI * 2.2 / 2, v: 9.5 })); b.put(D, drum(2.9, 0.4, x, 26, z, 8), drum(2.8, 0.4, x, 31, z, 8));
+    for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; b.put(D, drum(0.22, 2.8, x + Math.cos(a) * 1.9, 31.4, z + Math.sin(a) * 1.9, 6)); }
+    b.put(D, drum(2.6, 0.4, x, 34.2, z, 8), dome(2.1, 2.4, x, 34.6, z, { seg: 12, swell: 0.05, finial: 0.6 })); b.put(gold(), ball(0.3, x, 38.7, z, 8)); b.light(x, 32.6, z, WARM, 0.6, 4.5, 2.2);
   }
-  for (let x = -32; x <= 32; x += 8) b.light(x, 0.6, 15, WARM, 0.34, 14);
-  b.light(0, 22, 8, WARM, 0.55, 11).light(-33, 18, 8, WARM, 0.3, 8).light(33, 18, 8, WARM, 0.3, 8);
+  for (const sx of [-1, 1]) {                                                                                                // a gabled pavilion, then a long wing, on each side
+    const px = sx * 20.2; b.put(PAV, wall(13.4, 15.4, 20, px, 0, -10, { u: 13.4, v: 15.4 })); b.put(D, box(14.4, 0.6, 21, px, 15.4, -10)); b.put(roof, hipped(7.2, 10.6, 4.6, px, 16, -10));
+    b.put(D, slab(4.6, 3.4, 0.5, px, 16, 0.3), dome(0.9, 1.4, px, 19.4, 0.3, { seg: 8, finial: 0.6 }));
+    const wx = sx * 37.2; b.put(WING, wall(20.6, 12, 16, wx, 0, -9, { u: 20.6, v: 12 }, sx < 0 ? 0 : 0.5)); b.put(D, box(21.6, 0.6, 17, wx, 12, -9)); b.put(roof, pitched(21.8, 17.4, wx, 12.6, -9, 0.5));
+    for (let x = -9.4; x <= 9.4; x += 1.34) b.put(D, slab(0.3, 0.6, 0.3, wx + x, 12.6, -0.7));
+    const ex = sx * 46.8; b.put(D, drum(1.2, 3, ex, 12.6, -1.4, 8), chhatri(2.4, 2.3, ex, 15.6, -1.4)); b.put(gold(), ball(0.24, ex, 20.3, -1.4, 6));
+  }
+  for (let i = 0; i < 5; i++) b.put(D, slab(13 - i * 0.6, 0.24, 1, 0, 0.8 - i * 0.2, 4.6 + i));
+  for (let x = -40; x <= 40; x += 8) b.light(x, 0.6, 15, LAMP, 0.36, 14);
+  b.light(0, 24, 10, LAMP, 0.55, 11).light(-20, 17, 8, LAMP, 0.3, 8).light(20, 17, 8, LAMP, 0.3, 8).light(0, 6, 8, WARM, 0.7, 7);
+  b.put(shadeMat(), shade(56, 12, 0, 0, -6));
   return b;
 }
 
 /* The Arts Faculty of the university: brick and stone in bands, and one of the largest masonry domes in India over the middle. */
 export function artsDome() {
-  const tile = facade({ cols: 8, rows: 3, lit: 0.24, seed: 21, stone: [178, 104, 78], shadow: [40, 24, 20], opening: 0.44, jali: 0.15 }), T = { u: 8 * 3.2, v: 3 * 5.4 };
-  const S = painted({ map: tile.map, emissiveMap: tile.emissiveMap, glow: 1.4, key: 'arts' }), D = painted({ tint: 0xe0cfae }), brick = painted({ tint: 0xb46a50 }), G = lit(0.74, 0.43, 0.17), b = new Builder();
-  b.put(S, wall(30, 19, 30, 0, 0, -15, T), wall(24, 11, 20, -27, 0, -12, T, 0.3), wall(24, 11, 20, 27, 0, -12, T, 0.5));
+  const PORTAL = fromPhoto('msu_portal'), S = fromPhoto('msu_wall'), T = { u: 10.4, v: 23.4 }, BAY = fromPhoto('msu_bay'), DRUM = fromPhoto('msu_drum', 0), DOME = fromPhoto('msu_dome', 0), brick = S;
+  const D = painted({ tint: 0xe0cfae }), b = new Builder();
+  b.put(PORTAL, wall(30, 19, 30, 0, 0, -15, { u: 30, v: 21 })); b.put(S, wall(24, 11, 20, -27, 0, -12, T, 0.3), wall(24, 11, 20, 27, 0, -12, T, 0.5));
+  for (const sx of [-1, 1]) { b.put(BAY, wall(7.6, 15.5, 6, sx * 33, 0, -1, { u: 7.6, v: 22.4, same: true })); b.put(D, box(8.4, 0.5, 6.8, sx * 33, 15.5, -1)); b.put(DOME, dome(2.6, 3, sx * 33, 16, -1, { seg: 12, wrap: 2 })); }   // a bay with its balcony at the end of each wing
   b.put(D, box(31.4, 0.7, 31.4, 0, 19, -15), box(25.2, 0.6, 21.2, -27, 11, -12), box(25.2, 0.6, 21.2, 27, 11, -12), box(82, 1, 34, 0, 0, -14));
   for (const y of [5.4, 10.8]) b.put(D, box(30.8, 0.4, 30.8, 0, y, -15)); b.put(D, box(24.8, 0.4, 20.8, -27, 5.4, -12), box(24.8, 0.4, 20.8, 27, 5.4, -12));
-  b.put(G, arch(6, 12, 0, 1, 0.08, 0.4));
   // the drum, banded, with its ring of windows; the dome; a small domed tower at each corner
-  b.put(S, drum(12, 8, 0, 19.7, -15, 16, T)); for (const y of [22.3, 25]) b.put(D, drum(12.3, 0.4, 0, y, -15, 16)); b.put(D, drum(13, 0.8, 0, 27.7, -15, 16), dome(12, 13, 0, 28.5, -15, { seg: 32, swell: 0.02, finial: 0.2 })); b.put(gold(), ball(0.7, 0, 44.6, -15, 8));
-  for (const [sx, sz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) { const x = sx * 13.4, z = -15 + sz * 13.4; b.put(brick, drum(2.3, 25, x, 0, z, 8)); b.put(D, drum(2.8, 0.5, x, 25, z, 8), chhatri(3, 2.6, x, 25.5, z)); }
-  for (const sx of [-1, 1]) { b.put(brick, drum(2, 15, sx * 38.5, 0, -3, 8)); b.put(D, dome(2.2, 2.6, sx * 38.5, 15, -3, { seg: 10 })); for (let x = 16; x <= 38; x += 5.5) b.put(D, chhatri(1.4, 1.5, sx * x, 11.6, -3.2)); }
+  b.put(DRUM, drum(12, 8, 0, 19.7, -15, 16, { u: 2 * Math.PI * 12 / 8, v: 8 })); b.put(D, drum(12.3, 0.4, 0, 22.3, -15, 16), drum(13, 0.8, 0, 27.7, -15, 16)); b.put(DOME, dome(12, 13, 0, 28.5, -15, { seg: 32, swell: 0.02, finial: 0.2, wrap: 4 }));
+  for (let i = 0; i < 8; i++) { const a = (i + 0.5) * Math.PI / 4; b.put(DOME, dome(2.2, 2.6, Math.cos(a) * 13.6, 19.7, -15 + Math.sin(a) * 13.6, { seg: 10, wrap: 1 })); }   // the ring of small domes round the great one b.put(gold(), ball(0.7, 0, 44.6, -15, 8));
+  for (const [sx, sz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) { const x = sx * 13.4, z = -15 + sz * 13.4; b.put(brick, drum(2.3, 25, x, 0, z, 8, T)); b.put(D, drum(2.8, 0.5, x, 25, z, 8), chhatri(3, 2.6, x, 25.5, z)); }
+  for (const sx of [-1, 1]) { b.put(brick, drum(2, 15, sx * 38.5, 0, -3, 8, T)); b.put(DOME, dome(2.2, 2.6, sx * 38.5, 15, -3, { seg: 10, wrap: 1 })); for (let x = 16; x <= 38; x += 5.5) b.put(D, chhatri(1.4, 1.5, sx * x, 11.6, -3.2)); }
   for (let x = -36; x <= 36; x += 9) b.light(x, 0.6, 15, WARM, 0.36, 15);
   b.light(0, 24, 8, WARM, 0.6, 13).light(0, 36, 4, WARM, 0.5, 12).light(-13, 26, 2, WARM, 0.3, 7).light(13, 26, 2, WARM, 0.3, 7);
   return b;

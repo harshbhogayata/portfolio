@@ -1,5 +1,6 @@
 // The kit everything in the scene is made with: simple solids, the paint that carries their light, and pictures drawn in code.
 import * as THREE from 'three';
+import { TILES } from './tiles-data.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
 export const DEG = Math.PI / 180, R = 150;                 // R: the lake's radius in metres
@@ -100,8 +101,8 @@ export function wall(w, h, d, x, y, z, tile, shift = 0) {
   const uv = g.attributes.uv, n = g.attributes.normal, p = g.attributes.position;
   for (let i = 0; i < uv.count; i++) {
     if (Math.abs(n.getY(i)) > 0.5 || !tile) { uv.setXY(i, 0.004, 0.004); continue; }     // roofs and floors take the plain corner of the picture
-    const along = Math.abs(n.getX(i)) > 0.5 ? p.getZ(i) + d / 2 + 7 : p.getX(i) + w / 2;
-    uv.setXY(i, along / tile.u + shift, (p.getY(i) + h / 2) / tile.v);
+    const along = Math.abs(n.getX(i)) > 0.5 ? p.getZ(i) + d / 2 + (tile.same ? 0 : 7) : p.getX(i) + w / 2;
+    uv.setXY(i, along / tile.u + shift, (p.getY(i) + h / 2 + (tile.y0 || 0)) / tile.v);
   }
   return g.translate(x, y + h / 2, z);
 }
@@ -109,7 +110,7 @@ export const box = (w, h, d, x, y, z) => wall(w, h, d, x, y, z, null);
 export const slab = (w, h, d, x, y, z) => plain(new THREE.BoxGeometry(w, h, d)).translate(x, y + h / 2, z);        // a box too small to need panels
 export function drum(r, h, x, y, z, sides = 8, tile = null, top = r) {
   const g = new THREE.CylinderGeometry(top, r, h, sides, Math.max(1, Math.round(h / 4))), uv = g.attributes.uv, n = g.attributes.normal;
-  for (let i = 0; i < uv.count; i++) { if (!tile || Math.abs(n.getY(i)) > 0.9) uv.setXY(i, 0.004, 0.004); else uv.setXY(i, uv.getX(i) * 2 * Math.PI * r / tile.u, uv.getY(i) * h / tile.v); }
+  for (let i = 0; i < uv.count; i++) { if (!tile || Math.abs(n.getY(i)) > 0.9) uv.setXY(i, 0.004, 0.004); else uv.setXY(i, uv.getX(i) * 2 * Math.PI * r / tile.u, (uv.getY(i) * h + (tile.y0 || 0)) / tile.v); }
   return g.rotateY(Math.PI / sides).translate(x, y + h / 2, z);
 }
 export const ball = (r, x, y, z, seg = 10) => plain(new THREE.SphereGeometry(r, seg, Math.max(6, seg - 2))).translate(x, y, z);
@@ -120,9 +121,10 @@ export function rod(a, b, r = 0.08, sides = 5) {
   return g.applyQuaternion(new THREE.Quaternion().setFromUnitVectors(UP, d.clone().normalize())).translate((A.x + B.x) / 2, (A.y + B.y) / 2, (A.z + B.z) / 2);
 }
 // An onion dome: a slight swell above the neck, drawn to a point, with a finial.
-export function dome(r, h, x, y, z, { seg = 20, swell = 0.1, finial = 0.32 } = {}) {
+export function dome(r, h, x, y, z, { seg = 20, swell = 0.1, finial = 0.32, wrap = 0 } = {}) {
   const pts = []; for (let i = 0; i <= 18; i++) { const t = i / 18; pts.push(new THREE.Vector2(Math.max(0.001, r * Math.sqrt(1 - Math.pow(t, 1.75)) * (0.93 + swell * 2.6 * Math.sin(Math.PI * Math.min(1, t * 1.5)) * (1 - t))), h * t)); }
-  const parts = [plain(new THREE.LatheGeometry(pts, seg)).translate(x, y, z)];
+  const shell = new THREE.LatheGeometry(pts, seg); if (wrap) { const uv = shell.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * wrap, 0.03 + uv.getY(i) * 0.94); } else plain(shell);
+  const parts = [shell.translate(x, y, z)];
   if (finial) { const f = h * finial; parts.push(plain(new THREE.CylinderGeometry(0.02 * r, 0.09 * r, f, 6)).translate(x, y + h + f / 2 - 0.05, z), ball(0.11 * r, x, y + h + f * 0.25, z, 8), ball(0.07 * r, x, y + h + f * 0.62, z, 6)); }
   return parts;
 }
@@ -269,3 +271,17 @@ export function ribbed(pts, ribs = 16, depth = 0.1) {
   for (let i = 0; i < p.count; i++) if (((i / n) | 0) % 2) { p.setX(i, p.getX(i) * (1 - depth)); p.setZ(i, p.getZ(i) * (1 - depth)); }
   const flat = g.toNonIndexed(); flat.computeVertexNormals(); return plain(flat);
 }
+
+/* ---------- surfaces taken from photographs ---------- */
+// A material whose picture is a piece of the real building: a stretch of its arcade, its tower's shaft, the stone of its dome.
+const photos = new Map();
+export function fromPhoto(name, glow = 1.15) {
+  if (photos.has(name)) return photos.get(name);
+  const t = TILES[name], load = src => { const x = new THREE.Texture(), i = new Image(); x.wrapS = x.wrapT = THREE.RepeatWrapping; x.colorSpace = THREE.SRGBColorSpace; x.anisotropy = 8; i.onload = () => { x.image = i; x.needsUpdate = true; }; i.src = src; return x; };
+  const m = painted({ map: load(t.tex), emissiveMap: t.glow ? load(t.glow) : undefined, glow, key: 'photo-' + name }); photos.set(name, m); return m;
+}
+// A shape turned about its axis that keeps a picture wrapped round it: a spire, a great dome.
+export function turned(pts, seg = 16, wrap = 4) { const g = new THREE.LatheGeometry(pts.map(p => new THREE.Vector2(p[0], p[1])), seg), uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * wrap, 0.02 + uv.getY(i) * 0.96); return g; }
+// A tiled roof of two slopes, its ridge running along x; and one of four slopes rising to a point.
+export const pitched = (w, d, x, y, z, rise = 0.42) => [1, -1].map(s => plain(new THREE.BoxGeometry(w, 0.3, d / 2 / Math.cos(rise) + 0.5)).rotateX(s * rise).translate(x, y + Math.tan(rise) * d / 4, z + s * d / 4));
+export const hipped = (half, deep, h, x, y, z) => plain(new THREE.ConeGeometry(half * 1.42, h, 4)).rotateY(Math.PI / 4).scale(1, 1, deep / half).translate(x, y + h / 2, z);

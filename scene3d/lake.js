@@ -1,6 +1,6 @@
 // What is on the water: the island with the statue, lamps floating, a fountain, pedal boats, and the boat you sail.
 import * as THREE from 'three';
-import { Builder, painted, lit, wall, facade, box, slab, drum, ball, cone, rod, plain, spot, stripes, leafy, clump, shade, shadeMat, rng, at, R, WARM, LAMP, COOL, TEAL, ROSE } from './kit.js';
+import { Builder, painted, lit, wall, facade, box, slab, drum, ball, cone, rod, plain, spot, stripes, leafy, clump, shade, shadeMat, rng, at, R, WARM, LAMP, COOL, TEAL, ROSE, fromPhoto } from './kit.js';
 import { person } from './shore.js';
 import { STATUE } from './statue-data.js';
 
@@ -46,8 +46,12 @@ export function island() {
   for (let z = -12.6; z <= 12.6; z += 1.8) for (const x of [-30.5, 30.5]) b.put(iron, slab(0.12, 1.1, 0.12, x, 4.7, z));
   for (const z of [-12.6, 12.6]) b.put(iron, slab(61, 0.07, 0.07, 0, 5.75, z)); for (const x of [-30.5, 30.5]) b.put(iron, slab(0.07, 0.07, 25.2, x, 5.75, 0));
   // the plinth, in red stone: two tiers, each with a moulding and a row of panels
-  b.put(red, box(12.6, 6, 12.6, 0, 4.7, 0), box(10, 4.6, 10, 0, 11.4, 0)); b.put(redDark, slab(13.8, 0.7, 13.8, 0, 10.7, 0), slab(11.2, 0.7, 11.2, 0, 16, 0), slab(13.6, 0.5, 13.6, 0, 4.7, 0));
-  for (const [fx, fz] of [[0, 1], [0, -1], [1, 0], [-1, 0]]) { for (const k of [-3.6, 0, 3.6]) b.put(redDark, fx ? slab(0.12, 3.4, 2.6, fx * 6.32, 6.2, k) : slab(2.6, 3.4, 0.12, k, 6.2, fz * 6.32)); for (const k of [-2.3, 2.3]) b.put(redDark, fx ? slab(0.12, 2.6, 2.8, fx * 5.02, 12.4, k) : slab(2.8, 2.6, 0.12, k, 12.4, fz * 5.02)); }
+  const STONE = fromPhoto('plinth_stone', 0), BASE = fromPhoto('plinth_base', 0), gilt = lit(0.85, 0.56, 0.16);
+  b.put(BASE, wall(11.8, 5, 11.8, 0, 4.7, 0, { u: 11.8, v: 5, same: true })); b.put(redDark, slab(12.6, 0.4, 12.6, 0, 4.7, 0), slab(12.4, 0.45, 12.4, 0, 9.7, 0), slab(11.4, 0.3, 11.4, 0, 10.15, 0));
+  b.put(STONE, wall(9.2, 5.6, 9.2, 0, 10.45, 0, { u: 9.2, v: 5.6, same: true })); b.put(redDark, slab(10.2, 0.35, 10.2, 0, 16.05, 0), slab(10.8, 0.3, 10.8, 0, 16.4, 0));
+  for (const [fx, fz] of [[0, 1], [0, -1], [1, 0], [-1, 0]]) for (const k of [-4.6, 0, 4.6]) {                               // the gilded figures that stand round its foot
+    const x = fx ? fx * 6.15 : k, z = fz ? fz * 6.15 : k; b.put(redDark, slab(1.3, 0.3, 1.3, x, 5.1, z)); b.put(gilt, plain(new THREE.SphereGeometry(1, 8, 6)).scale(0.34, 0.8, 0.28).translate(x, 6.25, z), ball(0.24, x, 7.3, z, 6), plain(new THREE.SphereGeometry(1, 6, 5)).scale(0.5, 0.16, 0.24).translate(x, 6.6, z));
+  }
   for (const [x, z] of [[-24, 8], [24, 8], [-24, -8], [24, -8], [-12, 10.5], [12, 10.5]]) { b.put(post, drum(0.5, 5.2, x, 4.7, z, 8), drum(0.8, 0.3, x, 9.8, z, 8)); b.put(G, ball(0.4, x, 10.5, z, 10)); b.light(x, 10.6, z, LAMP, 0.9, 7, 4.6); }
   for (const x of [-28, 28]) { b.put(iron, rod([x, 4.7, -10], [x, 13.5, -10], 0.07, 4)); b.put(saffron, slab(2.6, 1.5, 0.06, x + 1.35, 11.9, -10)); }
   for (const x of [-52, 52]) for (const z of [26, -22]) {                                                                      // the lamp pillars that stand in the water round it, tier on tier
@@ -55,12 +59,7 @@ export function island() {
     b.put(post, drum(0.55, 11, x, 0, z, 8)); b.put(G, ball(0.5, x, 11.5, z, 10)); b.light(x, 11.6, z, LAMP, 0.9, 7, 5);
   }
   b.light(0, 6, 15, WARM, 0.7, 11).light(-11, 5, 12, WARM, 0.5, 8).light(11, 5, 12, WARM, 0.5, 8);
-  // the plinth's dressing: mouldings at every change of width, pilasters at the corners, a lamp in every other niche, garlands of marigold
-  const cream = painted({ tint: 0xd9c6a2 }), marble = painted({ tint: 0xe8e4da }), marigold = lit(1.25, 0.62, 0.1), niche = lit(1.7, 1.0, 0.42);
-  b.put(cream, slab(13.1, 0.22, 13.1, 0, 5.5, 0), slab(13, 0.2, 13, 0, 9.9, 0), slab(10.4, 0.22, 10.4, 0, 12.1, 0), slab(10.4, 0.2, 10.4, 0, 15.4, 0), slab(12.2, 0.3, 12.2, 0, 16.7, 0));
-  for (const [sx, sz] of [[-1, -1], [1, -1], [-1, 1], [1, 1]]) b.put(redDark, slab(0.9, 5.2, 0.9, sx * 6, 5.5, sz * 6), slab(0.75, 3.6, 0.75, sx * 4.75, 12.1, sz * 4.75));
-  for (const [fx, fz] of [[0, 1], [0, -1], [1, 0], [-1, 0]]) b.put(niche, fx ? slab(0.1, 0.9, 0.55, fx * 6.42, 5.9, 0) : slab(0.55, 0.9, 0.1, 0, 5.9, fz * 6.42));
-  for (const [fx, fz] of [[0, 1], [0, -1], [1, 0], [-1, 0]]) for (let i = 0; i <= 16; i++) { const t = i / 16 * 4, u = (t % 1) - 0.5, y = 10.4 - (0.25 - u * u) * 3, k = -6.6 + i / 16 * 13.2; b.put(marigold, ball(0.17, fx ? fx * 6.95 : k, y, fz ? fz * 6.95 : k, 5)); }
+  const cream = painted({ tint: 0xd9c6a2 }), marble = painted({ tint: 0xe8e4da });
   // Nandi, the bull, sits facing the god, as he does before every Shiva
   b.put(cream, slab(2.2, 0.7, 3.4, 0, 4.7, 10)); b.put(marble, plain(new THREE.SphereGeometry(1, 10, 8)).scale(0.72, 0.6, 1.25).translate(0, 6.0, 10.1), ball(0.4, 0, 6.55, 9.75, 8), ball(0.42, 0, 6.5, 8.75, 8), plain(new THREE.SphereGeometry(1, 8, 6)).scale(0.26, 0.24, 0.42).translate(0, 6.3, 8.35), cone(0.07, 0.3, -0.22, 6.82, 8.8, 5), cone(0.07, 0.3, 0.22, 6.82, 8.8, 5));
   b.light(0, 7.4, 11.4, WARM, 0.6, 3.2);
@@ -70,7 +69,7 @@ export function island() {
   const leaf = leafy([52, 108, 66], 'b'), pot = painted({ tint: 0xa5553a }), folk = Array.from({ length: 8 }, (_, i) => person(i + 51)), q = rng(14);
   for (let x = -27; x <= 27; x += 4.5) for (const z of [-11.4, 11.4]) if (Math.abs(x) > 8 || z < 0) { b.put(pot, drum(0.4, 0.6, x, 4.7, z, 7, null, 0.5)); b.put(leaf, clump(0.62, x, 5.9, z, x, 1)); }
   for (let i = 0; i < 16; i++) { const x = (q() - 0.5) * 54, z = (q() < 0.7 ? 1 : -1) * (9.8 + q() * 1.2); if (Math.abs(x) < 2.6) continue; b.stamp(folk[(q() * 8) | 0], x, z, q() * 6.28, 1, 4.7); }
-  b.put(shadeMat(), shade(11.5, 11.5, 0, 4.7, 0));
+  b.put(shadeMat(), shade(10.5, 10.5, 0, 4.7, 0));
   return b;
 }
 // Lamps set afloat, drifting; and the fountain.

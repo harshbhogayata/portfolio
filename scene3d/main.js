@@ -9,17 +9,18 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { Water } from 'three/addons/objects/Water.js';
 import { Builder, paint, glowing, SPARKS, spot, words, rng, at, R, DEG } from './kit.js';
 import { palace } from './palace.js';
-import { kirtiMandir, mandvi, nyayMandir, artsDome, clockTower, emeTemple, kalaGhoda, banyan, sayajiBaug, toyTrain } from './places.js';
+import { kirtiMandir, mandvi, nyayMandir, artsDome, kalaGhoda, banyan, sayajiBaug, toyTrain } from './places.js';
 import { shore, claim } from './shore.js';
 import { town } from './town.js';
 import { island, statue, afloat, pedalBoats, boat } from './lake.js';
-import { khanderao, lehripura, musicCollege, museum, oldCity, garba, lotus } from './more.js';
+import { museum, oldCity, garba, lotus } from './more.js';
 
-const ANGLES = [126, 102, 78, 54, 28, 6, -16, -38, 162, -90];   // where each landing stage sits, in the order the page lists its parts
-const TOUR = [9, 8, 0, 1, 2, 3, 4, 5, 6, 7];               // the round trip: from the home jetty, clockwise
 const NIGHT = { zenith: 0x04060c, mid: 0x0a1226, horizon: 0x1b2a4e, fog: 0x121c38, water: 0x040a16 };
 
+// stops: the places the boat calls at, in the order of its round. Each has a name and a line for its board, and either the angle of its
+// landing stage on the bank (deg) or island: true for the steps of the island. The one marked home is where the boat lies at first.
 export function start(canvas, stops, hooks = {}) {
+  const ANGLES = stops.map(s => s.deg), BANK = ANGLES.filter(a => a !== undefined), HOME = Math.max(0, stops.findIndex(s => s.home)), TOUR = stops.map((_, i) => (HOME + i) % stops.length);
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, powerPreference: 'high-performance' });
   renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.12; renderer.outputColorSpace = THREE.SRGBColorSpace;
   const scene = new THREE.Scene(); scene.fog = new THREE.FogExp2(NIGHT.fog, 0.0008); scene.background = new THREE.Color(NIGHT.mid);
@@ -41,7 +42,7 @@ export function start(canvas, stops, hooks = {}) {
     vertexShader: 'attribute float size; attribute float phase; uniform float time; uniform float dpr; varying float tw; void main(){ tw = 0.72 + 0.28 * sin(time * (0.6 + phase * 0.25) + phase * 9.0); gl_PointSize = size * dpr; gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }',
     fragmentShader: 'varying float tw; void main(){ float d = length(gl_PointCoord - 0.5); float a = smoothstep(0.5, 0.05, d) * tw; gl_FragColor = vec4(vec3(0.92, 0.95, 1.0) * a * 1.5, a); }' })); scene.add(stars);
   const moonC = document.createElement('canvas'); moonC.width = moonC.height = 256; { const k = moonC.getContext('2d'); k.fillStyle = '#fff6e0'; k.beginPath(); k.arc(128, 128, 96, 0, 7); k.fill(); k.fillStyle = 'rgba(190,180,160,.5)'; for (const [x, y, s] of [[150, 100, 16], [176, 150, 11], [130, 170, 9], [190, 110, 7]]) { k.beginPath(); k.arc(x, y, s, 0, 7); k.fill(); } k.globalCompositeOperation = 'destination-out'; k.beginPath(); k.arc(72, 116, 92, 0, 7); k.fill(); }
-  const moon = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(moonC), color: new THREE.Color(2.4, 2.3, 2.0), fog: false, depthWrite: false })); moon.scale.set(150, 150, 1); moon.position.set(980, 600, -2900); scene.add(moon);
+  const moon = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(moonC), color: new THREE.Color(2.4, 2.3, 2.0), fog: false, depthWrite: false })); moon.scale.set(150, 150, 1); moon.position.set(230, 520, -2900); scene.add(moon);
   const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: spot(256), color: 0x6f8fd8, fog: false, depthWrite: false, blending: THREE.AdditiveBlending, opacity: 0.32 })); halo.scale.set(1500, 1500, 1); halo.position.copy(moon.position); scene.add(halo);
   const cloudC = document.createElement('canvas'); cloudC.width = cloudC.height = 256; { const k = cloudC.getContext('2d'), im = k.createImageData(256, 256), q = rng(19), w = []; for (let i = 0; i < 22; i++) w.push([1 + ((q() * 5) | 0), 1 + ((q() * 5) | 0), q() * 6.28, q()]);
     for (let y = 0; y < 256; y++) for (let x = 0; x < 256; x++) { let s = 0; for (const [fx, fy, ph, am] of w) s += Math.sin((x * fx + y * fy) / 256 * 6.2832 + ph) * am / (fx + fy); const v = Math.max(0, Math.min(1, s * 0.9 - 0.12)), i = (y * 256 + x) * 4; im.data[i] = 150; im.data[i + 1] = 170; im.data[i + 2] = 215; im.data[i + 3] = v * v * 255; } k.putImageData(im, 0, 0); }
@@ -49,7 +50,7 @@ export function start(canvas, stops, hooks = {}) {
   const clouds = new THREE.Mesh(new THREE.PlaneGeometry(9000, 9000).rotateX(Math.PI / 2), new THREE.MeshBasicMaterial({ map: cloudT, transparent: true, opacity: 0.2, depthWrite: false, fog: false })); clouds.position.y = 620; clouds.layers.set(1); scene.add(clouds);
 
   // Pavagadh, the hill that stands on the city's horizon; the climb to the temple on its top is lit all night. Here it rises behind the statue.
-  { const s = new THREE.Shape(), prof = [[-290, 0], [-215, 14], [-165, 24], [-125, 44], [-85, 58], [-55, 80], [-30, 92], [-10, 104], [9, 108], [30, 98], [55, 92], [85, 64], [130, 42], [170, 26], [225, 12], [300, 0]]; s.moveTo(-290, -40); for (const [x, y] of prof) s.lineTo(x, y); s.lineTo(300, -40);
+  { const s = new THREE.Shape(), prof = [[-290, 0], [-215, 14], [-165, 24], [-125, 44], [-85, 58], [-55, 80], [-30, 92], [-10, 104], [9, 108], [30, 98], [55, 92], [85, 64], [130, 42], [170, 26], [225, 12], [300, 0]]; s.moveTo(-290, -700); for (const [x, y] of prof) s.lineTo(x, y); s.lineTo(300, -700);
     const hill = new THREE.Mesh(new THREE.ShapeGeometry(s), new THREE.MeshBasicMaterial({ color: 0x101a36, fog: false })), p = at(91.5, 3350); hill.position.set(p.x, 0, p.z); hill.lookAt(0, 0, 0); scene.add(hill); hill.userData.at = p; scene.userData.hill = hill; }
 
   /* ----- the water ----- */
@@ -68,14 +69,12 @@ export function start(canvas, stops, hooks = {}) {
   // Kirti Mandir to its left and the palace to its right.
   const PAL = at(60, R + 70), palTurn = turn(60), palAt = (lx, lz) => new THREE.Vector3(lx, 0, lz).applyAxisAngle(new THREE.Vector3(0, 1, 0), palTurn).add(PAL);
   for (const t of [-58, 0, 58]) { const c = palAt(t, 4); claim(c.x, c.z, 40, 50); } world.stamp(palace(), PAL.x, PAL.z, palTurn, 1, 0.3);
-  set(kirtiMandir, 110, R + 44, [30, 30, 14]); set(nyayMandir, 177, R + 46, [44, 36, 14]); set(artsDome, 20, R + 54, [40, 42, 15]); set(mandvi, -11, R + 44, [26, 26, 17]);
-  set(clockTower, 197, R + 40, [24, 18, 7]); set(emeTemple, -38, R + 42, [22, 22, 15]); set(() => banyan(4), 146, R + 47, [21, 21, 0], 0); set(() => banyan(9), 86, R + 150, [21, 21, 0], 0);
-  set(sayajiBaug, 128, R + 74, [36, 36, 0], 0);                                                      // the garden, behind Kala Ghoda as in the real city
-  { const p = at(129, R + 8); claim(p.x, p.z, 7, 7); world.stamp(kalaGhoda(), p.x, p.z, Math.atan2(-p.x, -p.z), 1, 1.7); }
-  set(khanderao, 3.5, R + 50, [28, 20, 6]); set(musicCollege, -24.5, R + 46, [21, 16, 5]); set(museum, 132, R + 126, [27, 18, 6]);
-  { const p = at(158.5, R + 36), out = at(158.5, R + 60); claim(out.x, out.z, 30, 22); world.stamp(lehripura(), p.x, p.z, Math.atan2(-p.x, -p.z), 1, 1.5); }   // the gate stands across its own road
+  set(kirtiMandir, 110, R + 44, [30, 30, 14]); set(artsDome, 133, R + 118, [48, 42, 15]); set(museum, 162, R + 50, [27, 18, 6]); set(nyayMandir, 20, R + 50, [44, 36, 14]); set(mandvi, -8, R + 44, [26, 26, 17]);
+  set(() => banyan(4), 149, R + 47, [21, 21, 0], 0); set(() => banyan(9), 86, R + 150, [21, 21, 0], 0);
+  set(sayajiBaug, 131, R + 72, [36, 36, 0], 0);                                                      // the garden lies before the university, with Kala Ghoda at its gate, as in the real city
+  { const p = at(132, R + 8); claim(p.x, p.z, 7, 7); world.stamp(kalaGhoda(), p.x, p.z, Math.atan2(-p.x, -p.z), 1, 1.7); }
   const dance = garba(), dp = at(96, R + 52), dturn = Math.atan2(-dp.x, -dp.z); claim(dp.x, dp.z, 28, 28); world.stamp(dance.b, dp.x, dp.z, dturn, 1, 1.5);
-  world.stamp(island()); world.stamp(afloat(ANGLES)); world.stamp(lotus()); world.stamp(shore(ANGLES, [158.5, 3.5, 60])); world.stamp(town());
+  world.stamp(island()); world.stamp(afloat(BANK)); world.stamp(lotus()); world.stamp(shore(BANK, [60, 110, 162, 20, -8])); world.stamp(town());
   // the old city lies on the near bank, behind the camera's shoulder: nothing of it is ever mirrored in the lake, so the mirror is spared drawing it
   const near = new Builder(); near.stamp(oldCity());
   const built = world.build(), nearBuilt = near.build(); nearBuilt.traverse(o => o.layers.set(1)); camera.layers.enable(1); scene.add(built, nearBuilt);
@@ -107,13 +106,13 @@ export function start(canvas, stops, hooks = {}) {
   const shaftC = document.createElement('canvas'); shaftC.width = 4; shaftC.height = 128; { const k = shaftC.getContext('2d'), gr = k.createLinearGradient(0, 128, 0, 0); gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.3, 'rgba(255,255,255,.4)'); gr.addColorStop(0.7, 'rgba(255,255,255,.08)'); gr.addColorStop(1, 'rgba(255,255,255,0)'); k.fillStyle = gr; k.fillRect(0, 0, 4, 128); }
   const shaftT = new THREE.CanvasTexture(shaftC), shaft = (x, z, h, spread, colour = 0xffc27a, o = 0.042) => { const m = new THREE.Mesh(new THREE.CylinderGeometry(spread, 1.2, h, 20, 1, true), new THREE.MeshBasicMaterial({ map: shaftT, color: colour, transparent: true, opacity: o, depthWrite: false, blending: THREE.AdditiveBlending, side: THREE.DoubleSide, fog: false })); m.position.set(x, h / 2 + 1, z); m.layers.set(1); scene.add(m); return m; };
   for (const [x, z, h, s] of [[-19.5, 6, 74, 9], [12.5, 8, 62, 12], [-46, 8, 44, 8], [58, 8, 40, 8]]) { const p = palAt(x, z); shaft(p.x, p.z, h, s); }
-  { const k = at(110, R + 50), a = at(20, R + 62), c = at(197, R + 44), e = at(-38, R + 52); shaft(k.x, k.z, 60, 9); shaft(a.x, a.z, 58, 12); shaft(c.x, c.z, 50, 6); shaft(e.x, e.z, 40, 10, 0x9fc4ff, 0.04); }
+  { const k = at(110, R + 46), a = at(133, R + 120), n = at(20, R + 52); shaft(k.x, k.z, 60, 9); shaft(a.x, a.z, 58, 14); shaft(n.x, n.z, 46, 12); }
 
   // mist lying on the water, far side
   const mistT = spot(256, 0, 1.6), mists = []; for (let i = 0; i < 10; i++) { const m = new THREE.Sprite(new THREE.SpriteMaterial({ map: mistT, color: 0x33487a, transparent: true, opacity: 0.07, depthWrite: false, blending: THREE.AdditiveBlending })); const p = at(10 + i * 17 + r() * 10, R - 14 - r() * 22, 5); m.position.copy(p); m.scale.set(190 + r() * 110, 26 + r() * 10, 1); m.userData.a = r() * 6.28; m.layers.set(1); mists.push(m); scene.add(m); }
   // the board at each landing stage: on the near bank it stands beside the stage, so it never comes between the camera and the boat
-  stops.forEach((s, i) => { const deg = ANGLES[i], near = Math.sin(deg * DEG) < -0.3, bp = at(near ? deg + 10 : deg, R + 9, near ? 6.4 : 8.6);
-    const t = words([{ text: String(i + 1).padStart(2, '0') + '   ' + s.group.toUpperCase(), y: 84, size: 44, colour: '#f2c66a', font: '"Geist Mono", ui-monospace, monospace', weight: 500 }, { text: s.name, y: 206, size: 132, colour: '#fff6e2' }]);
+  stops.forEach((s, i) => { if (s.deg === undefined) return; const deg = ANGLES[i], near = Math.sin(deg * DEG) < -0.3, bp = at(near ? deg + 10 : deg + (s.shift || 0), R + 9, near ? 6.4 : 8.6);
+    const t = words([{ text: (s.line || '').toUpperCase(), y: 84, size: 44, colour: '#f2c66a', font: '"Geist Mono", ui-monospace, monospace', weight: 500 }, { text: s.name, y: 206, size: 132, colour: '#fff6e2' }]);
     const board = new THREE.Mesh(new THREE.PlaneGeometry(15, 4.7), new THREE.MeshBasicMaterial({ map: t, color: new THREE.Color(1.35, 1.35, 1.35) })); board.position.copy(bp); board.layers.set(1); scene.add(board);
     for (const x of [-6.7, 6.7]) { const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, bp.y - 1.4), new THREE.MeshBasicMaterial({ color: 0x1a1d2a })); leg.position.set(bp.x + x, (bp.y + 1.4) / 2 - 1.4, bp.z - 0.1); leg.layers.set(1); scene.add(leg); }
     for (const x of [-5.4, 0, 5.4]) { const lampOver = new THREE.Mesh(new THREE.BoxGeometry(1, 0.18, 0.45), new THREE.MeshBasicMaterial({ color: new THREE.Color(2, 1.6, 0.9) })); lampOver.position.set(bp.x + x, bp.y + 2.7, bp.z + 0.8); lampOver.layers.set(1); scene.add(lampOver); } });
@@ -141,10 +140,10 @@ export function start(canvas, stops, hooks = {}) {
   const bloom = new UnrealBloomPass(new THREE.Vector2(256, 256), 0.34, 0.55, 1.0); composer.addPass(bloom); composer.addPass(new OutputPass());
 
   /* ----- the boat's handling ----- */
-  const home = at(ANGLES[9], R - 27), pos = new THREE.Vector2(home.x, home.z), vel = new THREE.Vector2(), keys = new Set();
-  let heading = Math.PI, goal = null, docked = 9, leg = 0, hold = 3.5, lastTouch = -99, clock = 0, wakeT = 0, running = true;
-  const berth = i => { const p = at(ANGLES[i], R - 27); return new THREE.Vector2(p.x, p.z); };
-  const sail = i => { goal = { i, p: berth(i) }; docked = -1; };
+  const berth = i => { if (stops[i].deg === undefined) return new THREE.Vector2(0, 40); const p = at(ANGLES[i], R - 27); return new THREE.Vector2(p.x, p.z); };   // the island's stop is off its steps
+  const pos = berth(HOME).clone(), vel = new THREE.Vector2(), keys = new Set();
+  let heading = Math.PI, goal = null, docked = HOME, leg = 0, hold = 3.5, lastTouch = -99, clock = 0, wakeT = 0, running = true;
+  const sail = i => { goal = { i, p: berth(i) }; docked = -1; hooks.toward && hooks.toward(i); };
   function steer(dt) {
     let ix = 0, iz = 0;
     if (keys.has('ArrowUp') || keys.has('w')) iz -= 1; if (keys.has('ArrowDown') || keys.has('s')) iz += 1; if (keys.has('ArrowLeft') || keys.has('a')) ix -= 1; if (keys.has('ArrowRight') || keys.has('d')) ix += 1;
@@ -190,6 +189,7 @@ export function start(canvas, stops, hooks = {}) {
   const cam = new THREE.Vector3(); let back = 188, up = 31, tilt = -0.03, drift = 0, sharp = 1.6, slow = 0, tier = 0;
   function frame() {
     const w = canvas.clientWidth, h = canvas.clientHeight, tall = h > w;
+    moon.position.x = halo.position.x = tall ? 1500 : 230;                                    // on a tall screen the moon would sit behind the words
     camera.aspect = w / h; camera.fov = w / h < 1.5 ? 44 : 38; back = tall ? 240 : 188; up = tall ? 40 : 31; tilt = -0.03;
     if (tall) {   // a tall screen has only a band of open picture between the words above and the rail below: the lake is fitted to that band, from the statue's head down to the boat, most of it water
       const band = hooks.band && hooks.band(), top = band ? band[0] : h * 0.42, bottom = band ? band[1] : h * 0.74, above = 3.0 * DEG, below = 10.4 * DEG;
@@ -200,13 +200,14 @@ export function start(canvas, stops, hooks = {}) {
     const dpr = Math.min(devicePixelRatio || 1, tall ? sharp + 0.4 : sharp); renderer.setPixelRatio(dpr); renderer.setSize(w, h, false); composer.setPixelRatio(dpr); composer.setSize(w, h); stars.material.uniforms.dpr.value = dpr;
     const scale = h * dpr / (2 * Math.tan(camera.fov * DEG / 2)); sparks.material.uniforms.scale.value = scale; traffic.material.uniforms.scale.value = scale; fire.material.uniforms.scale.value = scale;
   }
-  let spy = null;                                            // a fixed viewpoint, for looking the scene over while it is being built
+  let spy = null, intro = still.matches ? 0 : 1;             // intro: the way in, from high and far back, as the page opens                                            // a fixed viewpoint, for looking the scene over while it is being built
   function follow(dt, snap) {
     if (spy) { camera.position.set(...spy.from); camera.lookAt(...spy.to); return; }
     // it never comes nearer the island than the south side of the lake, so the statue is seen whole, with the far bank behind it
     const tall = canvas.clientHeight > canvas.clientWidth, tx = pos.x * (tall ? 0.9 : 0.86) + drift, tz = Math.max(pos.y + back, tall ? 240 : 105), k = snap ? 1 : 1 - Math.exp(-dt * 1.7);
     cam.x += (tx - cam.x) * k; cam.z += (tz - cam.z) * k; cam.y = up + Math.sin(clock * 0.31) * 0.5;
-    camera.position.copy(cam); camera.lookAt(cam.x, cam.y + tilt * 100, cam.z - 100);
+    if (intro > 0 && !snap) intro = Math.max(0, intro - dt / 3.6); const e = intro * intro * (3 - 2 * intro), cy = cam.y + e * 52, cz = cam.z + e * 190;
+    camera.position.set(cam.x, cy, cz); camera.lookAt(cam.x, cy + (tilt - e * 0.12) * 100, cz - 100);
   }
 
   /* ----- running ----- */
@@ -238,8 +239,8 @@ export function start(canvas, stops, hooks = {}) {
     skip(seconds) { for (let t = 0; t < seconds; t += 1 / 30) { clock += 1 / 30; steer(1 / 30); follow(1 / 30); } live(1 / 30); composer.render(); },   // run time forward without drawing it: for tests and stills
     sail(i) { lastTouch = clock; if (docked === i) return; if (docked >= 0) hooks.leave && hooks.leave();
       if (still.matches) { api.jump(i); hooks.arrive && hooks.arrive(i); live(0); composer.render(); } else sail(i); },   // with motion turned down the boat is simply there
-    stop() { running = false; go(); }, resume() { running = true; go(); }, where: () => ({ x: pos.x, z: pos.y, docked }),
-    jump(i) { const p = berth(i); pos.copy(p); vel.set(0, 0); goal = null; docked = i; hold = 1e9; follow(0, true); }, renderer, scene, camera };
+    stop() { running = false; go(); }, resume() { running = true; go(); }, where: () => ({ x: pos.x, z: pos.y, docked, heading, toward: goal && goal.i !== undefined ? goal.i : -1 }),
+    jump(i) { const p = berth(i); pos.copy(p); vel.set(0, 0); goal = null; docked = i; hold = 1e9; intro = 0; follow(0, true); }, renderer, scene, camera };
   frame(); follow(0, true); go();
   return api;
 }

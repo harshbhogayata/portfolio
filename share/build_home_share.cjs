@@ -17,7 +17,8 @@ const executablePath = [process.env.CHROMIUM, local].find(p => p && fs.existsSyn
   const tab = await browser.newPage({ viewport: { width: 1200, height: 630 } });
   await tab.goto(pathToFileURL(path.join(root, 'index.html')).href);
   await tab.waitForFunction(() => document.documentElement.classList.contains('scene-on'), null, { timeout: 90000 });
-  await tab.addStyleTag({ content: '.links,.place,.rail,.shade,.card{display:none!important}.ident{left:60px;top:54px}.name{font-size:96px}.role{font-size:14px;margin-top:20px}' });
+  await tab.addStyleTag({ content: '.util,.lake,.rail,.shade,.card,.pitch,.acts,.home::after{display:none!important}.ident{left:60px;top:54px;opacity:1!important;transform:none!important}.name{font-size:96px}.role{font-size:14px;margin-top:20px}.role::after{display:none}' });
+  await tab.evaluate(() => { window.Lake.jump(0); window.Lake.skip(1); });                    // past the opening move, at the home jetty
   await tab.waitForTimeout(3000);
   await tab.screenshot({ path: path.join(root, 'assets/share/home.jpg'), type: 'jpeg', quality: 88 });
   await browser.close();
