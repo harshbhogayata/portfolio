@@ -62,8 +62,8 @@ export function start(canvas, stops, hooks = {}) {
   water.rotation.x = -Math.PI / 2; water.material.uniforms.size.value = 0.95; water.material.fragmentShader = water.material.fragmentShader.replace('vec3( 0.1 )', 'vec3( 0.006, 0.01, 0.022 )'); scene.add(water);
   const mirror = water.onBeforeRender; let turns = 0; water.onBeforeRender = function (...a) { if (tier < 1 || (turns++ & 1) === 0) mirror.apply(this, a); };   // a machine that is struggling mirrors the lake every other frame
 
-  /* ----- the city: each place is built facing south, then set on its bank and turned part of the way towards the camera ----- */
-  const world = new Builder(), turn = deg => { const p = at(deg, 1); return Math.atan2(-p.x, -p.z) * 0.62; };
+  /* ----- the city: each place is built facing south, then set on its bank and turned to face the lake ----- */
+  const world = new Builder(), turn = deg => { const p = at(deg, 1); return Math.atan2(-p.x, -p.z); };   // each place faces the lake
   const set = (make, deg, dist, plot, facing = turn(deg)) => { const p = at(deg, dist), c = at(deg, dist + plot[2]); claim(c.x, c.z, plot[0], plot[1]); world.stamp(make(), p.x, p.z, facing, 1, 1.5); return p; };
   // The banks are laid out for the first view: the statue stands clear against the dark, the garba ground's lights at its feet,
   // Kirti Mandir to its left and the palace to its right.
@@ -81,7 +81,7 @@ export function start(canvas, stops, hooks = {}) {
   const rings = dance.rings.map(({ rad, q }) => { const g = q.build(); g.position.set(dp.x, 1.66, dp.z); g.userData.rad = rad; g.traverse(o => o.layers.set(1)); scene.add(g); return g; });
   paint(built); paint(nearBuilt); rings.forEach(paint);
   const centre = new THREE.Group(); scene.add(centre); statue(centre);
-  { const aura = new THREE.Sprite(new THREE.SpriteMaterial({ map: spot(128, 0, 1.3), color: 0xffa84a, transparent: true, opacity: 0.14, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); aura.scale.set(44, 62, 1); aura.position.set(0.6, 33, -1.5); aura.layers.set(1); scene.add(aura);
+  { const aura = new THREE.Sprite(new THREE.SpriteMaterial({ map: spot(128, 0, 1.3), color: 0xffa84a, transparent: true, opacity: 0.14, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); aura.scale.set(44, 62, 1); aura.position.set(0.3, 33, 0); aura.layers.set(1); scene.add(aura);
     const spray = new THREE.Sprite(new THREE.SpriteMaterial({ map: spot(128, 0, 1.5), color: 0x9fc4ff, transparent: true, opacity: 0.13, depthWrite: false, blending: THREE.AdditiveBlending })); spray.scale.set(20, 17, 1); spray.position.set(-78, 6.5, -46); spray.layers.set(1); scene.add(spray); }
 
   // every point of light: lamp globes, bulbs on strings, lamps afloat, the fountain, the red lights on the masts
@@ -113,9 +113,11 @@ export function start(canvas, stops, hooks = {}) {
   // the board at each landing stage: on the near bank it stands beside the stage, so it never comes between the camera and the boat
   stops.forEach((s, i) => { if (s.deg === undefined) return; const deg = ANGLES[i], near = Math.sin(deg * DEG) < -0.3, bp = at(near ? deg + 10 : deg + (s.shift || 0), R + 9, near ? 6.4 : 8.6);
     const t = words([{ text: (s.line || '').toUpperCase(), y: 84, size: 44, colour: '#f2c66a', font: '"Geist Mono", ui-monospace, monospace', weight: 500 }, { text: s.name, y: 206, size: 132, colour: '#fff6e2' }]);
-    const board = new THREE.Mesh(new THREE.PlaneGeometry(15, 4.7), new THREE.MeshBasicMaterial({ map: t, color: new THREE.Color(1.35, 1.35, 1.35) })); board.position.copy(bp); board.layers.set(1); scene.add(board);
-    for (const x of [-6.7, 6.7]) { const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, bp.y - 1.4), new THREE.MeshBasicMaterial({ color: 0x1a1d2a })); leg.position.set(bp.x + x, (bp.y + 1.4) / 2 - 1.4, bp.z - 0.1); leg.layers.set(1); scene.add(leg); }
-    for (const x of [-5.4, 0, 5.4]) { const lampOver = new THREE.Mesh(new THREE.BoxGeometry(1, 0.18, 0.45), new THREE.MeshBasicMaterial({ color: new THREE.Color(2, 1.6, 0.9) })); lampOver.position.set(bp.x + x, bp.y + 2.7, bp.z + 0.8); lampOver.layers.set(1); scene.add(lampOver); } });
+    const th = Math.atan2(-bp.x, -bp.z), rx = Math.cos(th), rz = -Math.sin(th), fx = Math.sin(th), fz = Math.cos(th);            // it faces the lake, wherever on the bank it stands
+    const board = new THREE.Mesh(new THREE.PlaneGeometry(15, 4.7), new THREE.MeshBasicMaterial({ map: t, color: new THREE.Color(1.35, 1.35, 1.35) })); board.position.copy(bp); board.rotation.y = th; board.layers.set(1); scene.add(board);
+    const backing = new THREE.Mesh(new THREE.PlaneGeometry(15, 4.7), new THREE.MeshBasicMaterial({ color: 0x0b1020 })); backing.position.set(bp.x - fx * 0.06, bp.y, bp.z - fz * 0.06); backing.rotation.y = th + Math.PI; backing.layers.set(1); scene.add(backing);
+    for (const x of [-6.7, 6.7]) { const leg = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, bp.y - 1.4), new THREE.MeshBasicMaterial({ color: 0x1a1d2a })); leg.position.set(bp.x + rx * x - fx * 0.1, (bp.y + 1.4) / 2 - 1.4, bp.z + rz * x - fz * 0.1); leg.layers.set(1); scene.add(leg); }
+    for (const x of [-5.4, 0, 5.4]) { const lampOver = new THREE.Mesh(new THREE.BoxGeometry(1, 0.18, 0.45), new THREE.MeshBasicMaterial({ color: new THREE.Color(2, 1.6, 0.9) })); lampOver.position.set(bp.x + rx * x + fx * 0.8, bp.y + 2.7, bp.z + rz * x + fz * 0.8); lampOver.rotation.y = th; lampOver.layers.set(1); scene.add(lampOver); } });
 
   const others = pedalBoats(scene), vessel = boat(); scene.add(vessel);
   const train = toyTrain(); scene.add(train.g);
@@ -143,31 +145,40 @@ export function start(canvas, stops, hooks = {}) {
   const berth = i => { if (stops[i].deg === undefined) return new THREE.Vector2(0, 40); const p = at(ANGLES[i], R - 27); return new THREE.Vector2(p.x, p.z); };   // the island's stop is off its steps
   const pos = berth(HOME).clone(), vel = new THREE.Vector2(), keys = new Set();
   let heading = Math.PI, goal = null, docked = HOME, leg = 0, hold = 3.5, lastTouch = -99, clock = 0, wakeT = 0, running = true;
-  const sail = i => { goal = { i, p: berth(i) }; docked = -1; hooks.toward && hooks.toward(i); };
+  const sail = i => { goal = { i, p: berth(i) }; hooks.toward && hooks.toward(i); };
+  // which way the boat lies at a stop: bows to the landing and what stands behind it; at the home jetty and off the island, north across the lake
+  const facing = i => stops[i].deg === undefined || stops[i].home ? Math.PI : (b => Math.atan2(b.x, b.y))(berth(i));
+  let speed = 0, mine = false; const stick = { x: 0, y: 0 };   // mine: someone has taken the helm, so the boat no longer makes its round by itself
   function steer(dt) {
-    let ix = 0, iz = 0;
-    if (keys.has('ArrowUp') || keys.has('w')) iz -= 1; if (keys.has('ArrowDown') || keys.has('s')) iz += 1; if (keys.has('ArrowLeft') || keys.has('a')) ix -= 1; if (keys.has('ArrowRight') || keys.has('d')) ix += 1;
-    if (ix || iz) { goal = null; lastTouch = clock; if (docked >= 0) { docked = -1; hooks.leave && hooks.leave(); } }
-    else if (goal) {
+    let turn = 0, drive = 0, want = null;
+    if (keys.has('ArrowUp') || keys.has('w')) drive += 1; if (keys.has('ArrowDown') || keys.has('s')) drive -= 1; if (keys.has('ArrowLeft') || keys.has('a')) turn += 1; if (keys.has('ArrowRight') || keys.has('d')) turn -= 1;
+    turn -= stick.x; drive += stick.y;
+    if (turn || drive) { mine = true; goal = null; lastTouch = clock; }
+    else if (goal) {                                                                                 // the helm is held for it: towards the place asked for, round the island if that lies in the way
       const to = goal.p.clone().sub(pos), dist = to.length();
-      if (dist < 2.2 && vel.length() < 2.5) { if (goal.i !== undefined) { docked = goal.i; hold = 6.5; hooks.arrive && hooks.arrive(docked); } goal = null; }
+      if (dist < 3 && Math.abs(speed) < 4.5) { speed = 0; if (goal.i !== undefined && docked !== goal.i) { docked = goal.i; hold = 6.5; hooks.arrive && hooks.arrive(docked); } goal = null; }
       else {
-        const dir = to.clone().normalize(), along = -pos.dot(dir);                                   // does the straight course pass too near the island?
+        const dir = to.clone().normalize(), along = -pos.dot(dir);
         if (along > 0 && along < dist) { const near = pos.clone().addScaledVector(dir, along); if (near.length() < 62) { const side = near.lengthSq() > 1 ? near.clone().normalize() : new THREE.Vector2(-dir.y, dir.x); dir.addScaledVector(side, 1.5 * (1 - near.length() / 62) + 0.35).normalize(); } }
-        const ease = Math.min(1, dist / 26); ix = dir.x * ease; iz = dir.y * ease;
+        let da = Math.atan2(dir.x, dir.y) - heading; da = Math.atan2(Math.sin(da), Math.cos(da));
+        turn = Math.max(-1, Math.min(1, da * 2.4)); want = Math.min(20, dist * 0.85 + 0.8) * (Math.abs(da) > 1.0 ? 0.3 : 1);
       }
-    } else if (!still.matches) {                                                                     // nobody at the helm: go on with the round trip
+    } else if (docked >= 0 && Math.abs(speed) < 0.8) { let da = facing(docked) - heading; da = Math.atan2(Math.sin(da), Math.cos(da)); heading += da * Math.min(1, dt * 1.1); }   // lying at a place, it swings its bows to it
+    if (!turn && !drive && !goal && !mine && !still.matches) {                                        // nobody has taken the helm: it goes on with its round
       hold -= dt; if (hold <= 0 && clock - lastTouch > 9) { leg = docked >= 0 ? (TOUR.indexOf(docked) + 1) % TOUR.length : leg; if (docked >= 0) hooks.leave && hooks.leave(); sail(TOUR[leg]); }
     }
-    const l = Math.hypot(ix, iz) || 1; if (l > 1) { ix /= l; iz /= l; }
-    vel.x += (ix * 30 - vel.x * 1.5) * dt; vel.y += (iz * 30 - vel.y * 1.5) * dt;
-    pos.addScaledVector(vel, dt);
-    const d = pos.length(); if (d > R - 12) { pos.multiplyScalar((R - 12) / d); const n = pos.clone().normalize(); vel.addScaledVector(n, -Math.max(0, vel.dot(n))); }   // the bank
-    const ex = pos.x / 44, ez = pos.y / 26, e = Math.hypot(ex, ez); if (e < 1) { const n = new THREE.Vector2(ex / 44, ez / 26).normalize(); pos.set(pos.x / Math.max(e, 0.01), pos.y / Math.max(e, 0.01)); vel.addScaledVector(n, -Math.min(0, vel.dot(n))); }   // the island
-    const speed = vel.length(); if (speed > 0.6) { const want = Math.atan2(vel.x, vel.y); let da = want - heading; da = Math.atan2(Math.sin(da), Math.cos(da)); heading += da * Math.min(1, dt * 3.2); }
-    vessel.position.set(pos.x, Math.sin(clock * 1.7) * 0.06 - 0.12, pos.y); vessel.rotation.set(Math.sin(clock * 1.3) * 0.02 - Math.min(0.06, speed * 0.003), heading, Math.sin(clock * 1.1) * 0.03);
+    turn = Math.max(-1, Math.min(1, turn)); drive = Math.max(-1, Math.min(1, drive)); if (want === null) want = drive >= 0 ? drive * 20 : drive * 8;   // twenty metres a second ahead, eight astern
+    speed += (want - speed) * Math.min(1, dt * (Math.abs(want) < Math.abs(speed) ? 2.4 : 1.2));
+    heading += turn * dt * 0.9 * Math.min(1, 0.4 + Math.abs(speed) / 9) * (speed < -0.5 ? -1 : 1);
+    vel.set(Math.sin(heading) * speed, Math.cos(heading) * speed); pos.addScaledVector(vel, dt);
+    const d = pos.length(); if (d > R - 12) { pos.multiplyScalar((R - 12) / d); if (vel.dot(pos) > 0) speed *= Math.max(0, 1 - dt * 3.5); }                              // the bank
+    const e = Math.hypot(pos.x / 44, pos.y / 26); if (e < 1) { if (vel.dot(pos) < 0) speed *= Math.max(0, 1 - dt * 3.5); pos.set(pos.x / Math.max(e, 0.01), pos.y / Math.max(e, 0.01)); }   // the island
+    if (docked >= 0) { if (berth(docked).distanceTo(pos) > 26) { docked = -1; if (!goal || goal.i === undefined) hooks.leave && hooks.leave(); } }   // gone off from the place it lay at
+    else if (!goal || goal.i === undefined) for (let i = 0; i < stops.length; i++) if (berth(i).distanceTo(pos) < 15) { docked = i; hold = 6.5; hooks.arrive && hooks.arrive(i); break; }   // coming near a place is arriving at it
+    const sp = Math.abs(speed);
+    vessel.position.set(pos.x, Math.sin(clock * 1.7) * 0.06 - 0.12, pos.y); vessel.rotation.set(Math.sin(clock * 1.3) * 0.02 - Math.min(0.06, sp * 0.003), heading, Math.sin(clock * 1.1) * 0.03 - turn * sp * 0.004);
     vessel.userData.flag.rotation.y = Math.sin(clock * 6) * 0.3; for (const h of vessel.userData.lights) h.material.opacity = 0.52 + Math.sin(clock * 11 + h.position.z) * 0.07;
-    wakeT -= dt; if (speed > 2 && wakeT <= 0) { wakeT = 0.16; const w = wake.reduce((a, b) => a.userData.age > b.userData.age ? a : b); w.userData.age = 0; w.position.set(pos.x - Math.sin(heading) * 7, 0.07, pos.y - Math.cos(heading) * 7); w.userData.s = Math.min(1, speed / 16); }
+    wakeT -= dt; if (sp > 2 && wakeT <= 0) { wakeT = 0.16; const w = wake.reduce((a, b) => a.userData.age > b.userData.age ? a : b); w.userData.age = 0; w.position.set(pos.x - Math.sin(heading) * 7, 0.07, pos.y - Math.cos(heading) * 7); w.userData.s = Math.min(1, sp / 16); }
     for (const w of wake) { w.userData.age += dt; const a = w.userData.age, k = Math.min(1, a / 3.2); w.scale.setScalar(1.6 + k * 11); w.material.opacity = a < 3.2 ? (1 - k) * 0.3 * (w.userData.s || 0) : 0; }
   }
   // everything else that moves
@@ -175,6 +186,7 @@ export function start(canvas, stops, hooks = {}) {
   function live(dt) {
     water.material.uniforms.time.value = clock * 0.42; stars.material.uniforms.time.value = clock; sparks.material.uniforms.time.value = clock; cloudT.offset.x = clock * 0.0016;
     for (const m of glowing) m.uniforms.glow.value = m.userData.glow * (0.94 + Math.sin(clock * 0.7 + m.id) * 0.08);
+    centre.rotation.y = Math.atan2(camera.position.x, camera.position.z);                          // the statue is a relief: it keeps its face to whoever is looking
     for (const m of mists) m.position.x += Math.sin(clock * 0.05 + m.userData.a) * dt * 1.2;
     const tp = traffic.geometry.attributes.position; cars.forEach((c, i) => { c.a += c.v / c.d / DEG * dt; const lead = c.v > 0 ? 0.55 : -0.55, f = at(c.a + lead, c.d), b = at(c.a - lead, c.d); tp.setXYZ(i * 2, f.x, 2.3, f.z); tp.setXYZ(i * 2 + 1, b.x, 2.3, b.z); }); tp.needsUpdate = true;
     for (const o of others) { const a = clock * o.speed + o.phase; o.g.position.set(o.cx + Math.cos(a) * o.rx, Math.sin(clock * 1.5 + o.phase) * 0.05, o.cz + Math.sin(a) * o.rz); o.g.rotation.y = Math.atan2(-Math.sin(a) * o.rx * Math.sign(o.speed), Math.cos(a) * o.rz * Math.sign(o.speed)); }
@@ -185,17 +197,14 @@ export function start(canvas, stops, hooks = {}) {
     if (falling >= 0) { falling += dt; const u = streak.userData; streak.position.set(u.x + u.vx * falling, u.y - 380 * falling, -3000); streak.material.opacity = Math.max(0, Math.sin(Math.min(1, falling / 0.9) * Math.PI)) * 0.9; if (falling > 0.9) falling = -1; }
   }
 
-  /* ----- the camera: always looking north, nearly level, keeping the boat in the lower middle ----- */
-  const cam = new THREE.Vector3(); let back = 188, up = 31, tilt = -0.03, drift = 0, sharp = 1.6, slow = 0, tier = 0;
+  /* ----- the camera: behind the boat, turning as it turns; a drag looks round; it stays over the water and clear of the island ----- */
+  const cam = new THREE.Vector3(); let back = 84, up = 15, aim = 0.16, camYaw = Math.PI, lookYaw = 0, lookTilt = 0, looked = -99, dragging = false, sharp = 1.6, slow = 0, tier = 0;
   function frame() {
     const w = canvas.clientWidth, h = canvas.clientHeight, tall = h > w;
-    moon.position.x = halo.position.x = tall ? 1500 : 230;                                    // on a tall screen the moon would sit behind the words
-    camera.aspect = w / h; camera.fov = w / h < 1.5 ? 44 : 38; back = tall ? 240 : 188; up = tall ? 40 : 31; tilt = -0.03;
-    if (tall) {   // a tall screen has only a band of open picture between the words above and the rail below: the lake is fitted to that band, from the statue's head down to the boat, most of it water
-      const band = hooks.band && hooks.band(), top = band ? band[0] : h * 0.42, bottom = band ? band[1] : h * 0.74, above = 3.0 * DEG, below = 10.4 * DEG;
-      let f = Math.max(80, bottom - top) / (Math.tan(above) + Math.tan(below)); camera.fov = Math.min(54, Math.max(34, 2 * Math.atan(h / 2 / f) / DEG)); f = h / 2 / Math.tan(camera.fov * DEG / 2);
-      tilt = Math.tan((above - below) / 2 - Math.atan((h / 2 - (top + bottom) / 2) / f));
-    }
+    camera.aspect = w / h; camera.fov = tall ? 50 : w / h < 1.5 ? 44 : 38; back = tall ? 104 : 84; up = tall ? 17 : 15;
+    // the boat is kept low in the open part of the page, between the words above and the list below; the camera's tilt follows from that
+    const band = hooks.band && hooks.band(), top = band ? band[0] : h * 0.3, bottom = band ? band[1] : h * 0.86;
+    aim = Math.atan(((bottom - 0.14 * (bottom - top)) / h - 0.5) * 2 * Math.tan(camera.fov * DEG / 2));
     camera.updateProjectionMatrix();
     const dpr = Math.min(devicePixelRatio || 1, tall ? sharp + 0.4 : sharp); renderer.setPixelRatio(dpr); renderer.setSize(w, h, false); composer.setPixelRatio(dpr); composer.setSize(w, h); stars.material.uniforms.dpr.value = dpr;
     const scale = h * dpr / (2 * Math.tan(camera.fov * DEG / 2)); sparks.material.uniforms.scale.value = scale; traffic.material.uniforms.scale.value = scale; fire.material.uniforms.scale.value = scale;
@@ -203,12 +212,21 @@ export function start(canvas, stops, hooks = {}) {
   let spy = null, intro = still.matches ? 0 : 1;             // intro: the way in, from high and far back, as the page opens                                            // a fixed viewpoint, for looking the scene over while it is being built
   function follow(dt, snap) {
     if (spy) { camera.position.set(...spy.from); camera.lookAt(...spy.to); return; }
-    // it never comes nearer the island than the south side of the lake, so the statue is seen whole, with the far bank behind it
-    const tall = canvas.clientHeight > canvas.clientWidth, tx = pos.x * (tall ? 0.9 : 0.86) + drift, tz = Math.max(pos.y + back, tall ? 240 : 105), k = snap ? 1 : 1 - Math.exp(-dt * 1.7);
-    cam.x += (tx - cam.x) * k; cam.z += (tz - cam.z) * k; cam.y = up + Math.sin(clock * 0.31) * 0.5;
-    if (intro > 0 && !snap) intro = Math.max(0, intro - dt / 3.6); const e = intro * intro * (3 - 2 * intro), cy = cam.y + e * 52, cz = cam.z + e * 190;
-    camera.position.set(cam.x, cy, cz); camera.lookAt(cam.x, cy + (tilt - e * 0.12) * 100, cz - 100);
+    const k = snap ? 1 : 1 - Math.exp(-dt * 2.4), kp = snap ? 1 : 1 - Math.exp(-dt * 5);
+    let d = heading - camYaw; d = Math.atan2(Math.sin(d), Math.cos(d)); camYaw += d * k;                                   // it swings round behind the boat
+    if (!dragging && clock - looked > 2.2) { const ease = Math.exp(-dt * 1.4); lookYaw *= ease; lookTilt *= ease; }          // a look round is let go of after a moment
+    const yaw = camYaw + lookYaw, fx = Math.sin(yaw), fz = Math.cos(yaw); let cx = pos.x - fx * back, cz = pos.y - fz * back;
+    // it keeps over the water, and never goes back among the buildings: only on the south side, where the old city's roofs are low, may it stand off over them
+    const r = Math.hypot(cx, cz) || 1, s = Math.min(1, Math.max(0, (cz / r - 0.5) / 0.22)), lim = R + 6 + 84 * s * s * (3 - 2 * s); if (r > lim) { cx *= lim / r; cz *= lim / r; }
+    const isle = Math.hypot(cx / 54, cz / 36); if (isle < 1) { cx /= Math.max(isle, 0.05); cz /= Math.max(isle, 0.05); }       // and out of the island
+    cam.x += (cx - cam.x) * kp; cam.z += (cz - cam.z) * kp;
+    const near = Math.min(1, Math.max(0.56, Math.hypot(pos.x - cam.x, pos.y - cam.z) / back)); cam.y += (up * near + Math.sin(clock * 0.31) * 0.4 - cam.y) * kp;   // held in close, it comes down
+    if (intro > 0 && !snap) intro = Math.max(0, intro - dt / 3.6); const e = intro * intro * (3 - 2 * intro), px = cam.x - fx * e * 170, py = cam.y + e * 58, pz = cam.z - fz * e * 170;
+    const tx = pos.x + fx * 30 - px, tz = pos.y + fz * 30 - pz, tl = Math.hypot(tx, tz) || 1, pitch = Math.max(-0.5, aim - Math.atan2(py - 1, Math.hypot(pos.x - px, pos.y - pz))) + lookTilt;
+    camera.position.set(px, py, pz); camera.lookAt(px + tx / tl * Math.cos(pitch) * 100, py + Math.sin(pitch) * 100, pz + tz / tl * Math.cos(pitch) * 100);
   }
+
+
 
   /* ----- running ----- */
   let last = performance.now(), raf = 0;
@@ -227,20 +245,30 @@ export function start(canvas, stops, hooks = {}) {
   addEventListener('keyup', e => keys.delete(e.key.length === 1 ? e.key.toLowerCase() : e.key)); addEventListener('blur', () => keys.clear());
   // press on the water and the boat goes there
   const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0), hit = new THREE.Vector3();
-  canvas.addEventListener('pointerdown', e => { const b = canvas.getBoundingClientRect(); ndc.set((e.clientX - b.left) / b.width * 2 - 1, -((e.clientY - b.top) / b.height) * 2 + 1); ray.setFromCamera(ndc, camera);
-    if (ray.ray.intersectPlane(plane, hit) && Math.hypot(hit.x, hit.z) < R + 30) { const p = new THREE.Vector2(hit.x, hit.z), d = p.length(); if (d > R - 14) p.multiplyScalar((R - 14) / d); if (Math.hypot(p.x / 48, p.y / 30) < 1) p.multiplyScalar(1 / Math.max(0.05, Math.hypot(p.x / 48, p.y / 30)));
-      let best = -1, bd = 22; stops.forEach((s, i) => { const q = berth(i).distanceTo(p); if (q < bd) { bd = q; best = i; } });                                             // a press near a landing stage means that stage
-      lastTouch = clock; if (docked >= 0) hooks.leave && hooks.leave(); if (best >= 0) sail(best); else { goal = { p }; docked = -1; } } });
-  addEventListener('pointermove', e => { drift = (e.clientX / innerWidth - 0.5) * 10; });
+  function press(e) { const b = canvas.getBoundingClientRect(); ndc.set((e.clientX - b.left) / b.width * 2 - 1, -((e.clientY - b.top) / b.height) * 2 + 1); ray.setFromCamera(ndc, camera);
+    const o = ray.ray.origin, dir = ray.ray.direction; if (dir.y > 0.2) return;                                                                                        // the sky is not somewhere to go
+    let p = ray.ray.intersectPlane(plane, hit) && Math.hypot(hit.x, hit.z) < R - 14 ? new THREE.Vector2(hit.x, hit.z) : null, reach = 22;
+    if (!p) { const dx = dir.x, dz = dir.z, l = Math.hypot(dx, dz) || 1, ux = dx / l, uz = dz / l, bq = o.x * ux + o.z * uz, cq = o.x * o.x + o.z * o.z - (R - 14) * (R - 14), disc = bq * bq - cq; if (disc < 0) return;   // a press on the bank or on what stands there: the water's edge on the way to it
+      const t = -bq + Math.sqrt(disc); if (t < 0) return; p = new THREE.Vector2(o.x + ux * t, o.z + uz * t); reach = 34; }
+    if (Math.hypot(p.x / 48, p.y / 30) < 1) p.multiplyScalar(1 / Math.max(0.05, Math.hypot(p.x / 48, p.y / 30)));
+    let best = -1, bd = reach; stops.forEach((s, i) => { const q = berth(i).distanceTo(p); if (q < bd) { bd = q; best = i; } });                                         // near a landing stage means that stage
+    mine = true; lastTouch = clock; if (best >= 0) { if (best !== docked) sail(best); } else goal = { p }; }
+  let held = null;
+  canvas.addEventListener('pointerdown', e => { held = { x: e.clientX, y: e.clientY, yaw: lookYaw, tilt: lookTilt, id: e.pointerId, moved: false }; try { canvas.setPointerCapture(e.pointerId); } catch (err) {} });
+  canvas.addEventListener('pointermove', e => { if (!held || e.pointerId !== held.id) return; const dx = e.clientX - held.x, dy = e.clientY - held.y; if (!held.moved && Math.hypot(dx, dy) < 7) return;
+    held.moved = dragging = true; mine = true; looked = clock; lookYaw = held.yaw + dx / canvas.clientWidth * 3.4; lookTilt = Math.max(-0.2, Math.min(0.3, held.tilt + dy / canvas.clientHeight * 0.9)); if (still.matches) go(); });
+  const release = e => { if (!held || e.pointerId !== held.id) return; const was = held; held = null; dragging = false; looked = clock; if (!was.moved && e.type === 'pointerup') press(e); };
+  canvas.addEventListener('pointerup', release); canvas.addEventListener('pointercancel', release);
 
   const stepOnce = dt => { clock += dt; steer(dt); follow(dt); live(dt); composer.render(); };
   const api = { look(from, to, fov) { spy = from ? { from, to } : null; frame(); if (spy && fov) { camera.fov = fov; camera.updateProjectionMatrix(); } },
     step(dt) { running = false; cancelAnimationFrame(raf); stepOnce(dt); },
     skip(seconds) { for (let t = 0; t < seconds; t += 1 / 30) { clock += 1 / 30; steer(1 / 30); follow(1 / 30); } live(1 / 30); composer.render(); },   // run time forward without drawing it: for tests and stills
-    sail(i) { lastTouch = clock; if (docked === i) return; if (docked >= 0) hooks.leave && hooks.leave();
+    drive(x, y) { stick.x = x; stick.y = y; if (still.matches) go(); },                             // a stick on the page, for hands without keys
+    sail(i) { mine = true; lastTouch = clock; if (docked === i && !goal) return;
       if (still.matches) { api.jump(i); hooks.arrive && hooks.arrive(i); live(0); composer.render(); } else sail(i); },   // with motion turned down the boat is simply there
     stop() { running = false; go(); }, resume() { running = true; go(); }, where: () => ({ x: pos.x, z: pos.y, docked, heading, toward: goal && goal.i !== undefined ? goal.i : -1 }),
-    jump(i) { const p = berth(i); pos.copy(p); vel.set(0, 0); goal = null; docked = i; hold = 1e9; intro = 0; follow(0, true); }, renderer, scene, camera };
+    jump(i) { const p = berth(i); pos.copy(p); vel.set(0, 0); speed = 0; heading = camYaw = facing(i); lookYaw = lookTilt = 0; goal = null; docked = i; hold = 1e9; intro = 0; follow(0, true); hooks.arrive && hooks.arrive(i); }, renderer, scene, camera };
   frame(); follow(0, true); go();
   return api;
 }

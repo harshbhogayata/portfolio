@@ -14,7 +14,7 @@ export function town() {
   let built = 0;
   for (let i = 0; i < 620 && built < 430; i++) {
     const a = r() * 360, front = r() < 0.36, d = front ? R + 32 + r() * 10 : R + 44 + r() * r() * 420, p = at(a, d);
-    if (south(a) || !free(p.x, p.z, 12)) continue;
+    if ((south(a) && d < R + 150) || !free(p.x, p.z, 12)) continue;                                                                                                              // on the south side the old city's low roofs come first, and the town stands beyond them
     const wd = 10 + r() * 22, dp = 9 + r() * 16, h = front ? 7 + r() * 9 : 6 + r() * r() * (d > R + 130 ? 52 : 24), k = (r() * 4) | 0, turn = Math.atan2(-Math.cos(a * DEG), Math.sin(a * DEG)) + (r() - 0.5) * 0.4, b = new Builder();
     b.put(kinds[k], wall(wd, h, dp, 0, 0, -dp / 2, T, r() * 3)); b.put(roof, slab(wd + 0.5, 0.5, dp + 0.5, 0, h, -dp / 2));
     if (r() < 0.7) { const tx = (r() - 0.5) * (wd - 4), tz = -dp / 2 + (r() - 0.5) * (dp - 4); b.put(tin, slab(2.2, 1.1, 2.2, tx, h + 0.5, tz)); b.put(tank, drum(0.9, 1.5, tx, h + 1.6, tz, 10)); }      // a water tank on its stand

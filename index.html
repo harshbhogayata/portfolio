@@ -18,7 +18,7 @@ a,button{-webkit-tap-highlight-color:transparent}
 #scene3d{position:absolute;inset:0;width:100%;height:100%;display:block;opacity:0;transition:opacity 1.4s;touch-action:none;cursor:crosshair}
 .scene-on #scene3d{opacity:1}
 /* The sky darkens behind the words at the top and the roofs behind the work at the foot; a little grain and a darker edge hold the picture together. */
-.veil{position:absolute;left:0;right:0;top:0;height:44%;pointer-events:none;background:linear-gradient(to bottom,rgba(5,8,18,.8) 0,rgba(5,8,18,.46) 55%,transparent)}
+.veil{position:absolute;left:0;right:0;top:0;height:52%;pointer-events:none;background:radial-gradient(ellipse 60% 96% at 0 0,rgba(5,8,18,.86) 0,rgba(5,8,18,.7) 50%,transparent 80%),linear-gradient(to bottom,rgba(5,8,18,.82) 0,rgba(5,8,18,.4) 50%,transparent)}
 .shade{position:absolute;left:0;right:0;bottom:0;height:calc(var(--rail-h,180px) + 130px);pointer-events:none;background:linear-gradient(to top,rgba(4,7,15,.97) 0,rgba(4,7,15,.92) calc(var(--rail-h,180px) + 14px),transparent)}
 .grain{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:.5;background:radial-gradient(ellipse at 50% 46%,transparent 52%,rgba(3,5,12,.5) 100%),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .22 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
 .home::after{content:"";position:absolute;inset:12px;z-index:2;border:1px solid rgba(250,243,224,.07);pointer-events:none}
@@ -75,6 +75,12 @@ a,button{-webkit-tap-highlight-color:transparent}
 .spot-name,.spot-line,.spot-dek{transition:opacity .28s,transform .28s}
 .hint{grid-column:1/-1;margin:10px 0 0;padding-top:11px;border-top:1px solid rgba(250,243,224,.09);font:500 10px/1.3 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ui-soft)}
 .no-scene .lake{display:none}
+
+/* The stick, on screens that are touched: push it the way the boat should go */
+.stick{display:none;position:absolute;right:var(--pad);bottom:calc(var(--rail-h,180px) + 26px);z-index:4;width:86px;height:86px;border-radius:50%;border:1px solid rgba(250,243,224,.26);background:rgba(9,14,28,.42);touch-action:none}
+.stick i{position:absolute;left:50%;top:50%;width:36px;height:36px;margin:-18px 0 0 -18px;border-radius:50%;background:rgba(250,243,224,.86);box-shadow:0 2px 10px rgba(0,0,0,.5)}
+.stick::before{content:"";position:absolute;left:50%;top:9px;margin-left:-4px;border:4px solid transparent;border-bottom-color:rgba(250,243,224,.6)}
+@media (pointer:coarse){.scene-on .stick{display:block}}
 
 /* The work, along the foot */
 .rail{position:absolute;left:var(--pad);right:var(--pad);bottom:clamp(18px,4.2vh,40px);z-index:3;display:grid;grid-template-columns:auto auto;justify-content:space-between;gap:clamp(24px,3vw,56px);counter-reset:work}
@@ -140,7 +146,7 @@ a,button{-webkit-tap-highlight-color:transparent}
   .acts{gap:18px;font-size:14.5px}.mail{padding:10px 15px 11px}
   .util{left:var(--pad);right:auto;top:auto;position:absolute;gap:6px 16px;flex-wrap:wrap;font-size:11px;letter-spacing:.1em}
   .clock{display:none}
-  .veil{height:48%;background:linear-gradient(to bottom,rgba(5,8,18,.86) 0,rgba(5,8,18,.7) 74%,transparent)}.shade{display:none}
+  .veil{height:calc(var(--head-h,300px) + 70px);background:linear-gradient(to bottom,rgba(5,8,18,.92) 0,rgba(5,8,18,.86) calc(var(--head-h,300px) - 4px),transparent)}.shade{display:none}
   .lake{left:var(--pad);right:var(--pad);top:auto;bottom:calc(var(--rail-h,180px) + 12px);grid-template-columns:40px 1fr auto;gap:0 12px;align-items:center;min-height:56px;padding:8px 12px 8px 10px;background:rgba(9,14,28,.82);border:1px solid var(--ui-line)}
   .plan{width:40px;height:40px}.plan button{display:none}
   .spot{display:contents}
@@ -149,6 +155,7 @@ a,button{-webkit-tap-highlight-color:transparent}
   .spot-line{grid-column:2;grid-row:2;margin:3px 0 0;font-size:9.5px;letter-spacing:.1em}
   .plan{grid-row:1/3}.spot-acts{grid-column:3;grid-row:1/3;margin:0}
   .spot-acts button{height:34px}
+  .stick{right:var(--pad);bottom:calc(var(--rail-h,180px) + 12px + 56px + 12px);width:78px;height:78px}
   .rail{grid-template-columns:1fr 1fr;gap:18px;bottom:max(16px,env(safe-area-inset-bottom))}
   .rail::before{content:"";position:absolute;z-index:-1;left:calc(-1*var(--pad));right:calc(-1*var(--pad));top:-58px;bottom:-60px;pointer-events:none;background:linear-gradient(to top,rgba(4,7,15,.98) 0,rgba(4,7,15,.96) calc(100% - 58px),transparent)}
   .group ul{grid-template-columns:1fr;gap:9px}
@@ -200,6 +207,9 @@ a,button{-webkit-tap-highlight-color:transparent}
     </div>
     <p class="hint" id="hint">The boat goes round the lake by itself</p>
   </section>
+
+  <!-- For hands without keys: a stick to steer the boat by. -->
+  <div class="stick" id="stick" aria-hidden="true"><i></i></div>
 
   <nav class="rail" aria-label="Work">
     <section class="group"><h2>Products</h2><ul><li><a href="work/curator.html" data-name="Curator" data-meta="News app · Preparing for launch" data-dek="A news app that keeps every source attached to the story." data-go="Read the case study" data-img="assets/work/curator-phones.webp"><strong>Curator</strong><small>Reading and saved stories</small></a></li><li><a href="work/curator.html" data-name="Curator Teams" data-meta="B2B workspace · Part of Curator" data-dek="A separate product inside Curator: morning briefs written for investment teams." data-go="Read the Curator case study" data-img="assets/work/curator-brief-to-reader.poster.webp"><strong>Curator Teams</strong><small>Morning briefs for teams</small></a></li><li><a href="work/morrow.html" data-name="Morrow" data-meta="Film and series app · In development" data-dek="Apple TV’s calm on an ordinary television, with one Play button for every copy." data-go="Read the case study" data-img="assets/work/morrow-home.webp"><strong>Morrow</strong><small>Film and series for TV</small></a></li><li><a href="work/flood.html" data-name="Flood Archive" data-meta="Offline-first map · Live" data-dek="A place-based record of a city’s flood history that works without a signal." data-go="Read the case study" data-img="assets/flood-live-social-preview.webp"><strong>Flood Archive</strong><small>Vadodara flood history</small></a></li></ul></section>
@@ -274,7 +284,7 @@ a,button{-webkit-tap-highlight-color:transparent}
   const clock = $('clock'); if (clock) { const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }), tick = () => { clock.textContent = 'Vadodara ' + fmt.format(new Date()) + ' IST'; }; tick(); setInterval(tick, 20000); }
 
   /* ----- sizes other parts hang on: where the words end, how tall the list is ----- */
-  const measure = () => { root.style.setProperty('--rail-h', Math.round(innerHeight - rail.getBoundingClientRect().top) + 'px'); if (phone.matches) util.style.top = Math.round(ident.getBoundingClientRect().bottom + 12) + 'px'; else util.style.top = ''; };
+  const measure = () => { root.style.setProperty('--rail-h', Math.round(innerHeight - rail.getBoundingClientRect().top) + 'px'); if (phone.matches) util.style.top = Math.round(ident.getBoundingClientRect().bottom + 12) + 'px'; else util.style.top = ''; root.style.setProperty('--head-h', Math.round(util.getBoundingClientRect().bottom) + 'px'); };
   measure(); addEventListener('resize', measure); if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
 
   /* ----- the lake: its plan, and the place the boat is at or bound for ----- */
@@ -302,11 +312,17 @@ a,button{-webkit-tap-highlight-color:transparent}
       scene = window.Scene3D.start(canvas, PLACES.map(p => ({ name: p.board || p.name, line: p.line, deg: p.deg, island: p.island, home: p.home, shift: p.shift })), {
         arrive: i => { at = i; bound = -1; say(i, false); draw(); },
         toward: i => { bound = i; say(i, true); },
-        leave: () => { if (bound < 0) { $('spot-k').textContent = 'On the water'; dots.forEach(d => d.classList.remove('is-here')); } },
+        leave: () => { if (bound < 0) { $('spot-k').textContent = 'On the water · last at'; dots.forEach(d => d.classList.remove('is-here')); } },
         band: () => [(phone.matches ? util : ident).getBoundingClientRect().bottom + 4, (phone.matches ? lake : rail).getBoundingClientRect().top - 6],   // the open picture between the words above and what lies below
       });
       root.classList.add('scene-on'); say(at, false);
-      $('hint').textContent = matchMedia('(pointer:coarse)').matches ? 'Tap the water to sail there' : 'Arrow keys steer · press the water to sail there';
+      $('hint').textContent = matchMedia('(pointer:coarse)').matches ? 'Stick steers · drag to look · tap the water' : 'Arrows or WASD steer · drag to look · click the water';
+      // the stick: pushed up it drives ahead, pulled back astern, to the side it turns
+      const stickEl = $('stick'), knob = stickEl && stickEl.firstElementChild; let grip = null;
+      if (stickEl) { const move = e => { const b = stickEl.getBoundingClientRect(), R0 = b.width / 2 - 14; let x = (e.clientX - b.left - b.width / 2) / R0, y = (e.clientY - b.top - b.height / 2) / R0; const l = Math.hypot(x, y); if (l > 1) { x /= l; y /= l; } knob.style.transform = 'translate(' + (x * R0).toFixed(1) + 'px,' + (y * R0).toFixed(1) + 'px)'; scene.drive(Math.abs(x) < 0.18 ? 0 : x, Math.abs(y) < 0.18 ? 0 : -y); };
+        stickEl.addEventListener('pointerdown', e => { grip = e.pointerId; try { stickEl.setPointerCapture(grip); } catch (err) {} move(e); e.preventDefault(); });
+        stickEl.addEventListener('pointermove', e => { if (e.pointerId === grip) move(e); });
+        const drop = e => { if (e.pointerId !== grip) return; grip = null; knob.style.transform = ''; scene.drive(0, 0); }; stickEl.addEventListener('pointerup', drop); stickEl.addEventListener('pointercancel', drop); }
       draw = () => { const w = scene.where(); boat.setAttribute('transform', 'translate(' + (w.x / 3).toFixed(2) + ' ' + (w.z / 3).toFixed(2) + ') rotate(' + (Math.atan2(Math.sin(w.heading), -Math.cos(w.heading)) * 180 / Math.PI).toFixed(1) + ')'); };
       const loop = () => { draw(); if (!still.matches && !document.hidden) requestAnimationFrame(loop); }; loop(); document.addEventListener('visibilitychange', () => { if (!document.hidden) loop(); });
       window.Lake = scene;

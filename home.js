@@ -45,7 +45,7 @@
   const clock = $('clock'); if (clock) { const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit' }), tick = () => { clock.textContent = 'Vadodara ' + fmt.format(new Date()) + ' IST'; }; tick(); setInterval(tick, 20000); }
 
   /* ----- sizes other parts hang on: where the words end, how tall the list is ----- */
-  const measure = () => { root.style.setProperty('--rail-h', Math.round(innerHeight - rail.getBoundingClientRect().top) + 'px'); if (phone.matches) util.style.top = Math.round(ident.getBoundingClientRect().bottom + 12) + 'px'; else util.style.top = ''; };
+  const measure = () => { root.style.setProperty('--rail-h', Math.round(innerHeight - rail.getBoundingClientRect().top) + 'px'); if (phone.matches) util.style.top = Math.round(ident.getBoundingClientRect().bottom + 12) + 'px'; else util.style.top = ''; root.style.setProperty('--head-h', Math.round(util.getBoundingClientRect().bottom) + 'px'); };
   measure(); addEventListener('resize', measure); if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
 
   /* ----- the lake: its plan, and the place the boat is at or bound for ----- */
@@ -73,11 +73,17 @@
       scene = window.Scene3D.start(canvas, PLACES.map(p => ({ name: p.board || p.name, line: p.line, deg: p.deg, island: p.island, home: p.home, shift: p.shift })), {
         arrive: i => { at = i; bound = -1; say(i, false); draw(); },
         toward: i => { bound = i; say(i, true); },
-        leave: () => { if (bound < 0) { $('spot-k').textContent = 'On the water'; dots.forEach(d => d.classList.remove('is-here')); } },
+        leave: () => { if (bound < 0) { $('spot-k').textContent = 'On the water · last at'; dots.forEach(d => d.classList.remove('is-here')); } },
         band: () => [(phone.matches ? util : ident).getBoundingClientRect().bottom + 4, (phone.matches ? lake : rail).getBoundingClientRect().top - 6],   // the open picture between the words above and what lies below
       });
       root.classList.add('scene-on'); say(at, false);
-      $('hint').textContent = matchMedia('(pointer:coarse)').matches ? 'Tap the water to sail there' : 'Arrow keys steer · press the water to sail there';
+      $('hint').textContent = matchMedia('(pointer:coarse)').matches ? 'Stick steers · drag to look · tap the water' : 'Arrows or WASD steer · drag to look · click the water';
+      // the stick: pushed up it drives ahead, pulled back astern, to the side it turns
+      const stickEl = $('stick'), knob = stickEl && stickEl.firstElementChild; let grip = null;
+      if (stickEl) { const move = e => { const b = stickEl.getBoundingClientRect(), R0 = b.width / 2 - 14; let x = (e.clientX - b.left - b.width / 2) / R0, y = (e.clientY - b.top - b.height / 2) / R0; const l = Math.hypot(x, y); if (l > 1) { x /= l; y /= l; } knob.style.transform = 'translate(' + (x * R0).toFixed(1) + 'px,' + (y * R0).toFixed(1) + 'px)'; scene.drive(Math.abs(x) < 0.18 ? 0 : x, Math.abs(y) < 0.18 ? 0 : -y); };
+        stickEl.addEventListener('pointerdown', e => { grip = e.pointerId; try { stickEl.setPointerCapture(grip); } catch (err) {} move(e); e.preventDefault(); });
+        stickEl.addEventListener('pointermove', e => { if (e.pointerId === grip) move(e); });
+        const drop = e => { if (e.pointerId !== grip) return; grip = null; knob.style.transform = ''; scene.drive(0, 0); }; stickEl.addEventListener('pointerup', drop); stickEl.addEventListener('pointercancel', drop); }
       draw = () => { const w = scene.where(); boat.setAttribute('transform', 'translate(' + (w.x / 3).toFixed(2) + ' ' + (w.z / 3).toFixed(2) + ') rotate(' + (Math.atan2(Math.sin(w.heading), -Math.cos(w.heading)) * 180 / Math.PI).toFixed(1) + ')'); };
       const loop = () => { draw(); if (!still.matches && !document.hidden) requestAnimationFrame(loop); }; loop(); document.addEventListener('visibilitychange', () => { if (!document.hidden) loop(); });
       window.Lake = scene;
