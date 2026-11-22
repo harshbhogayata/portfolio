@@ -1,6 +1,6 @@
 // The other places gathered on the banks. Each is built facing south at the origin; main.js sets it down and turns it.
 import * as THREE from 'three';
-import { Builder, painted, lit, wall, box, slab, drum, dome, chhatri, arch, ball, cone, rod, plain, facade, leafy, clump, shade, shadeMat, sprays, crown, ribbed, turned, pitched, hipped, fromPhoto, rng, WARM, LAMP, COOL } from './kit.js';
+import { Builder, painted, lit, wall, box, slab, drum, dome, chhatri, arch, ball, cone, rod, plain, facade, leafy, clump, shade, shadeMat, sprays, crown, ribbed, turned, pitched, hipped, rng, WARM, LAMP, COOL } from './kit.js';
 
 const gold = () => lit(1.9, 1.35, 0.42), globe = () => lit(1.8, 1.4, 0.8);
 

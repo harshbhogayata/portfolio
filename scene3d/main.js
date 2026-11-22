@@ -88,7 +88,7 @@ export function start(canvas, stops, hooks = {}) {
   const built = world.build(), nearBuilt = near.build(); nearBuilt.traverse(o => o.layers.set(1)); camera.layers.enable(1); scene.add(built, nearBuilt);
   const rings = dance.rings.map(({ rad, q }) => { const g = q.build(); g.position.set(dp.x, 1.66, dp.z); g.userData.rad = rad; g.traverse(o => o.layers.set(1)); scene.add(g); return g; });
   paint(built); paint(nearBuilt); rings.forEach(paint);
-  const centre = new THREE.Group(); scene.add(centre); statue(centre).then(c => { casts.fine.push(...c.fine); casts.plain.push(...c.plain); if (still.matches) go(); });   // the statue takes a moment to cast; the scene opens without waiting for it
+  const centre = new THREE.Group(); scene.add(centre); statue(centre, 16.7, innerWidth < 700 ? 1.35 : 1).then(c => { casts.fine.push(...c.fine); casts.plain.push(...c.plain); if (still.matches) go(); });   // the statue takes a moment to cast; the scene opens without waiting for it
   { const aura = new THREE.Sprite(new THREE.SpriteMaterial({ map: spot(128, 0, 1.3), color: 0xffa84a, transparent: true, opacity: 0.14, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); aura.scale.set(44, 62, 1); aura.position.set(0.3, 33, 0); aura.layers.set(1); scene.add(aura);
     const spray = new THREE.Sprite(new THREE.SpriteMaterial({ map: spot(128, 0, 1.5), color: 0x9fc4ff, transparent: true, opacity: 0.13, depthWrite: false, blending: THREE.AdditiveBlending })); spray.scale.set(20, 17, 1); spray.position.set(-78, 6.5, -46); spray.layers.set(1); scene.add(spray); }
 

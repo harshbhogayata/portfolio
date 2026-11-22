@@ -1,7 +1,7 @@
 // More of Vadodara: Khanderao Market, Lehripura Gate, the Music College, the Baroda Museum; the old city's roofs on the near bank;
 // a garba ground under its roof of bulbs; lotus on the water. Each place is built facing south at the origin, like the others.
 import * as THREE from 'three';
-import { Builder, painted, lit, wall, box, slab, drum, dome, chhatri, arch, ball, cone, rod, plain, ring, facade, block, leafy, clump, shade, shadeMat, unmirrored, pitched as tiled, hipped, fromPhoto, rng, at, R, DEG, WARM, LAMP, COOL, TEAL, ROSE } from './kit.js';
+import { Builder, painted, lit, wall, box, slab, drum, dome, chhatri, arch, ball, cone, rod, plain, ring, facade, block, leafy, clump, shade, shadeMat, unmirrored, pitched as tiled, hipped, rng, at, R, DEG, WARM, LAMP, COOL, TEAL, ROSE } from './kit.js';
 import { free, person, cart } from './shore.js';
 
 const gold = () => lit(1.9, 1.35, 0.42), tiles = () => painted({ tint: 0xa5553a });

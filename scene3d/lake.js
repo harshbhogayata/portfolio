@@ -1,6 +1,7 @@
 // What is on the water: the island with the statue, lamps floating, a fountain, pedal boats, and the boat you sail.
 import * as THREE from 'three';
-import { Builder, painted, lit, wall, facade, box, slab, drum, ball, cone, rod, plain, spot, stripes, leafy, clump, shade, shadeMat, rng, at, R, WARM, LAMP, COOL, TEAL, ROSE, fromPhoto } from './kit.js';
+import { Builder, painted, lit, box, slab, drum, ball, cone, rod, plain, spot, stripes, leafy, clump, shade, shadeMat, rng, at, R, WARM, LAMP, COOL, TEAL, ROSE } from './kit.js';
+import { masonry, band, rect, cornice } from './mason.js';
 import { person } from './shore.js';
 
 export function island() {
@@ -11,13 +12,15 @@ export function island() {
   for (let x = -30.5; x <= 30.5; x += 1.9) for (const z of [-12.6, 12.6]) if (Math.abs(x) > 7.5 || z < 0) b.put(iron, slab(0.12, 1.1, 0.12, x, 4.7, z));   // the rail round the deck
   for (let z = -12.6; z <= 12.6; z += 1.8) for (const x of [-30.5, 30.5]) b.put(iron, slab(0.12, 1.1, 0.12, x, 4.7, z));
   for (const z of [-12.6, 12.6]) b.put(iron, slab(61, 0.07, 0.07, 0, 5.75, z)); for (const x of [-30.5, 30.5]) b.put(iron, slab(0.07, 0.07, 25.2, x, 5.75, 0));
-  // the plinth, in red stone: two tiers, each with a moulding and a row of panels
-  const STONE = fromPhoto('plinth_stone', 0), BASE = fromPhoto('plinth_base', 0), gilt = lit(0.85, 0.56, 0.16);
-  b.put(BASE, wall(11.8, 5, 11.8, 0, 4.7, 0, { u: 11.8, v: 5, same: true })); b.put(redDark, slab(12.6, 0.4, 12.6, 0, 4.7, 0), slab(12.4, 0.45, 12.4, 0, 9.7, 0), slab(11.4, 0.3, 11.4, 0, 10.15, 0));
-  b.put(STONE, wall(9.2, 5.6, 9.2, 0, 10.45, 0, { u: 9.2, v: 5.6, same: true })); b.put(redDark, slab(10.2, 0.35, 10.2, 0, 16.05, 0), slab(10.8, 0.3, 10.8, 0, 16.4, 0));
-  for (const [fx, fz] of [[0, 1], [0, -1], [1, 0], [-1, 0]]) for (const k of [-4.6, 0, 4.6]) {                               // the gilded figures that stand round its foot
-    const x = fx ? fx * 6.15 : k, z = fz ? fz * 6.15 : k; b.put(redDark, slab(1.3, 0.3, 1.3, x, 5.1, z)); b.put(gilt, plain(new THREE.SphereGeometry(1, 8, 6)).scale(0.34, 0.8, 0.28).translate(x, 6.25, z), ball(0.24, x, 7.3, z, 6), plain(new THREE.SphereGeometry(1, 6, 5)).scale(0.5, 0.16, 0.24).translate(x, 6.6, z));
-  }
+  // the pedestal, in grey granite as it has stood since the statue was gilded: a broad block with a plaque on its face, a narrower one above,
+  // each under a moulded cap, and a line of light under the upper cap
+  const GR = masonry('granite', { stone: [112, 116, 124], course: 0.9, block: 1.5, rows: 4, cols: 2, joint: 0.78, vary: 0.08, grime: 0.08 }), GT = GR.userData.tile, capM = painted({ tint: 0x7c8088 }), gilt = painted({ tint: 0xc09a44 });
+  b.put(GR, band([[0.55, 0], [0.55, 0.5], [0.22, 0.72], [0.22, 0.95], [0, 0.95], [0, 5.3]], rect(11.8, 11.8), 4.7, { tile: GT }), band([[0, 0], [0, 5.0]], rect(9.2, 9.2), 10.9, { tile: GT }));
+  b.put(capM, cornice(rect(11.8, 11.8), 10.0, 0.45, 0.6), slab(11.2, 0.3, 11.2, 0, 10.6, 0), cornice(rect(9.2, 9.2), 15.9, 0.55, 0.55), slab(10.3, 0.25, 10.3, 0, 16.45, 0));
+  for (const [fx, fz] of [[0, 1], [0, -1], [1, 0], [-1, 0]]) { const t = Math.atan2(fx, fz), at = (g, d) => g.rotateY(t).translate(fx * d, 0, fz * d);
+    b.put(capM, at(slab(4.4, 2.7, 0.14, 0, 6.5, 0), 5.9), at(slab(6.4, 3.0, 0.1, 0, 11.8, 0), 4.6)); b.put(gilt, at(slab(3.8, 2.1, 0.06, 0, 6.8, 0), 5.99));       // the plaque, and a sunk panel above it
+    b.put(lit(1.9, 1.5, 0.9), at(slab(8.8, 0.1, 0.08, 0, 15.72, 0), 4.66)); }
+  b.light(0, 14.6, 7, LAMP, 0.3, 4).light(0, 14.6, -7, LAMP, 0.2, 4).light(7, 14.6, 0, LAMP, 0.2, 4).light(-7, 14.6, 0, LAMP, 0.2, 4);
   for (const [x, z] of [[-24, 8], [24, 8], [-24, -8], [24, -8], [-12, 10.5], [12, 10.5]]) { b.put(post, drum(0.5, 5.2, x, 4.7, z, 8), drum(0.8, 0.3, x, 9.8, z, 8)); b.put(G, ball(0.4, x, 10.5, z, 10)); b.light(x, 10.6, z, LAMP, 0.9, 7, 4.6); }
   for (const x of [-28, 28]) { b.put(iron, rod([x, 4.7, -10], [x, 13.5, -10], 0.07, 4)); b.put(saffron, slab(2.6, 1.5, 0.06, x + 1.35, 11.9, -10)); }
   for (const x of [-52, 52]) for (const z of [26, -22]) {                                                                      // the lamp pillars that stand in the water round it, tier on tier
@@ -28,6 +31,8 @@ export function island() {
   const cream = painted({ tint: 0xd9c6a2 }), marble = painted({ tint: 0xe8e4da });
   // Nandi, the bull, sits facing the god, as he does before every Shiva
   b.put(cream, slab(2.2, 0.7, 3.4, 0, 4.7, 10)); b.put(marble, plain(new THREE.SphereGeometry(1, 10, 8)).scale(0.72, 0.6, 1.25).translate(0, 6.0, 10.1), ball(0.4, 0, 6.55, 9.75, 8), ball(0.42, 0, 6.5, 8.75, 8), plain(new THREE.SphereGeometry(1, 8, 6)).scale(0.26, 0.24, 0.42).translate(0, 6.3, 8.35), cone(0.07, 0.3, -0.22, 6.82, 8.8, 5), cone(0.07, 0.3, 0.22, 6.82, 8.8, 5));
+  for (const [x, z, t] of [[-20, 9.5, 0.9], [20, 9.5, -0.9], [-21, -8, 2.2], [21, -8, -2.2]]) { const m = new THREE.Matrix4().makeRotationY(t).setPosition(x, 0, z), put = (mat, g) => b.put(mat, g.applyMatrix4(m));
+    put(cream, slab(2.0, 0.6, 3.1, 0, 4.7, 0)); put(marble, plain(new THREE.SphereGeometry(1, 10, 8)).scale(0.66, 0.55, 1.15).translate(0, 5.85, 0.1)); put(marble, ball(0.38, 0, 6.35, -1.2, 8)); put(marble, plain(new THREE.SphereGeometry(1, 8, 6)).scale(0.24, 0.22, 0.4).translate(0, 6.15, -1.6)); put(marble, ball(0.36, 0, 6.4, -0.3, 8)); }
   b.light(0, 7.4, 11.4, WARM, 0.6, 3.2);
   // two lamp towers on the deck, tier on tier of small flames
   for (const x of [-13.5, 13.5]) { b.put(post, drum(0.7, 0.5, x, 4.7, 9.6, 8), drum(0.42, 7.4, x, 5.2, 9.6, 8, null, 0.26)); b.put(G, ball(0.36, x, 12.9, 9.6, 8)); for (let i = 0; i < 6; i++) { const rr = 0.95 - i * 0.1, y = 6 + i * 1.1; b.put(post, drum(rr, 0.12, x, y, 9.6, 8)); for (let k = 0; k < 6; k++) { const a = k * Math.PI / 3 + i * 0.5; b.spark(x + Math.cos(a) * rr, y + 0.3, 9.6 + Math.sin(a) * rr, WARM, 1.0, 1); } } b.light(x, 9, 9.6, WARM, 0.6, 5); }

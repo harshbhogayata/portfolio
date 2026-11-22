@@ -1,6 +1,5 @@
 // The kit everything in the scene is made with: simple solids, the paint that carries their light, and pictures drawn in code.
 import * as THREE from 'three';
-import { TILES } from './tiles-data.js';
 import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js';
 
 export const DEG = Math.PI / 180, R = 150;                 // R: the lake's radius in metres
@@ -276,14 +275,7 @@ export function ribbed(pts, ribs = 16, depth = 0.1) {
   const flat = g.toNonIndexed(); flat.computeVertexNormals(); return plain(flat);
 }
 
-/* ---------- surfaces taken from photographs ---------- */
-// A material whose picture is a piece of the real building: a stretch of its arcade, its tower's shaft, the stone of its dome.
-const photos = new Map();
-export function fromPhoto(name, glow = 1.15) {
-  if (photos.has(name)) return photos.get(name);
-  const t = TILES[name], load = src => { const x = new THREE.Texture(), i = new Image(); x.wrapS = x.wrapT = THREE.RepeatWrapping; x.colorSpace = THREE.SRGBColorSpace; x.anisotropy = 8; i.onload = () => { x.image = i; x.needsUpdate = true; }; i.src = src; return x; };
-  const m = painted({ map: load(t.tex), emissiveMap: t.glow ? load(t.glow) : undefined, glow, key: 'photo-' + name }); photos.set(name, m); return m;
-}
+/* ---------- shapes turned and roofs pitched ---------- */
 // A shape turned about its axis that keeps a picture wrapped round it: a spire, a great dome.
 export function turned(pts, seg = 16, wrap = 4) { const g = new THREE.LatheGeometry(pts.map(p => new THREE.Vector2(p[0], p[1])), seg), uv = g.attributes.uv; for (let i = 0; i < uv.count; i++) uv.setXY(i, uv.getX(i) * wrap, 0.02 + uv.getY(i) * 0.96); return g; }
 // A tiled roof of two slopes, its ridge running along x; and one of four slopes rising to a point.
