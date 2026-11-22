@@ -9,11 +9,17 @@ import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { Water } from 'three/addons/objects/Water.js';
 import { Builder, paint, glowing, SPARKS, spot, words, rng, at, R, DEG } from './kit.js';
 import { palace } from './palace.js';
-import { kirtiMandir, mandvi, nyayMandir, artsDome, kalaGhoda, banyan, sayajiBaug, toyTrain } from './places.js';
+import { kirtiMandir } from './kirti.js';
+import { nyayMandir } from './nyay.js';
+import { mandvi } from './mandvi.js';
+import { artsDome } from './arts.js';
+import { museum } from './museum.js';
+import { kalaGhoda, banyan, sayajiBaug, toyTrain } from './places.js';
 import { shore, claim } from './shore.js';
 import { town } from './town.js';
-import { island, statue, afloat, pedalBoats, boat } from './lake.js';
-import { museum, oldCity, garba, lotus } from './more.js';
+import { island, afloat, pedalBoats, boat } from './lake.js';
+import { statue } from './statue.js';
+import { oldCity, garba, lotus } from './more.js';
 
 const NIGHT = { zenith: 0x04060c, mid: 0x0a1226, horizon: 0x1b2a4e, fog: 0x121c38, water: 0x040a16 };
 
@@ -60,7 +66,9 @@ export function start(canvas, stops, hooks = {}) {
   const normals = new THREE.CanvasTexture(nc); normals.wrapS = normals.wrapT = THREE.RepeatWrapping;
   const water = new Water(new THREE.CircleGeometry(R + 1, 96), { textureWidth: innerWidth < 700 ? 512 : 1024, textureHeight: innerWidth < 700 ? 512 : 1024, waterNormals: normals, sunDirection: new THREE.Vector3(0.3, 0.34, -0.9).normalize(), sunColor: 0x2a3760, waterColor: NIGHT.water, distortionScale: 2.4, fog: true });
   water.rotation.x = -Math.PI / 2; water.material.uniforms.size.value = 0.95; water.material.fragmentShader = water.material.fragmentShader.replace('vec3( 0.1 )', 'vec3( 0.006, 0.01, 0.022 )'); scene.add(water);
-  const mirror = water.onBeforeRender; let turns = 0; water.onBeforeRender = function (...a) { if (tier < 1 || (turns++ & 1) === 0) mirror.apply(this, a); };   // a machine that is struggling mirrors the lake every other frame
+  // a machine that is struggling mirrors the lake every other frame; and what has a plainer cast for the mirror shows that there instead of itself
+  const mirror = water.onBeforeRender, casts = { fine: [], plain: [] }; let turns = 0;
+  water.onBeforeRender = function (...a) { if (tier >= 1 && (turns++ & 1)) return; for (const m of casts.fine) m.visible = false; for (const m of casts.plain) m.visible = true; mirror.apply(this, a); for (const m of casts.fine) m.visible = true; for (const m of casts.plain) m.visible = false; };
 
   /* ----- the city: each place is built facing south, then set on its bank and turned to face the lake ----- */
   const world = new Builder(), turn = deg => { const p = at(deg, 1); return Math.atan2(-p.x, -p.z); };   // each place faces the lake
@@ -80,7 +88,7 @@ export function start(canvas, stops, hooks = {}) {
   const built = world.build(), nearBuilt = near.build(); nearBuilt.traverse(o => o.layers.set(1)); camera.layers.enable(1); scene.add(built, nearBuilt);
   const rings = dance.rings.map(({ rad, q }) => { const g = q.build(); g.position.set(dp.x, 1.66, dp.z); g.userData.rad = rad; g.traverse(o => o.layers.set(1)); scene.add(g); return g; });
   paint(built); paint(nearBuilt); rings.forEach(paint);
-  const centre = new THREE.Group(); scene.add(centre); statue(centre);
+  const centre = new THREE.Group(); scene.add(centre); statue(centre).then(c => { casts.fine.push(...c.fine); casts.plain.push(...c.plain); if (still.matches) go(); });   // the statue takes a moment to cast; the scene opens without waiting for it
   { const aura = new THREE.Sprite(new THREE.SpriteMaterial({ map: spot(128, 0, 1.3), color: 0xffa84a, transparent: true, opacity: 0.14, depthWrite: false, blending: THREE.AdditiveBlending, fog: false })); aura.scale.set(44, 62, 1); aura.position.set(0.3, 33, 0); aura.layers.set(1); scene.add(aura);
     const spray = new THREE.Sprite(new THREE.SpriteMaterial({ map: spot(128, 0, 1.5), color: 0x9fc4ff, transparent: true, opacity: 0.13, depthWrite: false, blending: THREE.AdditiveBlending })); spray.scale.set(20, 17, 1); spray.position.set(-78, 6.5, -46); spray.layers.set(1); scene.add(spray); }
 
@@ -186,7 +194,6 @@ export function start(canvas, stops, hooks = {}) {
   function live(dt) {
     water.material.uniforms.time.value = clock * 0.42; stars.material.uniforms.time.value = clock; sparks.material.uniforms.time.value = clock; cloudT.offset.x = clock * 0.0016;
     for (const m of glowing) m.uniforms.glow.value = m.userData.glow * (0.94 + Math.sin(clock * 0.7 + m.id) * 0.08);
-    centre.rotation.y = Math.atan2(camera.position.x, camera.position.z);                          // the statue is a relief: it keeps its face to whoever is looking
     for (const m of mists) m.position.x += Math.sin(clock * 0.05 + m.userData.a) * dt * 1.2;
     const tp = traffic.geometry.attributes.position; cars.forEach((c, i) => { c.a += c.v / c.d / DEG * dt; const lead = c.v > 0 ? 0.55 : -0.55, f = at(c.a + lead, c.d), b = at(c.a - lead, c.d); tp.setXYZ(i * 2, f.x, 2.3, f.z); tp.setXYZ(i * 2 + 1, b.x, 2.3, b.z); }); tp.needsUpdate = true;
     for (const o of others) { const a = clock * o.speed + o.phase; o.g.position.set(o.cx + Math.cos(a) * o.rx, Math.sin(clock * 1.5 + o.phase) * 0.05, o.cz + Math.sin(a) * o.rz); o.g.rotation.y = Math.atan2(-Math.sin(a) * o.rx * Math.sign(o.speed), Math.cos(a) * o.rz * Math.sign(o.speed)); }

@@ -83,26 +83,6 @@ export function musicCollege() {
   return b;
 }
 
-/* The Baroda Museum and Picture Gallery in Sayaji Baug, 1894: red brick below, a timber-framed gallery above, steep tiled roofs,
-   and two tall finials over the middle. Its surfaces are taken from a photograph. */
-export function museum() {
-  const LOWER = fromPhoto('museum_lower'), UPPER = fromPhoto('museum_upper'), C = painted({ tint: 0xd9c9aa }), wood = painted({ tint: 0x5a3a28 }), roof = painted({ tint: 0x8a4a38 }), brick = painted({ tint: 0x9a4a38 }), b = new Builder(), r = rng(61);
-  b.put(C, box(46, 0.9, 18, 0, 0, -8));
-  b.put(LOWER, wall(44, 7, 15, 0, 0.9, -8, { u: 14.6, v: 7 })); b.put(C, box(44.8, 0.4, 15.8, 0, 7.9, -8));
-  b.put(UPPER, wall(45.2, 6.6, 16.2, 0, 8.3, -8, { u: 15, v: 6.6 })); b.put(wood, box(46.4, 0.3, 17.4, 0, 14.9, -8)); b.put(roof, tiled(46.8, 18, 0, 15.2, -8, 0.6));   // the gallery stands out a little over the brick
-  for (let x = -22; x <= 22; x += 3.67) b.put(wood, slab(0.22, 6.6, 0.22, x, 8.3, 0.2));
-  // the middle: a taller gabled pavilion, its two finials, the door under an arch
-  b.put(LOWER, wall(13, 7.5, 17, 0, 0.9, -7.2, { u: 14.6, v: 7 }, 0.3)); b.put(UPPER, wall(13.6, 9.5, 17.6, 0, 8.4, -7.2, { u: 15, v: 6.6 }, 0.2)); b.put(wood, box(14.8, 0.3, 18.8, 0, 17.9, -7.2)); b.put(roof, hipped(7.6, 9.6, 6, 0, 18.2, -7.2));
-  for (const sx of [-1, 1]) { b.put(brick, drum(0.9, 9, sx * 3.6, 17.9, -2.4, 8)); b.put(C, drum(1.3, 0.4, sx * 3.6, 23.4, -2.4, 8), drum(1.2, 0.4, sx * 3.6, 26.9, -2.4, 8)); b.put(roof, cone(1.3, 2.6, sx * 3.6, 27.3, -2.4, 8)); b.put(lit(1.9, 1.35, 0.42), ball(0.22, sx * 3.6, 30.2, -2.4, 6)); }
-  b.put(lit(0.5, 0.29, 0.11), arch(3.2, 4.8, 0, 0.9, 1.36)); for (let i = 0; i < 5; i++) b.put(C, slab(8 - i * 0.4, 0.2, 0.8, 0, 0.74 - i * 0.18, 1.8 + i * 0.8));
-  // an end pavilion each side under its own steep roof
-  for (const sx of [-1, 1]) { b.put(LOWER, wall(8.6, 7.4, 16.6, sx * 20.6, 0.9, -8, { u: 14.6, v: 7 }, 0.6)); b.put(UPPER, wall(9.2, 8, 17.2, sx * 20.6, 8.3, -8, { u: 15, v: 6.6 }, 0.5)); b.put(wood, box(10.2, 0.3, 18.2, sx * 20.6, 16.3, -8)); b.put(roof, hipped(5.2, 9.2, 4.6, sx * 20.6, 16.6, -8)); b.put(lit(1.9, 1.35, 0.42), ball(0.2, sx * 20.6, 21.4, -8, 6)); }
-  const people = folk(8); for (let i = 0; i < 10; i++) b.stamp(people[(r() * 8) | 0], (r() - 0.5) * 36, 5 + r() * 8, r() * 6.28, 1, 0);
-  for (let x = -18; x <= 18; x += 7.2) b.light(x, 0.6, 10, LAMP, 0.36, 13); b.light(0, 20, 6, LAMP, 0.45, 10).light(0, 5, 4, WARM, 0.8, 7).light(-20.6, 12, 5, LAMP, 0.3, 8).light(20.6, 12, 5, LAMP, 0.3, 8);
-  b.put(shadeMat(), shade(30, 12, 0, 0, -5));
-  return b;
-}
-
 /* The old city on the near bank: low houses packed close, lanes between them, and life on the roofs: tanks, washing on a line,
    a cot put out for the night, a bulb over a stair door. Kept low, because the camera looks in over it. */
 export function oldCity() {

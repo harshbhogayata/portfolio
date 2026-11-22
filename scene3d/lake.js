@@ -2,40 +2,6 @@
 import * as THREE from 'three';
 import { Builder, painted, lit, wall, facade, box, slab, drum, ball, cone, rod, plain, spot, stripes, leafy, clump, shade, shadeMat, rng, at, R, WARM, LAMP, COOL, TEAL, ROSE, fromPhoto } from './kit.js';
 import { person } from './shore.js';
-import { STATUE } from './statue-data.js';
-
-/* The statue: its true outline, gently rounded, with the photograph's own light and shade turned to gold. */
-const picture = src => new Promise(done => { const i = new Image(); i.onload = () => done(i); i.src = src; });
-export async function statue(group) {
-  const [hi, mi, si] = await Promise.all([picture(STATUE.height), picture(STATUE.mask), picture(STATUE.shade)]);
-  const c = document.createElement('canvas'); c.width = STATUE.cols; c.height = STATUE.rows; const k = c.getContext('2d', { willReadFrequently: true }); k.drawImage(hi, 0, 0);
-  const px = k.getImageData(0, 0, c.width, c.height).data, H = 31, W = H * STATUE.aspect, depth = 2.2, nx = STATUE.cols, ny = STATUE.rows;
-  const h = (x, y) => px[(Math.max(0, Math.min(ny - 1, y)) * nx + Math.max(0, Math.min(nx - 1, x))) * 4] / 255;
-  const pos = [], uv = [], idx = [];
-  for (let y = 0; y < ny; y++) for (let x = 0; x < nx; x++) { pos.push((x / (nx - 1) - 0.5) * W, (1 - y / (ny - 1)) * H, h(x, y) * depth); uv.push(x / (nx - 1), 1 - y / (ny - 1)); }
-  for (let y = 0; y < ny - 1; y++) for (let x = 0; x < nx - 1; x++) { const a = y * nx + x; idx.push(a, a + nx, a + 1, a + 1, a + nx, a + nx + 1); }
-  const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3)); g.setAttribute('uv', new THREE.Float32BufferAttribute(uv, 2)); g.setIndex(idx);
-  const tex = img => { const t = new THREE.Texture(img); t.needsUpdate = true; t.anisotropy = 8; t.colorSpace = THREE.NoColorSpace; return t; };
-  // gold under lamps set at its feet: the photograph's shade picks out the form, brightest low down, with a cool edge from the moon
-  const gold = new THREE.ShaderMaterial({ uniforms: THREE.UniformsUtils.merge([THREE.UniformsLib.fog, { shade: { value: null }, mask: { value: null } }]), fog: true,
-    vertexShader: `varying vec2 vUv;
-      #include <fog_pars_vertex>
-      void main() { vUv = uv; vec4 mvPosition = modelViewMatrix * vec4(position, 1.0); gl_Position = projectionMatrix * mvPosition;
-      #include <fog_vertex>
-      }`,
-    fragmentShader: `uniform sampler2D shade; uniform sampler2D mask; varying vec2 vUv;
-      #include <fog_pars_fragment>
-      void main() { if (texture2D(mask, vUv).r < 0.5) discard; float l = texture2D(shade, vUv).r;
-        vec3 c = mix(vec3(0.15, 0.065, 0.008), vec3(0.98, 0.62, 0.15), smoothstep(0.04, 0.86, l)); c += pow(l, 6.0) * vec3(1.0, 0.9, 0.6) * 0.75;
-        c *= mix(1.3, 0.8, smoothstep(0.0, 1.0, vUv.y)); c += vec3(0.05, 0.08, 0.16) * smoothstep(0.55, 1.0, vUv.y) * (1.0 - l);
-        gl_FragColor = vec4(c, 1.0);
-      #include <fog_fragment>
-      #include <tonemapping_fragment>
-      #include <colorspace_fragment>
-      }` });
-  gold.uniforms.shade.value = tex(si); gold.uniforms.mask.value = tex(mi);
-  const figure = new THREE.Mesh(g, gold); figure.position.set(0.6, 16.6, 0); group.add(figure);
-}
 
 export function island() {
   const b = new Builder(), stone = painted({ tint: 0x8c8378 }), red = painted({ tint: 0xb4563e }), redDark = painted({ tint: 0x8e4030 }), post = painted({ tint: 0xc9b9a0 }), iron = painted({ tint: 0x30323a }), G = lit(1.9, 1.4, 0.8), saffron = lit(1.7, 0.7, 0.15);

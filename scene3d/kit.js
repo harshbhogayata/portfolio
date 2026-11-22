@@ -47,6 +47,7 @@ export function painted({ map = white, emissiveMap = black, glow = 1.5, tint = 0
 const lights = new Map();
 export function lit(r, g, b) { const k = r + ',' + g + ',' + b; if (!lights.has(k)) lights.set(k, new THREE.MeshBasicMaterial({ color: new THREE.Color(r, g, b) })); return lights.get(k); }
 
+const KEPT = ['position', 'normal', 'uv', 'ao'];
 // Collects solids by material. Parts made once can be stamped down many times; in the end each material becomes one mesh.
 export class Builder {
   constructor() { this.bins = new Map(); this.lights = []; this.sparks = []; }
@@ -63,7 +64,8 @@ export class Builder {
   build() {
     for (const l of this.lights) LAMPS.push({ x: l.x, y: l.y, z: l.z, r: l.colour.r * l.power, g: l.colour.g * l.power, b: l.colour.b * l.power, reach2: l.reach * l.reach, far: l.reach * 6 });
     SPARKS.push(...this.sparks);
-    const g = new THREE.Group(); for (const [m, list] of this.bins) if (list.length) { const mesh = new THREE.Mesh(mergeGeometries(list.map(s => s.index ? s.toNonIndexed() : s), false), m); if (UNMIRRORED.has(m)) mesh.layers.set(1); g.add(mesh); } return g;
+    const whole = s => { const g = s.index ? s.toNonIndexed() : s; if (!g.attributes.ao) g.setAttribute('ao', new THREE.BufferAttribute(new Float32Array(g.attributes.position.count).fill(1), 1)); for (const k in g.attributes) if (!KEPT.includes(k)) g.deleteAttribute(k); return g; };
+    const g = new THREE.Group(); for (const [m, list] of this.bins) if (list.length) { const mesh = new THREE.Mesh(mergeGeometries(list.map(whole), false), m); if (UNMIRRORED.has(m)) mesh.layers.set(1); g.add(mesh); } return g;
   }
 }
 // Work out the light on every corner of every solid: a little from the sky and the moon, the rest from the lamps within reach.
@@ -72,9 +74,10 @@ export function paint(group) {
   for (const l of LAMPS) for (let i = Math.floor((l.x - l.far) / cell); i <= Math.floor((l.x + l.far) / cell); i++) for (let j = Math.floor((l.z - l.far) / cell); j <= Math.floor((l.z + l.far) / cell); j++) { const k = key(i + 2048, j + 2048); if (!grid.has(k)) grid.set(k, []); grid.get(k).push(l); }
   group.updateMatrixWorld(true);
   const v = new THREE.Vector3(), n = new THREE.Vector3(), nm = new THREE.Matrix3(), moon = new THREE.Vector3(-0.35, 0.62, 0.7).normalize(), none = [];
+  const day = typeof location !== 'undefined' && location.hash.includes('day');   // a flat daylight, for looking the models over while they are being built
   group.traverse(o => {
     if (!o.isMesh || !o.material.vertexColors || o.userData.lit) return;
-    const g = o.geometry, p = g.attributes.position, nn = g.attributes.normal, c = new Float32Array(p.count * 3); nm.getNormalMatrix(o.matrixWorld);
+    const g = o.geometry, p = g.attributes.position, nn = g.attributes.normal, ao = g.attributes.ao, c = new Float32Array(p.count * 3); nm.getNormalMatrix(o.matrixWorld);
     for (let i = 0; i < p.count; i++) {
       v.fromBufferAttribute(p, i).applyMatrix4(o.matrixWorld); n.fromBufferAttribute(nn, i).applyMatrix3(nm).normalize();
       const sky = 0.55 + 0.45 * n.y, m = Math.max(0, n.dot(moon)) * 0.78;
@@ -86,7 +89,8 @@ export function paint(group) {
         const d = Math.sqrt(d2) || 1, facing = Math.max(0, ((n.x * dx + n.y * dy + n.z * dz) / d + 0.22) / 1.22), k = facing / (1 + d2 / l.reach2) * lampFoot;
         r += l.r * k; gg += l.g * k; b += l.b * k;
       }
-      c[i * 3] = r; c[i * 3 + 1] = gg; c[i * 3 + 2] = b;
+      if (day) r = gg = b = (0.3 + 0.7 * Math.max(0, n.x * 0.42 + n.y * 0.66 + n.z * 0.62)) * (0.8 + 0.2 * foot);
+      const k = ao ? ao.getX(i) : 1; c[i * 3] = r * k; c[i * 3 + 1] = gg * k; c[i * 3 + 2] = b * k;
     }
     g.setAttribute('color', new THREE.BufferAttribute(c, 3)); o.userData.lit = true;
   });
