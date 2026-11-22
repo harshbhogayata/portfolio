@@ -50,10 +50,10 @@ export function foundry() {
       return this;
     }
     // A ring. Unturned it lies level; B's second direction is the way its hole looks.
-    ring(c, R, r, k, B = null) {
+    ring(c, R, r, k, B = null, carve = false) {
       const m = R + r;
       return this.lay([c[0] - m, c[1] - m, c[2] - m, c[0] + m, c[1] + m, c[2] + m], (x, y, z) => { let px = x - c[0], py = y - c[1], pz = z - c[2]; if (B) { const a = px * B[0] + py * B[1] + pz * B[2], b = px * B[3] + py * B[4] + pz * B[5], e = px * B[6] + py * B[7] + pz * B[8]; px = a; py = b; pz = e; }
-        return hyp(hyp(px, pz) - R, py) - r; }, k);
+        return hyp(hyp(px, pz) - R, py) - r; }, k, carve);
     }
     // A drum or a disc: a round of radius R and half-height h, its edges eased. B's second direction is its axis.
     drum(c, R, h, round, k, B = null, tex = null) {
@@ -74,13 +74,16 @@ export function foundry() {
       const a = g[i] + (g[i + 1] - g[i]) * tx, b = g[i + sy] + (g[i + sy + 1] - g[i + sy]) * tx, c = g[i + sz] + (g[i + sz + 1] - g[i + sz]) * tx, d = g[i + sz + sy] + (g[i + sz + sy + 1] - g[i + sz + sy]) * tx;
       return (a + (b - a) * ty) + ((c + (d - c) * ty) - (a + (b - a) * ty)) * tz;
     }
+    // Where the surface lies at x, y, coming at it from the front: what is raised on the face is set on the face as it has come out.
+    front(x, y, from = 3.4) { const st = this.cell * 0.5; let z = from, a = this.read(x, y, z); for (let i = 0; i < 400; i++) { const b = this.read(x, y, z - st); if (b < 0) return z - st * a / (a - b); a = b; z -= st; if (z < from - 3) break; } return from - 1.5; }
     // Draw the surface off the field between two heights: a point in every cell the surface passes through, joined to its neighbours.
-    skin(yFrom, yTo) {
+    skin(yFrom, yTo, only = null, omit = null) {
       const { lo, cell, n, g } = this, [nx, ny, nz] = n, sx = 1, sy = nx, sz = nx * ny, id = new Int32Array(nx * ny * nz).fill(-1), P = [], I = [], far = cell * 3.2;
       const j0 = Math.max(0, Math.floor((yFrom - lo[1]) / cell)), j1 = Math.min(ny - 2, Math.ceil((yTo - lo[1]) / cell)), off = [0, sx, sy, sy + sx, sz, sz + sx, sz + sy, sz + sy + sx], cx = [0, 1, 0, 1, 0, 1, 0, 1], cy = [0, 0, 1, 1, 0, 0, 1, 1], cz = [0, 0, 0, 0, 1, 1, 1, 1];
       const ea = [0, 2, 4, 6, 0, 1, 4, 5, 0, 1, 2, 3], eb = [1, 3, 5, 7, 2, 3, 6, 7, 4, 5, 6, 7], v = new Float32Array(8);
       for (let z = 0; z < nz - 1; z++) for (let y = j0; y <= j1; y++) { let i = (z * ny + y) * nx; for (let x = 0; x < nx - 1; x++, i++) {
         const d0 = g[i]; if (d0 > far || d0 < -far) continue;
+        if (only || omit) { const X = lo[0] + (x + 0.5) * cell, Y = lo[1] + (y + 0.5) * cell, Z = lo[2] + (z + 0.5) * cell, inside = b => X > b[0] && Y > b[1] && Z > b[2] && X < b[3] && Y < b[4] && Z < b[5]; if ((only && !inside(only)) || (omit && inside(omit))) continue; }
         let mask = 0; for (let c = 0; c < 8; c++) { v[c] = g[i + off[c]]; if (v[c] < 0) mask |= 1 << c; } if (mask === 0 || mask === 255) continue;
         let ax = 0, ay = 0, az = 0, k = 0; for (let e = 0; e < 12; e++) { const a = ea[e], b = eb[e]; if ((v[a] < 0) === (v[b] < 0)) continue; const t = v[a] / (v[a] - v[b]); ax += cx[a] + (cx[b] - cx[a]) * t; ay += cy[a] + (cy[b] - cy[a]) * t; az += cz[a] + (cz[b] - cz[a]) * t; k++; }
         id[i] = P.length / 3; P.push(lo[0] + (x + ax / k) * cell, lo[1] + (y + ay / k) * cell, lo[2] + (z + az / k) * cell); } }
@@ -165,33 +168,42 @@ export function foundry() {
     c.run([...coil(LE, LW, 0.25, 0.7, 2.25, 0.14, 0.78, 0.56), [4.5, 19.0, 1.5], [4.75, 19.95, 1.6], [5.05, 20.65, 1.7]], [0.13, 0.17, 0.19, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.21, 0.23, 0.2], 0.06, 3, null, scales);
     c.egg([5.12, 20.5, 1.68], [0.2, 0.46, 0.38], 0.12, basis([1, -0.5, 0], [0.5, 1, 0])).egg([5.42, 20.9, 1.74], [0.42, 0.19, 0.26], 0.1, basis([1, -0.15, 0.1], UP));
 
-    /* ----- the head: skull and jaw, then the face ----- */
-    c.egg([0, 27.35, 0.15], [1.72, 1.86, 1.86], 0.4).egg([0, 26.25, 0.72], [1.4, 1.18, 1.26], 0.5).egg([0, 25.55, 1.5], [0.6, 0.46, 0.46], 0.3).egg([0, 28.3, 1.2], [1.25, 0.75, 0.75], 0.4);
+    /* ----- the head. Its measure is the statue's own: eyes a little above the middle, arched brows close over them, the nose a quarter of
+       the face, a small full mouth turned up at its corners, cheeks round with the smile, the whole an egg narrowing to a round chin ----- */
+    c.egg([0, 27.55, 0.0], [1.6, 1.75, 1.85], 0.4).egg([0, 26.85, 0.6], [1.47, 1.5, 1.36], 0.5).egg([0, 28.1, 0.95], [1.3, 0.9, 0.93], 0.5);                         // the skull, the mask of the face, the fullness of the brow
+    c.egg([0, 25.95, 0.98], [1.22, 0.8, 0.97], 0.5).egg([0, 25.48, 1.72], [0.4, 0.32, 0.3], 0.3);                                                                     // the jaw, and the chin on it
     for (const s of [-1, 1]) {
-      c.egg([s * 0.86, 26.45, 1.42], [0.6, 0.56, 0.5], 0.35);                                                                                                           // the cheek, full with his smile
-      c.egg([s * 0.68, 27.3, 2.06], [0.62, 0.36, 0.2], 0.3, null, true).egg([s * 0.68, 27.29, 1.71], [0.44, 0.2, 0.2], 0.05);                                         // the eye, an almond set a little in
-      c.run([[s * 0.24, 27.27, 1.9], [s * 0.45, 27.47, 1.97], [s * 0.72, 27.53, 1.97], [s * 0.98, 27.44, 1.86], [s * 1.13, 27.32, 1.7]], [0.03, 0.06, 0.068, 0.058, 0.03], 0.04, 3);   // its upper lid
-      c.run([[s * 0.24, 27.27, 1.9], [s * 0.46, 27.12, 1.93], [s * 0.72, 27.07, 1.92], [s * 0.98, 27.16, 1.83], [s * 1.13, 27.32, 1.7]], [0.03, 0.036, 0.04, 0.036, 0.03], 0.04, 3);  // and its lower
-      c.egg([s * 0.66, 27.3, 1.93], [0.12, 0.13, 0.035], 0.02, null, true);                                                                                            // the pupil cut in it
-      c.run([[s * 0.17, 27.9, 2.0], [s * 0.7, 28.08, 1.92], [s * 1.28, 27.82, 1.5]], [0.1, 0.105, 0.05], 0.14, 4);                                                     // the brow, arched
-      c.egg([s * 0.3, 26.5, 2.14], [0.2, 0.16, 0.2], 0.18).egg([s * 0.2, 26.4, 2.36], [0.08, 0.05, 0.08], 0.05, null, true);                                           // the wing of the nose
-      c.egg([s * 1.74, 26.95, 0.15], [0.2, 0.68, 0.42], 0.12).limb([s * 1.74, 26.3, 0.25], [s * 1.8, 25.9, 0.5], 0.16, 0.13, 0.06).ring([s * 1.86, 25.42, 0.72], 0.46, 0.1, 0.04, about([0.45 * s, 0, 1]));   // the ear, its long lobe, and the ring in it
-      c.egg([s * 0.64, 25.97, 2.0], [0.1, 0.1, 0.1], 0.08, null, true);                                                                                              // the corner of the mouth, tucked into the cheek
+      c.egg([s * 0.9, 26.9, 1.1], [0.56, 0.52, 0.56], 0.45).egg([s * 0.72, 26.4, 1.64], [0.44, 0.36, 0.3], 0.4);                                                      // the cheekbone, and the cheek lifted by his smile
+      c.run([[s * 0.24, 27.5, 1.84], [s * 0.76, 27.62, 1.8], [s * 1.26, 27.42, 1.46]], [0.15, 0.17, 0.12], 0.3, 4);                                                    // the bone of the brow
+      c.run([[0.17, 27.48], [0.46, 27.6], [0.8, 27.64], [1.08, 27.56], [1.3, 27.4]].map(([x, y]) => [s * x, y, c.front(s * x, y) + 0.01]), [0.06, 0.085, 0.09, 0.075, 0.035], 0.03, 4);   // the eyebrow, a raised arc on it
+      // the eye: a hollow under the brow, the ball of the eye in it, its lids meeting at the corners, the fold over the upper one, and the iris cut in
+      c.egg([s * 0.69, 27.2, 2.16], [0.56, 0.32, 0.36], 0.26, null, true).egg([s * 0.69, 27.18, 1.64], [0.4, 0.27, 0.22], 0.04);
+      c.run([[s * 0.3, 27.14, 1.84], [s * 0.47, 27.29, 1.91], [s * 0.7, 27.335, 1.91], [s * 0.93, 27.27, 1.81], [s * 1.08, 27.14, 1.64]], [0.03, 0.06, 0.068, 0.06, 0.03], 0.04, 4);
+      c.run([[s * 0.34, 27.33, 1.83], [s * 0.7, 27.47, 1.86], [s * 1.05, 27.33, 1.66]], [0.04, 0.055, 0.04], 0.1, 4);
+      c.run([[s * 0.3, 27.14, 1.84], [s * 0.5, 27.03, 1.84], [s * 0.72, 27.0, 1.83], [s * 0.93, 27.05, 1.76], [s * 1.08, 27.14, 1.64]], [0.03, 0.035, 0.038, 0.035, 0.03], 0.04, 4);
+      c.ring([s * 0.68, 27.17, 1.852], 0.135, 0.03, 0.02, about([s * 0.05, -0.05, 1]), true).egg([s * 0.68, 27.17, 1.875], [0.055, 0.055, 0.035], 0.015, null, true);
+      c.egg([s * 0.28, 26.5, 2.11], [0.17, 0.14, 0.2], 0.13).egg([s * 0.17, 26.41, 2.22], [0.085, 0.04, 0.09], 0.04, null, true);                                       // the wing of the nose, and the nostril under it
+      c.egg([s * 1.64, 26.95, 0.28], [0.2, 0.62, 0.42], 0.1).egg([s * 1.76, 27.0, 0.42], [0.1, 0.36, 0.2], 0.06, null, true).limb([s * 1.66, 26.35, 0.35], [s * 1.72, 25.92, 0.55], 0.16, 0.13, 0.06).ring([s * 1.8, 25.44, 0.75], 0.46, 0.1, 0.04, about([0.45 * s, 0, 1]));   // the ear, its long lobe, and the ring in it
     }
-    c.limb([0, 27.6, 1.94], [0, 26.66, 2.36], 0.15, 0.22, 0.2).egg([0, 26.52, 2.4], [0.25, 0.2, 0.22], 0.12);                                                         // the nose
-    c.egg([0, 26.03, 2.02], [0.56, 0.12, 0.2], 0.06).egg([0, 25.83, 1.99], [0.45, 0.14, 0.2], 0.06);       // the lips, parted by a line
-    for (const dy of [-0.2, 0, 0.2]) c.run([[-0.62, 28.42 + dy - 0.03, 1.87], [0, 28.45 + dy + 0.04, 2.0], [0.62, 28.42 + dy - 0.03, 1.87]], 0.06, 0.03, 4);            // the three lines of ash on his brow
-    c.egg([0, 28.45, 2.02], [0.1, 0.24, 0.07], 0.04);                                                                                                                  // and the eye between them
+    c.limb([0, 27.45, 1.9], [0, 26.76, 2.28], 0.13, 0.16, 0.22).egg([0, 26.62, 2.32], [0.22, 0.19, 0.19], 0.15).limb([0, 26.45, 2.28], [0, 26.38, 2.08], 0.065, 0.065, 0.05);   // the nose: bridge, tip, and the pillar between the nostrils
+    c.limb([0, 26.33, 2.12], [0, 26.2, 2.15], 0.04, 0.045, 0.06, null, null, true);                                                                              // the groove above the lip
+    // the lips, laid on the face along the curve of his smile: the upper with its bow, the lower fuller, meeting at corners that lift into the cheeks
+    const smile = x => 26.03 + 0.52 * x * x, lip = (dy, lift) => [-0.57, -0.43, -0.28, -0.14, 0, 0.14, 0.28, 0.43, 0.57].map(x => { const y = smile(x) + dy(x); return [x, y, c.front(x, y) + lift]; }), bow = x => 1 - Math.pow(Math.abs(x) / 0.57, 2);
+    c.run(lip(x => 0.078 * bow(x) - (x === 0 ? 0.014 : 0), 0.03), [0.02, 0.05, 0.072, 0.086, 0.068, 0.086, 0.072, 0.05, 0.02], 0.03, 3);
+    c.run(lip(x => -0.1 * bow(x), 0.03), [0.02, 0.062, 0.092, 0.108, 0.112, 0.108, 0.092, 0.062, 0.02], 0.03, 3);
+    c.egg([0, 25.72, 2.14], [0.28, 0.08, 0.12], 0.14, null, true);                                                      // the lower lip, fuller, and the hollow under it
+    [[27.94, 0.4], [28.1, 0.5], [28.26, 0.4]].forEach(([y, w]) => c.run([[-w, y - 0.05], [-w * 0.5, y + 0.02], [0, y - 0.01], [w * 0.5, y + 0.02], [w, y - 0.05]].map(([x, yy]) => [x, yy, c.front(x, yy) + 0.015]), 0.062, 0.025, 4));   // the three lines of ash on his brow
+    c.egg([0, 28.1, c.front(0, 28.1) + 0.03], [0.1, 0.2, 0.07], 0.03);                                                                                                 // and the eye between them
 
     /* ----- the hair: drawn back over the skull, wound in a tall knot, falling in locks to his shoulders and down his back ----- */
-    c.lay([-2.1, 26.6, -2.3, 2.1, 29.9, 2.3], (x, y, z) => { const px = x / 1.9, py = (y - 27.75) / 1.72, pz = (z + 0.18) / 1.98, k0 = hyp(px, py, pz), k1 = hyp(px / 1.9, py / 1.72, pz / 1.98); let d = k1 > 1e-6 ? k0 * (k0 - 1) / k1 : -1;
-      d += 0.05 * sin(Math.atan2(x, z + 0.2) * 20 + 2.2 * sin((y - 27) * 1.3)) * ss(26.6, 27.6, y);
-      return Math.max(d, (28.62 - y) * 0.82 + (z - 1.1) * 0.58 - 0.22 * Math.abs(x)); }, 0.16);
+    c.lay([-2.1, 26.4, -2.4, 2.1, 29.9, 2.4], (x, y, z) => { const px = x / 1.82, py = (y - 27.62) / 1.84, pz = z / 2.2, k0 = hyp(px, py, pz), k1 = hyp(px / 1.82, py / 1.84, pz / 2.2); let d = k1 > 1e-6 ? k0 * (k0 - 1) / k1 : -1;
+      d += 0.05 * sin(Math.atan2(x, z + 0.3) * 30 + 2.6 * sin((y - 27) * 1.4)) * ss(26.6, 27.4, y);
+      const side = Math.max(0, Math.abs(x) - 1.3); return Math.max(d, (27.89 - y) * 0.82 + (z - 1.1) * 0.58 + 0.12 * x * x - 1.7 * side * side); }, 0.1);
     c.lay([-1.5, 28.7, -1.6, 1.6, 31.6, 1.5], (x, y, z) => { const t = sat((y - 29.0) / 2.0), X = x - 0.22 * t, Z = z + 0.12 + 0.25 * t, R = mix(1.08, 0.5, t * t * 0.6 + t * 0.4), a = Math.atan2(Z, X);
       const body = Math.max(hyp(X, Z) - R - 0.1 * sin(a * 2 - y * 5.4), y - 31.0, 28.8 - y); return Math.min(body, hyp(x - 0.2, y - 31.05, z + 0.35) - 0.3) * 0.85; }, 0.18);
     const wavy = (pts, w, ph) => pts.map((p, i) => [p[0] + w * sin(i * 1.9 + ph), p[1], p[2] + w * 0.5 * cos(i * 1.6 + ph)]);
-    for (const s of [-1, 1]) for (let j = 0; j < 3; j++) {                                                                                                              // the locks that come forward over each shoulder
-      c.run(wavy([[s * (1.72 + j * 0.1), 27.3, -0.35 - j * 0.3], [s * (1.95 + j * 0.2), 26.2, -0.1 - j * 0.3], [s * (1.9 + j * 0.3), 25.2, 0.2 - j * 0.28], [s * (2.2 + j * 0.34), 24.3, 0.42 - j * 0.3], [s * (2.75 + j * 0.36), 23.75, 0.4 - j * 0.3], [s * (3.25 + j * 0.3), 23.45, 0.2 - j * 0.3]], 0.1, j * 2 + s), [0.3, 0.31, 0.29, 0.25, 0.19, 0.07], 0.1, 4); }
+    for (const s of [-1, 1]) for (let j = 0; j < 3; j++) {                                                                                                              // the locks that come from behind each ear, forward over the shoulder
+      c.run(wavy([[s * (1.78 + j * 0.08), 27.4, -0.75 - j * 0.3], [s * (2.05 + j * 0.16), 26.2, -0.6 - j * 0.3], [s * (2.08 + j * 0.26), 25.2, -0.25 - j * 0.3], [s * (2.25 + j * 0.34), 24.3, 0.3 - j * 0.3], [s * (2.75 + j * 0.36), 23.75, 0.4 - j * 0.3], [s * (3.25 + j * 0.3), 23.45, 0.2 - j * 0.3]], 0.1, j * 2 + s), [0.3, 0.31, 0.29, 0.25, 0.19, 0.07], 0.1, 4); }
     for (let i = 0; i < 11; i++) { const u = (i - 5) / 5, len = 19.2 + 1.5 * Math.abs(sin(i * 2.3)) + 1.3 * Math.abs(u);                                             // and the long fall of it down his back
       c.run(wavy([[u * 1.35, 28.3, -1.72], [u * 1.9, 26.6, -2.02], [u * 2.4, 24.8, -1.98], [u * 2.65, 23.0, -1.92 - 0.12 * (i % 2)], [u * 2.7, 21.2, -1.88 - 0.12 * (i % 2)], [u * 2.6, len, -1.74]], 0.13, i * 1.7), [0.42, 0.46, 0.44, 0.4, 0.33, 0.1], 0.12, 5); }
     // the crescent moon set in his hair, at the right of the knot
@@ -230,7 +242,7 @@ export function foundry() {
     c.drum(dc, 0.94, 0.62, 0.08, 0.06, DB, (px, py, pz) => -0.1 * (1 - Math.abs(py) / 0.62) - (hyp(px, pz) > 0.8 ? 0.05 : 0)).ring(dc, 0.5, 0.06, 0.03, DB);
     c.run([[shaft(15.6)[0], 15.6, 3.3], [4.3, 15.5, 3.1], [dc[0], 15.5, dc[2]]], 0.07, 0.03, 3).run([[shaft(14.2)[0], 14.2, 3.3], [4.2, 14.3, 3.1]], 0.07, 0.03, 2);
   }
-  return function cast(z) { const c = new Clay(z.lo, z.hi, z.cell, z.band); sculpt(c); return c.skin(z.from, z.to); };
+  return function cast(z) { const c = new Clay(z.lo, z.hi, z.cell, z.band); sculpt(c); return c.skin(z.from, z.to, z.only || null, z.omit || null); };
 }
 
 // Gold under lamps: each lamp set round his feet warms the faces turned to it; the night sky and the moon show in the polish.
@@ -249,11 +261,11 @@ export function gilt() {
         float occ = vA * vA * (3.0 - 2.0 * vA);
         if (clay > 0.5) { float l = 0.25 + 0.75 * max(0.0, dot(n, normalize(vec3(0.35, 0.5, 0.8)))); gl_FragColor = vec4(vec3(0.78, 0.76, 0.72) * l * (0.35 + 0.65 * occ), 1.0); }
         else {
-        vec3 c = lamp(vec3(-13.0, 6.0, 16.0), 1.0, n, v) + lamp(vec3(13.0, 6.0, 16.0), 1.0, n, v) + lamp(vec3(0.0, 9.0, 30.0), 0.6, n, v) + lamp(vec3(-24.0, 7.0, -3.0), 0.55, n, v) + lamp(vec3(24.0, 7.0, -3.0), 0.55, n, v) + lamp(vec3(-10.0, 6.0, -16.0), 0.5, n, v) + lamp(vec3(10.0, 6.0, -16.0), 0.5, n, v);
+        vec3 c = lamp(vec3(-13.0, 6.0, 16.0), 0.9, n, v) + lamp(vec3(13.0, 6.0, 16.0), 0.9, n, v) + lamp(vec3(0.0, 9.0, 30.0), 0.5, n, v) + lamp(vec3(-30.0, 52.0, 62.0), 0.95, n, v) + lamp(vec3(34.0, 46.0, 58.0), 0.6, n, v) + lamp(vec3(-24.0, 7.0, -3.0), 0.55, n, v) + lamp(vec3(24.0, 7.0, -3.0), 0.55, n, v) + lamp(vec3(-10.0, 6.0, -16.0), 0.5, n, v) + lamp(vec3(10.0, 6.0, -16.0), 0.5, n, v);
         c += mix(vec3(0.2, 0.13, 0.06), vec3(0.03, 0.045, 0.09), n.y * 0.5 + 0.5);                                                                 // the glow off the deck below, the sky above
         c += vec3(0.07, 0.1, 0.19) * smoothstep(-0.1, 0.8, r.y) + vec3(0.42, 0.26, 0.1) * smoothstep(0.25, -0.6, r.y) * 0.8 + vec3(1.0, 0.98, 0.9) * pow(max(dot(r, normalize(vec3(0.08, 0.18, -1.0))), 0.0), 120.0);   // what the polish mirrors: sky, the lit water, the moon
         c += vec3(0.2, 0.28, 0.5) * pow(1.0 - max(dot(n, v), 0.0), 3.0) * (0.2 + 0.3 * max(n.y, 0.0));                                              // the edge the moon picks out
-        gl_FragColor = vec4(gold * c * (0.08 + 0.92 * occ) * 0.56, 1.0); }
+        gl_FragColor = vec4(gold * c * (0.06 + 0.94 * occ * occ) * 0.56, 1.0); }
       #include <fog_fragment>
       #include <tonemapping_fragment>
       #include <colorspace_fragment>
@@ -261,10 +273,12 @@ export function gilt() {
 }
 
 // The three castings he is made in, each finer than the one below it, and the plainer one that the lake mirrors.
+const FACE = [-1.82, 24.98, 0.62, 1.82, 28.8, 9];                                      // the part of the head that is cast finest
 export const ZONES = (k = 1) => [
   { lo: [-6.8, -0.4, -4.8], hi: [6.4, 16.7, 4.6], cell: 0.15 * k, band: 0.6, from: -9, to: 16.42 },
   { lo: [-6.4, 16.2, -3.6], hi: [6.3, 25.1, 4.8], cell: 0.105 * k, band: 0.45, from: 16.3, to: 24.92 },
-  { lo: [-4.8, 24.6, -3.3], hi: [5.6, 35.2, 4.2], cell: 0.08 * k, band: 0.36, from: 24.8, to: 99 }];
+  { lo: [-4.8, 24.6, -3.3], hi: [5.6, 35.2, 4.2], cell: 0.08 * k, band: 0.36, from: 24.8, to: 99, omit: [FACE[0] + 0.09, FACE[1] + 0.09, FACE[2] + 0.09, FACE[3] - 0.09, FACE[4] - 0.09, 9] },
+  { lo: [-2.4, 24.5, 0.1], hi: [2.4, 29.3, 3.2], cell: 0.04 * k, band: 0.3, from: -9, to: 99, only: FACE }];
 export const PLAIN = { lo: [-6.6, -0.4, -4.8], hi: [6.4, 35.4, 4.8], cell: 0.32, band: 0.7, from: -9, to: 99 };
 const mesh = (s, mat) => { const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.BufferAttribute(s.P, 3)); g.setAttribute('normal', new THREE.BufferAttribute(s.N, 3)); g.setAttribute('ao', new THREE.BufferAttribute(s.A, 1)); g.setIndex(new THREE.BufferAttribute(s.I, 1)); return new THREE.Mesh(g, mat); };
 // Cast one zone on another thread; if the browser will not have that, here, a little later.
